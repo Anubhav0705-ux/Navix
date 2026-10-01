@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from decimal import Decimal
 from typing import Dict, List, Optional
 from sqlalchemy.orm import Session
@@ -48,14 +48,16 @@ def infer_transport_mode(provider: str) -> TransportMode:
 class TransitGraph:
     """
     Time-dependent multi-modal transit graph built from database models.
+    Supports deterministic schedule projection onto requested trip departure dates.
     """
     def __init__(self):
         self.nodes: Dict[str, GraphNode] = {}
         self.city_to_node_ids: Dict[str, List[str]] = {}
         self.outgoing_edges: Dict[str, List[GraphEdge]] = {}
+        self.base_schedule_date: Optional[date] = None
 
     @classmethod
-    def load_from_db(cls, session: Session) -> "TransitGraph":
+    def load_from_db(cls, session: Session, target_date: Optional[date] = None) -> "TransitGraph":
         graph = cls()
 
         # Load Nodes
@@ -70,13 +72,13 @@ class TransitGraph:
             )
             graph.nodes[n.node_id] = g_node
             
-            # Map city name (case-insensitive) to node IDs
+            # Map city name (case-insensitive)
             city_key = n.city.strip().lower()
             if city_key not in graph.city_to_node_ids:
                 graph.city_to_node_ids[city_key] = []
             graph.city_to_node_ids[city_key].append(n.node_id)
             
-            # Also map exact node_name if queried directly
+            # Map node_name
             name_key = n.node_name.strip().lower()
             if name_key not in graph.city_to_node_ids:
                 graph.city_to_node_ids[name_key] = []
@@ -85,11 +87,27 @@ class TransitGraph:
 
         # Load Schedules (Edges)
         db_schedules = session.scalars(select(TransitSchedule)).all()
+        if db_schedules:
+            graph.base_schedule_date = min([s.departure_time.date() for s in db_schedules])
+
+        # Compute date projection offset if target_date is provided
+        days_offset = 0
+        if target_date and graph.base_schedule_date:
+            days_offset = (target_date - graph.base_schedule_date).days
+
         for s in db_schedules:
             if s.source_node_id not in graph.nodes or s.dest_node_id not in graph.nodes:
                 continue
 
-            duration = int((s.arrival_time - s.departure_time).total_seconds() / 60)
+            # Project dates if offset applies
+            if days_offset != 0:
+                dep_time = s.departure_time + timedelta(days=days_offset)
+                arr_time = s.arrival_time + timedelta(days=days_offset)
+            else:
+                dep_time = s.departure_time
+                arr_time = s.arrival_time
+
+            duration = int((arr_time - dep_time).total_seconds() / 60)
             mode = infer_transport_mode(s.provider)
 
             edge = GraphEdge(
@@ -98,8 +116,8 @@ class TransitGraph:
                 dest_node_id=s.dest_node_id,
                 provider=s.provider,
                 transport_mode=mode,
-                departure_time=s.departure_time,
-                arrival_time=s.arrival_time,
+                departure_time=dep_time,
+                arrival_time=arr_time,
                 base_cost=s.base_cost,
                 duration_minutes=duration
             )
@@ -118,7 +136,6 @@ class TransitGraph:
         if key in self.city_to_node_ids:
             return self.city_to_node_ids[key]
         
-        # Partial match fallback
         matching = []
         for city_key, node_list in self.city_to_node_ids.items():
             if key in city_key or city_key in key:
