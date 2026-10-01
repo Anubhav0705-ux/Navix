@@ -121,9 +121,18 @@ DEMO_SCHEDULES = [
         "schedule_id": "sch_105",
         "source_node_id": "node_MNL_BUS",
         "dest_node_id": "node_OLD_MNL",
-        "provider": "Manali Auto Shuttle",
+        "provider": "Manali Express Auto Shuttle",
         "departure_time": datetime(2026, 9, 2, 22, 15),
         "arrival_time": datetime(2026, 9, 2, 22, 30),
+        "base_cost": Decimal("150.00")
+    },
+    {
+        "schedule_id": "sch_105b",
+        "source_node_id": "node_MNL_BUS",
+        "dest_node_id": "node_OLD_MNL",
+        "provider": "Manali Night Shuttle",
+        "departure_time": datetime(2026, 9, 2, 22, 45),
+        "arrival_time": datetime(2026, 9, 2, 23, 0),
         "base_cost": Decimal("150.00")
     },
 
