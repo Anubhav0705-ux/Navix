@@ -2,14 +2,16 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Navbar, Footer } from '@/components';
-import { ArrowRight, ShieldCheck, MapPin, Calendar, Users, Wallet, Compass } from 'lucide-react';
+import { ArrowRight, ShieldCheck, MapPin, Users, Wallet, Compass } from 'lucide-react';
 
 const DEMO_LOCATIONS = [
   'Sangli', 'Miraj', 'Pune', 'Mumbai', 'Delhi', 'Chandigarh', 'Manali', 'Old Manali'
 ];
 
 export default function Home() {
+  const router = useRouter();
   const [origin, setOrigin] = useState('Sangli');
   const [destination, setDestination] = useState('Old Manali');
   const [budget, setBudget] = useState('20000');
@@ -23,7 +25,7 @@ export default function Home() {
       budget,
       travellers
     }).toString();
-    window.location.href = `/plan?${query}`;
+    router.push(`/plan?${query}`);
   };
 
   return (

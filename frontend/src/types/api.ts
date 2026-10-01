@@ -6,6 +6,19 @@ export type BudgetStatus = 'COMFORTABLE' | 'TIGHT' | 'EXCEEDED';
 export type TransferStatus = 'SAFE' | 'TIGHT' | 'INVALID';
 export type TransportMode = 'LOCAL' | 'TRAIN' | 'BUS' | 'METRO' | 'OTHER';
 
+export interface UserResponse {
+  user_id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
+export interface TokenResponse {
+  access_token: string;
+  token_type: string;
+  user: UserResponse;
+}
+
 export interface TripPlanRequest {
   origin: string;
   destination: string;

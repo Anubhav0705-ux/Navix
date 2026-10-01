@@ -12,17 +12,32 @@ export class APIError extends Error {
   }
 }
 
-export async function postApi<T>(endpoint: string, body: unknown): Promise<T> {
+function getAuthHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('navix_auth_token');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+  }
+  return headers;
+}
+
+export async function fetchApi<T>(endpoint: string, method: string = 'GET', body?: unknown): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
+  const options: RequestInit = {
+    method,
+    headers: getAuthHeaders(),
+  };
+
+  if (body !== undefined) {
+    options.body = JSON.stringify(body);
+  }
 
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
+    const response = await fetch(url, options);
 
     if (!response.ok) {
       let errorData: { detail?: APIErrorDetail | string } = {};
@@ -48,4 +63,16 @@ export async function postApi<T>(endpoint: string, body: unknown): Promise<T> {
     }
     throw new APIError('NETWORK_ERROR', err instanceof Error ? err.message : 'Failed to connect to NAVIX server.');
   }
+}
+
+export async function postApi<T>(endpoint: string, body: unknown): Promise<T> {
+  return fetchApi<T>(endpoint, 'POST', body);
+}
+
+export async function getApi<T>(endpoint: string): Promise<T> {
+  return fetchApi<T>(endpoint, 'GET');
+}
+
+export async function deleteApi<T>(endpoint: string): Promise<T> {
+  return fetchApi<T>(endpoint, 'DELETE');
 }

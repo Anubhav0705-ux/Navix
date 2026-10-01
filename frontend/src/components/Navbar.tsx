@@ -2,16 +2,21 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Logo } from './Logo';
-import { Menu, X, ArrowRight, Lock } from 'lucide-react';
+import { getCurrentUser, logoutSession } from '@/services/auth';
+import { UserResponse } from '@/types';
+import { Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard, Shield } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showAuthToast, setShowAuthToast] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserResponse | null>(() => getCurrentUser());
 
-  const handleSignInClick = () => {
-    setShowAuthToast(true);
-    setTimeout(() => setShowAuthToast(false), 3000);
+  const handleLogout = () => {
+    logoutSession();
+    setCurrentUser(null);
+    router.push('/');
   };
 
   return (
@@ -25,24 +30,48 @@ export const Navbar: React.FC = () => {
           <Link href="/plan" className="hover:text-[#0B1320] transition-smooth">
             Plan
           </Link>
-          <a href="#how-it-works" className="hover:text-[#0B1320] transition-smooth">
+          <Link href="/#how-it-works" className="hover:text-[#0B1320] transition-smooth">
             How it Works
-          </a>
-          <a href="#example-journey" className="hover:text-[#0B1320] transition-smooth">
+          </Link>
+          <Link href="/#example-journey" className="hover:text-[#0B1320] transition-smooth">
             Explore
-          </a>
+          </Link>
+          {currentUser && (
+            <Link href="/dashboard" className="hover:text-[#0B1320] transition-smooth flex items-center gap-1">
+              <LayoutDashboard className="w-3.5 h-3.5" /> Saved Trips
+            </Link>
+          )}
+          {currentUser?.role.toLowerCase() === 'admin' && (
+            <Link href="/admin" className="text-[#0E9F7A] font-bold hover:underline flex items-center gap-1">
+              <Shield className="w-3.5 h-3.5" /> Admin
+            </Link>
+          )}
         </nav>
 
         {/* Desktop Action Buttons */}
-        <div className="hidden md:flex items-center gap-5">
-          <button
-            onClick={handleSignInClick}
-            className="text-xs font-semibold text-[#667085] hover:text-[#0B1320] transition-smooth flex items-center gap-1.5"
-            title="Authentication available in Phase 9"
-          >
-            <Lock className="w-3.5 h-3.5 text-[#667085]" />
-            Sign In
-          </button>
+        <div className="hidden md:flex items-center gap-4">
+          {currentUser ? (
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-semibold text-[#0B1320] flex items-center gap-1.5 bg-white border border-[#E7E5E0] px-3 py-1.5 rounded-lg shadow-sm">
+                <UserIcon className="w-3.5 h-3.5 text-[#0E9F7A]" />
+                {currentUser.name}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="text-xs font-semibold text-[#667085] hover:text-red-600 transition-smooth p-1.5"
+                title="Log Out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="text-xs font-semibold text-[#667085] hover:text-[#0B1320] transition-smooth px-3 py-1.5"
+            >
+              Sign In
+            </Link>
+          )}
 
           <Link
             href="/plan"
@@ -64,14 +93,6 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Auth Toast Notice */}
-      {showAuthToast && (
-        <div className="absolute top-16 right-4 z-50 bg-[#0B1320] text-white text-xs px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2">
-          <Lock className="w-4 h-4 text-[#0E9F7A]" />
-          <span>User authentication will be enabled in Phase 9.</span>
-        </div>
-      )}
-
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-[#E7E5E0] px-4 pt-2 pb-6 space-y-3 shadow-lg">
@@ -82,27 +103,41 @@ export const Navbar: React.FC = () => {
           >
             Plan
           </Link>
-          <a
-            href="#how-it-works"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-[#0B1320] hover:text-[#0E9F7A] py-2 text-sm font-medium"
-          >
-            How it Works
-          </a>
-          <a
-            href="#example-journey"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-[#0B1320] hover:text-[#0E9F7A] py-2 text-sm font-medium"
-          >
-            Explore
-          </a>
-          <div className="pt-2 flex flex-col gap-2">
-            <button
-              onClick={handleSignInClick}
-              className="w-full text-center text-xs font-semibold text-[#667085] py-2 border border-[#E7E5E0] rounded-lg"
+          {currentUser && (
+            <Link
+              href="/dashboard"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-[#0B1320] hover:text-[#0E9F7A] py-2 text-sm font-medium"
             >
-              Sign In
-            </button>
+              Saved Trips
+            </Link>
+          )}
+          {currentUser?.role.toLowerCase() === 'admin' && (
+            <Link
+              href="/admin"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-[#0E9F7A] font-bold py-2 text-sm"
+            >
+              Admin Dashboard
+            </Link>
+          )}
+          <div className="pt-2 flex flex-col gap-2">
+            {currentUser ? (
+              <button
+                onClick={handleLogout}
+                className="w-full text-center text-xs font-semibold text-red-600 py-2 border border-[#E7E5E0] rounded-lg"
+              >
+                Sign Out ({currentUser.name})
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full text-center text-xs font-semibold text-[#0B1320] py-2 border border-[#E7E5E0] rounded-lg"
+              >
+                Sign In
+              </Link>
+            )}
             <Link
               href="/plan"
               onClick={() => setMobileMenuOpen(false)}

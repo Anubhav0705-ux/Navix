@@ -1,7 +1,7 @@
 from datetime import date
 from decimal import Decimal
 from typing import Optional, List, TYPE_CHECKING
-from sqlalchemy import String, Date, Numeric, ForeignKey
+from sqlalchemy import String, Date, Numeric, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
@@ -21,6 +21,7 @@ class Trip(Base):
     destination: Mapped[str] = mapped_column(String(100), nullable=False)
     travel_date: Mapped[date] = mapped_column(Date, nullable=False)
     budget_cap: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
+    plan_data: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     # Relationships
     traveler: Mapped["Traveler"] = relationship("Traveler", back_populates="trips")

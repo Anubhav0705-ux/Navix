@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Navbar, Footer } from '@/components';
 import { requestTripPlan, APIError } from '@/services';
 import { saveTripPlan } from '@/lib';
@@ -11,8 +10,8 @@ import {
   ActivityPreference, TripPlanResult
 } from '@/types';
 import {
-  MapPin, Calendar, Wallet, Users, Compass, ChevronRight, ChevronLeft,
-  CheckCircle2, AlertTriangle, Loader2, ArrowRight, RefreshCw, Check
+  ChevronRight, ChevronLeft,
+  AlertTriangle, Loader2, ArrowRight, Check
 } from 'lucide-react';
 
 const SUPPORTED_NODES = [
@@ -37,18 +36,36 @@ const LOADING_CHECKLIST = [
 ];
 
 function PlannerWizardContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   // Wizard Step (1 to 6)
   const [step, setStep] = useState(1);
 
-  // Form State
-  const [origin, setOrigin] = useState('Sangli');
-  const [destination, setDestination] = useState('Old Manali');
+  // Form State (Initialized lazily from query params)
+  const [origin, setOrigin] = useState(() => {
+    const q = searchParams.get('origin');
+    return q && SUPPORTED_NODES.includes(q) ? q : 'Sangli';
+  });
+
+  const [destination, setDestination] = useState(() => {
+    const q = searchParams.get('destination');
+    return q && SUPPORTED_NODES.includes(q) ? q : 'Old Manali';
+  });
+
   const [departureDate, setDepartureDate] = useState('2026-12-12');
   const [returnDate, setReturnDate] = useState('2026-12-18');
-  const [travellers, setTravellers] = useState(1);
-  const [maximumBudget, setMaximumBudget] = useState(20000);
+
+  const [travellers, setTravellers] = useState(() => {
+    const q = searchParams.get('travellers');
+    return q && !isNaN(Number(q)) ? Number(q) : 1;
+  });
+
+  const [maximumBudget, setMaximumBudget] = useState(() => {
+    const q = searchParams.get('budget');
+    return q && !isNaN(Number(q)) ? Number(q) : 20000;
+  });
+
   const [profile, setProfile] = useState<OptimizationProfile>('BALANCED');
   const [stayPref, setStayPref] = useState<StayPreference>('STANDARD');
   const [foodPref, setFoodPref] = useState<FoodPreference>('BALANCED');
@@ -58,19 +75,6 @@ function PlannerWizardContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingStage, setLoadingStage] = useState(0);
   const [errorInfo, setErrorInfo] = useState<{ code: string; message: string } | null>(null);
-
-  // Prefill from URL query params
-  useEffect(() => {
-    const qOrigin = searchParams.get('origin');
-    const qDest = searchParams.get('destination');
-    const qBudget = searchParams.get('budget');
-    const qTravellers = searchParams.get('travellers');
-
-    if (qOrigin && SUPPORTED_NODES.includes(qOrigin)) setOrigin(qOrigin);
-    if (qDest && SUPPORTED_NODES.includes(qDest)) setDestination(qDest);
-    if (qBudget && !isNaN(Number(qBudget))) setMaximumBudget(Number(qBudget));
-    if (qTravellers && !isNaN(Number(qTravellers))) setTravellers(Number(qTravellers));
-  }, [searchParams]);
 
   // Stage checklist animation during loading
   useEffect(() => {
@@ -121,7 +125,7 @@ function PlannerWizardContent() {
     try {
       const result: TripPlanResult = await requestTripPlan(payload);
       saveTripPlan(result);
-      window.location.href = '/trip/result';
+      router.push('/trip/result');
     } catch (err: unknown) {
       setIsSubmitting(false);
       if (err instanceof APIError) {
