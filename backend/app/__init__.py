@@ -1,0 +1,1 @@
+"""NAVIX Backend Application Package."""
