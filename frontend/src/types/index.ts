@@ -1,2 +1,1 @@
-// TypeScript types placeholder module
-export {};
+export * from './api';

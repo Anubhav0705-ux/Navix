@@ -1,2 +1,3 @@
-// Components placeholder module
-export {};
+export * from './Logo';
+export * from './Navbar';
+export * from './Footer';
