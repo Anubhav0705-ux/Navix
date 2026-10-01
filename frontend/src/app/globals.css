@@ -2,52 +2,105 @@
 
 @layer base {
   :root {
-    --bg-main: #F8F9FA;
+    --font-sans: var(--font-manrope), system-ui, -apple-system, sans-serif;
+    --font-serif: var(--font-playfair), Georgia, serif;
+    --bg-main: #F7F5F0;
+    --bg-surface: #FFFFFF;
+    --text-main: #0B1320;
+    --text-muted: #667085;
+    --primary-emerald: #0E9F7A;
+    --primary-emerald-hover: #0B8465;
+    --secondary-sky: #4C8BF5;
+    --border-warm: #E7E5E0;
     --navy-dark: #0A1128;
-    --navy-card: #1C2541;
-    --teal-primary: #06D6A0;
-    --teal-hover: #05B386;
-    --sky-accent: #48CAE4;
-    --border-neutral: #E2E8F0;
   }
 
   body {
     background-color: var(--bg-main);
-    color: #0F172A;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: var(--text-main);
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
 }
 
-.bg-navy-dark {
+.font-serif-emphasis {
+  font-family: var(--font-playfair), Georgia, serif;
+}
+
+/* Custom UI Tokens */
+.bg-warm-main {
+  background-color: #F7F5F0;
+}
+
+.bg-warm-surface {
+  background-color: #FFFFFF;
+}
+
+.border-warm {
+  border-color: #E7E5E0;
+}
+
+.text-emerald-brand {
+  color: #0E9F7A;
+}
+
+.bg-emerald-brand {
+  background-color: #0E9F7A;
+}
+
+.bg-emerald-brand:hover {
+  background-color: #0B8465;
+}
+
+.border-emerald-brand {
+  border-color: #0E9F7A;
+}
+
+.text-muted-custom {
+  color: #667085;
+}
+
+.text-navy-deep {
+  color: #0B1320;
+}
+
+.bg-navy-deep {
   background-color: #0A1128;
 }
 
-.bg-navy-card {
-  background-color: #1C2541;
+/* Segmented Control Animation */
+.segmented-control {
+  background-color: #F0EEE9;
+  padding: 4px;
+  border-radius: 12px;
 }
 
-.text-teal-accent {
-  color: #06D6A0;
+.segmented-option {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.bg-teal-accent {
-  background-color: #06D6A0;
+.segmented-option-active {
+  background-color: #FFFFFF;
+  color: #0B1320;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.hover\:bg-teal-dark:hover {
-  background-color: #05B386;
-}
-
-.border-teal-accent {
-  border-color: #06D6A0;
-}
-
-.text-sky-accent {
-  color: #48CAE4;
-}
-
-/* Restrained micro-interactions */
+/* Micro-interactions & animations */
 .transition-smooth {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Thin route line styling */
+.route-line {
+  height: 2px;
+  background: linear-gradient(90deg, #0E9F7A 0%, #4C8BF5 100%);
 }

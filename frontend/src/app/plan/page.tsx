@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Navbar, Footer } from '@/components';
 import { requestTripPlan, APIError } from '@/services';
@@ -12,19 +12,28 @@ import {
 } from '@/types';
 import {
   MapPin, Calendar, Wallet, Users, Compass, ChevronRight, ChevronLeft,
-  CheckCircle2, AlertTriangle, Loader2, Sparkles, ArrowRight, ShieldCheck, RefreshCw
+  CheckCircle2, AlertTriangle, Loader2, ArrowRight, RefreshCw, Check
 } from 'lucide-react';
 
 const SUPPORTED_NODES = [
   'Sangli', 'Miraj', 'Pune', 'Mumbai', 'Delhi', 'Chandigarh', 'Manali', 'Old Manali'
 ];
 
-const STAGE_MESSAGES = [
-  'Building multi-modal transport graph...',
-  'Evaluating time-dependent schedules...',
-  'Validating layover connection buffers...',
-  'Optimizing whole-trip budget DP...',
-  'Constructing daily itinerary...'
+const STEPS = [
+  { id: 1, title: 'Route', label: '01 Route' },
+  { id: 2, title: 'Dates', label: '02 Dates' },
+  { id: 3, title: 'Budget', label: '03 Budget' },
+  { id: 4, title: 'Priority', label: '04 Priority' },
+  { id: 5, title: 'Preferences', label: '05 Preferences' },
+  { id: 6, title: 'Review', label: '06 Review' },
+];
+
+const LOADING_CHECKLIST = [
+  'Mapping viable multi-modal transit graph',
+  'Evaluating time-dependent schedules & transfers',
+  'Validating layover connection safety windows',
+  'Optimizing whole-trip budget DP allocation',
+  'Constructing daily itinerary & cost breakdown'
 ];
 
 function PlannerWizardContent() {
@@ -63,13 +72,13 @@ function PlannerWizardContent() {
     if (qTravellers && !isNaN(Number(qTravellers))) setTravellers(Number(qTravellers));
   }, [searchParams]);
 
-  // Stage animation during loading
+  // Stage checklist animation during loading
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isSubmitting) {
       interval = setInterval(() => {
-        setLoadingStage((prev) => (prev + 1) % STAGE_MESSAGES.length);
-      }, 1200);
+        setLoadingStage((prev) => (prev < LOADING_CHECKLIST.length - 1 ? prev + 1 : prev));
+      }, 700);
     }
     return () => clearInterval(interval);
   }, [isSubmitting]);
@@ -124,514 +133,440 @@ function PlannerWizardContent() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Header */}
-      <div className="text-center space-y-3 mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
-          <Compass className="w-3.5 h-3.5" />
-          <span>Interactive Journey Planner</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">Plan Your Journey</h1>
-        <p className="text-xs sm:text-sm text-slate-400">
-          Guided 6-step workflow backed by real-time A* and Knapsack DP algorithms.
-        </p>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* Page Heading */}
+      <div className="mb-8 space-y-1">
+        <span className="text-xs font-bold text-[#0E9F7A] uppercase tracking-widest block">
+          Interactive Journey Planner
+        </span>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0B1320]">
+          Configure your trip requirements
+        </h1>
       </div>
 
-      {/* Stepper Progress Bar */}
-      <div className="mb-10 bg-slate-900 border border-slate-800 rounded-xl p-4">
-        <div className="flex items-center justify-between text-xs font-semibold text-slate-400 mb-2">
-          <span>Step {step} of 6</span>
-          <span className="text-emerald-400 font-mono">
-            {step === 1 && 'Locations'}
-            {step === 2 && 'Dates'}
-            {step === 3 && 'Travellers & Budget'}
-            {step === 4 && 'Routing Profile'}
-            {step === 5 && 'Trip Preferences'}
-            {step === 6 && 'Review & Generate'}
+      {/* Main Grid: Left Narrow Rail + Right Workspace */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        {/* LEFT PROGRESS RAIL (DESKTOP ~240px) */}
+        <div className="lg:col-span-3 bg-white border border-[#E7E5E0] rounded-2xl p-5 shadow-sm">
+          <span className="text-xs font-bold text-[#667085] uppercase tracking-wider block mb-4">
+            Planner Steps
           </span>
+          <nav className="space-y-2">
+            {STEPS.map((s) => {
+              const isActive = step === s.id;
+              const isDone = step > s.id;
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => {
+                    if (s.id < step) setStep(s.id);
+                  }}
+                  disabled={s.id > step}
+                  className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-smooth ${
+                    isActive
+                      ? 'bg-[#0E9F7A]/10 text-[#0E9F7A] font-bold border border-[#0E9F7A]/20'
+                      : isDone
+                      ? 'text-[#0B1320] hover:bg-[#F7F5F0]'
+                      : 'text-[#667085] cursor-not-allowed opacity-60'
+                  }`}
+                >
+                  <span className="font-mono">{s.label}</span>
+                  {isDone && <Check className="w-3.5 h-3.5 text-[#0E9F7A]" />}
+                </button>
+              );
+            })}
+          </nav>
         </div>
-        <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
-          <div
-            className="bg-emerald-500 h-full transition-all duration-300 ease-out"
-            style={{ width: `${(step / 6) * 100}%` }}
-          />
+
+        {/* RIGHT WORKSPACE */}
+        <div className="lg:col-span-9 space-y-6">
+          
+          {/* Native Error Card */}
+          {errorInfo && (
+            <div className="p-5 bg-white border border-[#E7E5E0] rounded-2xl text-[#0B1320] shadow-sm space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle className="w-4 h-4" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-[#0B1320]">
+                    {errorInfo.code === 'BUDGET_TOO_LOW' ? 'Trip Budget Shortfall' : 'Planner Warning'}
+                  </h4>
+                  <p className="text-xs text-[#667085] leading-relaxed">{errorInfo.message}</p>
+                </div>
+              </div>
+
+              {errorInfo.code === 'BUDGET_TOO_LOW' && (
+                <div className="pt-2 flex flex-wrap items-center gap-3">
+                  <button
+                    onClick={() => {
+                      setMaximumBudget((prev) => prev + 5000);
+                      setErrorInfo(null);
+                      setStep(3);
+                    }}
+                    className="px-4 py-2 bg-[#0E9F7A] hover:bg-[#0B8465] text-white text-xs font-bold rounded-xl transition-smooth shadow-sm"
+                  >
+                    Increase Budget by ₹5,000
+                  </button>
+                  <button
+                    onClick={() => {
+                      setStep(3);
+                      setErrorInfo(null);
+                    }}
+                    className="px-4 py-2 border border-[#E7E5E0] hover:bg-[#F7F5F0] text-[#0B1320] text-xs font-semibold rounded-xl transition-smooth"
+                  >
+                    Edit Budget Manually
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Loading View */}
+          {isSubmitting ? (
+            <div className="bg-white border border-[#E7E5E0] rounded-2xl p-10 text-center space-y-8 shadow-sm">
+              <div className="max-w-md mx-auto space-y-3">
+                <div className="w-12 h-12 rounded-full bg-[#0E9F7A]/10 text-[#0E9F7A] flex items-center justify-center mx-auto">
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                </div>
+                <h3 className="text-xl font-bold text-[#0B1320]">Building your journey</h3>
+                <p className="text-xs text-[#667085]">Executing A* pathfinding and Knapsack DP optimization engine...</p>
+              </div>
+
+              {/* Progress Checklist */}
+              <div className="max-w-md mx-auto text-left space-y-3 bg-[#F7F5F0] p-5 rounded-xl border border-[#E7E5E0]">
+                {LOADING_CHECKLIST.map((item, idx) => {
+                  const isDone = idx < loadingStage;
+                  const isCurrent = idx === loadingStage;
+                  return (
+                    <div key={item} className="flex items-center gap-3 text-xs">
+                      {isDone ? (
+                        <Check className="w-4 h-4 text-[#0E9F7A] flex-shrink-0" />
+                      ) : isCurrent ? (
+                        <span className="w-4 h-4 rounded-full border-2 border-[#0E9F7A] border-t-transparent animate-spin flex-shrink-0" />
+                      ) : (
+                        <span className="w-4 h-4 rounded-full border border-[#E7E5E0] flex-shrink-0" />
+                      )}
+                      <span className={isDone ? 'text-[#0B1320] font-medium' : isCurrent ? 'text-[#0E9F7A] font-bold' : 'text-[#667085]'}>
+                        {item}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            /* STEP FORM CONTAINER */
+            <div className="bg-white border border-[#E7E5E0] rounded-2xl p-6 sm:p-8 space-y-8 shadow-sm">
+              
+              {/* STEP 1: ROUTE */}
+              {step === 1 && (
+                <div className="space-y-6">
+                  <div className="space-y-1 pb-4 border-b border-[#E7E5E0]">
+                    <h3 className="text-lg font-bold text-[#0B1320]">Where are you starting &amp; heading?</h3>
+                    <p className="text-xs text-[#667085]">Select transit nodes supported in current demo dataset.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider mb-2">
+                        Origin Node
+                      </label>
+                      <select
+                        value={origin}
+                        onChange={(e) => setOrigin(e.target.value)}
+                        className="w-full bg-[#F7F5F0] border border-[#E7E5E0] rounded-xl px-4 py-3 text-sm text-[#0B1320] font-medium focus:outline-none focus:border-[#0E9F7A]"
+                      >
+                        {SUPPORTED_NODES.map((n) => (
+                          <option key={n} value={n}>{n}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider mb-2">
+                        Destination Node
+                      </label>
+                      <select
+                        value={destination}
+                        onChange={(e) => setDestination(e.target.value)}
+                        className="w-full bg-[#F7F5F0] border border-[#E7E5E0] rounded-xl px-4 py-3 text-sm text-[#0B1320] font-medium focus:outline-none focus:border-[#0E9F7A]"
+                      >
+                        {SUPPORTED_NODES.map((n) => (
+                          <option key={n} value={n}>{n}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 2: DATES */}
+              {step === 2 && (
+                <div className="space-y-6">
+                  <div className="space-y-1 pb-4 border-b border-[#E7E5E0]">
+                    <h3 className="text-lg font-bold text-[#0B1320]">When are you travelling?</h3>
+                    <p className="text-xs text-[#667085]">Select travel dates to evaluate schedule-aware transit windows.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider mb-2">
+                        Departure Date
+                      </label>
+                      <input
+                        type="date"
+                        value={departureDate}
+                        onChange={(e) => setDepartureDate(e.target.value)}
+                        className="w-full bg-[#F7F5F0] border border-[#E7E5E0] rounded-xl px-4 py-3 text-sm text-[#0B1320] font-medium focus:outline-none focus:border-[#0E9F7A]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider mb-2">
+                        Return Date
+                      </label>
+                      <input
+                        type="date"
+                        value={returnDate}
+                        onChange={(e) => setReturnDate(e.target.value)}
+                        className="w-full bg-[#F7F5F0] border border-[#E7E5E0] rounded-xl px-4 py-3 text-sm text-[#0B1320] font-medium focus:outline-none focus:border-[#0E9F7A]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: BUDGET & TRAVELLERS */}
+              {step === 3 && (
+                <div className="space-y-6">
+                  <div className="space-y-1 pb-4 border-b border-[#E7E5E0]">
+                    <h3 className="text-lg font-bold text-[#0B1320]">Who is travelling &amp; maximum budget?</h3>
+                    <p className="text-xs text-[#667085]">Total trip cost includes transport, stay, food, activities, and local shuttles.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider mb-2">
+                        Number of Travellers
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="5"
+                        value={travellers}
+                        onChange={(e) => setTravellers(Math.max(1, Number(e.target.value)))}
+                        className="w-full bg-[#F7F5F0] border border-[#E7E5E0] rounded-xl px-4 py-3 text-sm text-[#0B1320] font-medium focus:outline-none focus:border-[#0E9F7A]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider mb-2">
+                        Maximum Total Budget (₹)
+                      </label>
+                      <input
+                        type="number"
+                        step="500"
+                        min="1000"
+                        value={maximumBudget}
+                        onChange={(e) => setMaximumBudget(Number(e.target.value))}
+                        className="w-full bg-[#F7F5F0] border border-[#E7E5E0] rounded-xl px-4 py-3 text-sm text-[#0B1320] font-medium focus:outline-none focus:border-[#0E9F7A]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 4: PRIORITY */}
+              {step === 4 && (
+                <div className="space-y-6">
+                  <div className="space-y-1 pb-4 border-b border-[#E7E5E0]">
+                    <h3 className="text-lg font-bold text-[#0B1320]">How do you want to prioritize routing?</h3>
+                    <p className="text-xs text-[#667085]">Choose routing optimization profile.</p>
+                  </div>
+
+                  {/* Segmented Control Selector */}
+                  <div className="segmented-control grid grid-cols-3 gap-1">
+                    {(['CHEAPEST', 'BALANCED', 'FASTER'] as OptimizationProfile[]).map((p) => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setProfile(p)}
+                        className={`py-3 px-4 rounded-xl text-xs font-bold transition-smooth ${
+                          profile === p ? 'segmented-option-active text-[#0E9F7A]' : 'text-[#667085] hover:text-[#0B1320]'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 5: PREFERENCES */}
+              {step === 5 && (
+                <div className="space-y-6">
+                  <div className="space-y-1 pb-4 border-b border-[#E7E5E0]">
+                    <h3 className="text-lg font-bold text-[#0B1320]">Trip style preferences</h3>
+                    <p className="text-xs text-[#667085]">Customize lodging, dining, and activity expectations.</p>
+                  </div>
+
+                  {/* Stay Preference */}
+                  <div className="space-y-2">
+                    <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider">
+                      Accommodation Tier
+                    </label>
+                    <div className="segmented-control grid grid-cols-3 gap-1">
+                      {(['BUDGET', 'STANDARD', 'COMFORT'] as StayPreference[]).map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => setStayPref(s)}
+                          className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-smooth ${
+                            stayPref === s ? 'segmented-option-active text-[#0E9F7A]' : 'text-[#667085] hover:text-[#0B1320]'
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Food Preference */}
+                  <div className="space-y-2">
+                    <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider">
+                      Food Allocation
+                    </label>
+                    <div className="segmented-control grid grid-cols-3 gap-1">
+                      {(['BASIC', 'BALANCED', 'FLEXIBLE'] as FoodPreference[]).map((f) => (
+                        <button
+                          key={f}
+                          type="button"
+                          onClick={() => setFoodPref(f)}
+                          className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-smooth ${
+                            foodPref === f ? 'segmented-option-active text-[#0E9F7A]' : 'text-[#667085] hover:text-[#0B1320]'
+                          }`}
+                        >
+                          {f}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Activity Preference */}
+                  <div className="space-y-2">
+                    <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider">
+                      Activity Level
+                    </label>
+                    <div className="segmented-control grid grid-cols-3 gap-1">
+                      {(['LOW', 'MEDIUM', 'HIGH'] as ActivityPreference[]).map((a) => (
+                        <button
+                          key={a}
+                          type="button"
+                          onClick={() => setActivityPref(a)}
+                          className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-smooth ${
+                            activityPref === a ? 'segmented-option-active text-[#0E9F7A]' : 'text-[#667085] hover:text-[#0B1320]'
+                          }`}
+                        >
+                          {a}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 6: REVIEW */}
+              {step === 6 && (
+                <div className="space-y-6">
+                  <div className="space-y-1 pb-4 border-b border-[#E7E5E0]">
+                    <h3 className="text-lg font-bold text-[#0B1320]">Review your journey parameters</h3>
+                    <p className="text-xs text-[#667085]">Verify inputs before calling NAVIX solver backend.</p>
+                  </div>
+
+                  {/* Summary Table */}
+                  <div className="bg-[#F7F5F0] rounded-xl border border-[#E7E5E0] divide-y divide-[#E7E5E0] text-xs">
+                    <div className="p-4 flex items-center justify-between">
+                      <span className="text-[#667085]">Route</span>
+                      <span className="font-bold text-[#0B1320]">{origin} &rarr; {destination}</span>
+                    </div>
+
+                    <div className="p-4 flex items-center justify-between">
+                      <span className="text-[#667085]">Travel Dates</span>
+                      <span className="font-bold text-[#0B1320]">{departureDate} to {returnDate}</span>
+                    </div>
+
+                    <div className="p-4 flex items-center justify-between">
+                      <span className="text-[#667085]">Travellers &amp; Maximum Budget</span>
+                      <span className="font-bold text-[#0E9F7A]">{travellers} person(s) &bull; ₹{maximumBudget.toLocaleString()}</span>
+                    </div>
+
+                    <div className="p-4 flex items-center justify-between">
+                      <span className="text-[#667085]">Preferences</span>
+                      <span className="font-bold text-[#0B1320]">{profile} &bull; Stay: {stayPref} &bull; Food: {foodPref} &bull; Activity: {activityPref}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP CONTROLS FOOTER */}
+              <div className="pt-6 border-t border-[#E7E5E0] flex items-center justify-between">
+                {step > 1 ? (
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    className="px-4 py-2.5 text-xs font-semibold text-[#667085] hover:text-[#0B1320] flex items-center gap-1 transition-smooth"
+                  >
+                    <ChevronLeft className="w-4 h-4" /> Back
+                  </button>
+                ) : <div />}
+
+                {step < 6 ? (
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="px-6 py-2.5 bg-[#0E9F7A] hover:bg-[#0B8465] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-smooth shadow-sm"
+                  >
+                    <span>Continue</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    className="px-8 py-3 bg-[#0E9F7A] hover:bg-[#0B8465] text-white text-sm font-bold rounded-xl flex items-center gap-2 transition-smooth shadow-sm"
+                  >
+                    <span>Build my journey</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+            </div>
+          )}
+
         </div>
       </div>
-
-      {/* Error Alert Box */}
-      {errorInfo && (
-        <div className="mb-8 p-4 bg-red-950/40 border border-red-500/50 rounded-xl text-red-200 text-sm space-y-3 animate-fade-in">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <h4 className="font-bold text-red-300">
-                {errorInfo.code === 'BUDGET_TOO_LOW' ? 'Trip Budget Shortfall' : 'Planning Request Warning'}
-              </h4>
-              <p className="text-xs leading-relaxed text-red-200">{errorInfo.message}</p>
-            </div>
-          </div>
-
-          {errorInfo.code === 'BUDGET_TOO_LOW' && (
-            <div className="pt-2 flex items-center gap-3">
-              <button
-                onClick={() => {
-                  setMaximumBudget((prev) => prev + 5000);
-                  setErrorInfo(null);
-                  setStep(3);
-                }}
-                className="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-lg transition-smooth"
-              >
-                Increase Budget by ₹5,000
-              </button>
-              <button
-                onClick={() => {
-                  setStep(3);
-                  setErrorInfo(null);
-                }}
-                aria-label="Edit Budget"
-                className="px-3.5 py-1.5 border border-slate-700 hover:border-slate-600 text-slate-300 text-xs font-medium rounded-lg transition-smooth"
-              >
-                Edit Budget Manually
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Loading Overlay */}
-      {isSubmitting ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center space-y-6">
-          <div className="relative w-16 h-16 mx-auto flex items-center justify-center">
-            <Loader2 className="w-12 h-12 text-emerald-400 animate-spin" />
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="text-xl font-bold text-white">Generating Your Journey</h3>
-            <p className="text-sm font-mono text-emerald-400 transition-all duration-300">
-              {STAGE_MESSAGES[loadingStage]}
-            </p>
-          </div>
-
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
-            Calling NAVIX FastAPI engine to execute A* route search and Whole-Trip Knapsack DP.
-          </p>
-        </div>
-      ) : (
-        /* STEP CONTENT */
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-8">
-          {/* STEP 1: Locations */}
-          {step === 1 && (
-            <div className="space-y-6">
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-emerald-400" />
-                  Select Origin & Destination
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Select starting location and target destination from supported transit nodes.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    Origin Hub
-                  </label>
-                  <select
-                    value={origin}
-                    onChange={(e) => setOrigin(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-400"
-                  >
-                    {SUPPORTED_NODES.map((n) => (
-                      <option key={n} value={n}>{n}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    Destination Hub
-                  </label>
-                  <select
-                    value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-400"
-                  >
-                    {SUPPORTED_NODES.map((n) => (
-                      <option key={n} value={n}>{n}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="p-3.5 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-400 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>Demo Transit Dataset supported corridor: Sangli &rarr; Miraj &rarr; Pune &rarr; Delhi &rarr; Manali &rarr; Old Manali.</span>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2: Dates */}
-          {step === 2 && (
-            <div className="space-y-6">
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-sky-400" />
-                  Travel Dates
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Specify departure and return dates for trip duration calculation.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    Departure Date
-                  </label>
-                  <input
-                    type="date"
-                    value={departureDate}
-                    onChange={(e) => setDepartureDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    Return Date
-                  </label>
-                  <input
-                    type="date"
-                    value={returnDate}
-                    onChange={(e) => setReturnDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-400"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3: Travellers & Budget */}
-          {step === 3 && (
-            <div className="space-y-6">
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Wallet className="w-5 h-5 text-emerald-400" />
-                  Travellers & Maximum Budget
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Total budget is enforced as a strict hard constraint.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    Number of Travellers
-                  </label>
-                  <select
-                    value={travellers}
-                    onChange={(e) => setTravellers(Number(e.target.value))}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-400"
-                  >
-                    <option value={1}>1 Traveller</option>
-                    <option value={2}>2 Travellers</option>
-                    <option value={3}>3 Travellers</option>
-                    <option value={4}>4 Travellers</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    Maximum Total Budget (₹)
-                  </label>
-                  <input
-                    type="number"
-                    value={maximumBudget}
-                    onChange={(e) => setMaximumBudget(Number(e.target.value))}
-                    step="500"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-400 font-mono"
-                  />
-                </div>
-              </div>
-
-              {/* Quick Preset Buttons */}
-              <div className="space-y-2">
-                <span className="text-xs font-medium text-slate-400">Quick Budget Presets:</span>
-                <div className="flex flex-wrap gap-2">
-                  {[5000, 10000, 15000, 20000, 30000].map((preset) => (
-                    <button
-                      key={preset}
-                      type="button"
-                      onClick={() => setMaximumBudget(preset)}
-                      className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-smooth ${
-                        maximumBudget === preset
-                          ? 'bg-emerald-500 text-slate-950 font-bold'
-                          : 'bg-slate-950 border border-slate-800 text-slate-300 hover:border-slate-700'
-                      }`}
-                    >
-                      ₹{preset.toLocaleString()}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 4: Routing Profile */}
-          {step === 4 && (
-            <div className="space-y-6">
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Compass className="w-5 h-5 text-teal-400" />
-                  Route Optimization Profile
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Determines scoring weight allocation for time-dependent A* route search.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  {
-                    id: 'CHEAPEST',
-                    title: 'CHEAPEST',
-                    desc: 'Prioritize lower total transport cost.'
-                  },
-                  {
-                    id: 'BALANCED',
-                    title: 'BALANCED',
-                    desc: 'Harmonious trade-off of cost, time, and transfers.'
-                  },
-                  {
-                    id: 'FASTER',
-                    title: 'FASTER',
-                    desc: 'Prioritize shorter total elapsed journey time.'
-                  }
-                ].map((p) => (
-                  <div
-                    key={p.id}
-                    onClick={() => setProfile(p.id as OptimizationProfile)}
-                    className={`p-5 rounded-2xl border cursor-pointer transition-smooth ${
-                      profile === p.id
-                        ? 'bg-emerald-500/10 border-emerald-500 text-white'
-                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-bold text-white">{p.title}</span>
-                      {profile === p.id && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
-                    </div>
-                    <p className="text-xs leading-relaxed">{p.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* STEP 5: Trip Preferences */}
-          {step === 5 && (
-            <div className="space-y-6">
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-emerald-400" />
-                  Trip Style Preferences
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Configures preference utility targets for stay, food, and activities.
-                </p>
-              </div>
-
-              <div className="space-y-6">
-                {/* Stay */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    Accommodation Tier Preference
-                  </label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      { id: 'BUDGET', label: 'Budget (₹500/n)' },
-                      { id: 'STANDARD', label: 'Standard (₹1.5k/n)' },
-                      { id: 'COMFORT', label: 'Comfort (₹3k/n)' }
-                    ].map((st) => (
-                      <button
-                        key={st.id}
-                        type="button"
-                        onClick={() => setStayPref(st.id as StayPreference)}
-                        className={`py-2.5 px-3 rounded-xl text-xs font-semibold transition-smooth ${
-                          stayPref === st.id
-                            ? 'bg-emerald-500 text-slate-950'
-                            : 'bg-slate-950 border border-slate-800 text-slate-300 hover:border-slate-700'
-                        }`}
-                      >
-                        {st.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Food */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    Food Dining Preference
-                  </label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      { id: 'BASIC', label: 'Basic (₹300/d)' },
-                      { id: 'BALANCED', label: 'Balanced (₹700/d)' },
-                      { id: 'FLEXIBLE', label: 'Flexible (₹1.2k/d)' }
-                    ].map((fd) => (
-                      <button
-                        key={fd.id}
-                        type="button"
-                        onClick={() => setFoodPref(fd.id as FoodPreference)}
-                        className={`py-2.5 px-3 rounded-xl text-xs font-semibold transition-smooth ${
-                          foodPref === fd.id
-                            ? 'bg-sky-500 text-slate-950'
-                            : 'bg-slate-950 border border-slate-800 text-slate-300 hover:border-slate-700'
-                        }`}
-                      >
-                        {fd.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Activities */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    Activity Intensity Preference
-                  </label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      { id: 'LOW', label: 'Low (1 Activity)' },
-                      { id: 'MEDIUM', label: 'Medium (2-3 Activities)' },
-                      { id: 'HIGH', label: 'High (All Activities)' }
-                    ].map((ac) => (
-                      <button
-                        key={ac.id}
-                        type="button"
-                        onClick={() => setActivityPref(ac.id as ActivityPreference)}
-                        className={`py-2.5 px-3 rounded-xl text-xs font-semibold transition-smooth ${
-                          activityPref === ac.id
-                            ? 'bg-teal-400 text-slate-950'
-                            : 'bg-slate-950 border border-slate-800 text-slate-300 hover:border-slate-700'
-                        }`}
-                      >
-                        {ac.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 6: Review & Submit */}
-          {step === 6 && (
-            <div className="space-y-6">
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                  Review Journey Parameters
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Verify inputs before running the NAVIX algorithmic optimization engine.
-                </p>
-              </div>
-
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-4 text-xs text-slate-300">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div>
-                    <span className="block text-[10px] text-slate-400 uppercase font-semibold">Route</span>
-                    <span className="font-bold text-white">{origin} &rarr; {destination}</span>
-                  </div>
-                  <div>
-                    <span className="block text-[10px] text-slate-400 uppercase font-semibold">Dates</span>
-                    <span className="font-medium text-white">{departureDate} to {returnDate}</span>
-                  </div>
-                  <div>
-                    <span className="block text-[10px] text-slate-400 uppercase font-semibold">Travellers</span>
-                    <span className="font-medium text-white">{travellers} Person(s)</span>
-                  </div>
-                  <div>
-                    <span className="block text-[10px] text-slate-400 uppercase font-semibold">Max Budget</span>
-                    <span className="font-bold text-emerald-400">₹{maximumBudget.toLocaleString()}</span>
-                  </div>
-                </div>
-
-                <div className="border-t border-slate-800 pt-3 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div>
-                    <span className="block text-[10px] text-slate-400 uppercase font-semibold">Profile</span>
-                    <span className="font-medium text-white">{profile}</span>
-                  </div>
-                  <div>
-                    <span className="block text-[10px] text-slate-400 uppercase font-semibold">Stay Pref</span>
-                    <span className="font-medium text-white">{stayPref}</span>
-                  </div>
-                  <div>
-                    <span className="block text-[10px] text-slate-400 uppercase font-semibold">Food Pref</span>
-                    <span className="font-medium text-white">{foodPref}</span>
-                  </div>
-                  <div>
-                    <span className="block text-[10px] text-slate-400 uppercase font-semibold">Activity Pref</span>
-                    <span className="font-medium text-white">{activityPref}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* CONTROL NAVIGATION BUTTONS */}
-          <div className="pt-6 border-t border-slate-800 flex items-center justify-between">
-            <button
-              onClick={handleBack}
-              disabled={step === 1}
-              className={`px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-smooth ${
-                step === 1
-                  ? 'opacity-40 cursor-not-allowed text-slate-600'
-                  : 'text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700'
-              }`}
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Back
-            </button>
-
-            {step < 6 ? (
-              <button
-                onClick={handleNext}
-                className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 transition-smooth"
-              >
-                <span>Continue</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            ) : (
-              <button
-                onClick={handleSubmit}
-                className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-2 transition-smooth shadow-lg shadow-emerald-500/20"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>GENERATE MY JOURNEY</span>
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      <Footer />
     </div>
   );
 }
 
-export default function PlannerWizard() {
+export default function PlannerPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 text-sm">
-        Loading Planner...
-      </div>
-    }>
-      <PlannerWizardContent />
-    </Suspense>
+    <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#0B1320]">
+      <Navbar />
+      <main className="flex-1">
+        <Suspense fallback={
+          <div className="p-12 text-center text-xs text-[#667085] flex items-center justify-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin text-[#0E9F7A]" />
+            Loading Planner...
+          </div>
+        }>
+          <PlannerWizardContent />
+        </Suspense>
+      </main>
+      <Footer />
+    </div>
   );
 }
