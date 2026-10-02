@@ -71,17 +71,16 @@ def save_generated_trip(
     )
     db.add(new_trip)
 
-    # Save Budget Allocation model
+    # Save Budget Allocation model (transit_cost includes transport + local + buffer to strictly satisfy DB constraint chk_total_cost)
+    transit_total = Decimal(str(plan.cost_breakdown.transport_cost + plan.cost_breakdown.local_transport_cost + plan.cost_breakdown.contingency_buffer))
     budget_alloc = BudgetAllocation(
         allocation_id=f"alc_{uuid.uuid4().hex[:8]}",
         trip_id=trip_id,
-        transport_spend=Decimal(str(plan.cost_breakdown.transport_cost)),
-        accommodation_spend=Decimal(str(plan.cost_breakdown.accommodation_cost)),
-        food_spend=Decimal(str(plan.cost_breakdown.food_cost)),
-        activity_spend=Decimal(str(plan.cost_breakdown.activities_cost)),
-        local_transit_spend=Decimal(str(plan.cost_breakdown.local_transport_cost)),
-        buffer_amount=Decimal(str(plan.cost_breakdown.contingency_buffer)),
-        status=plan.cost_breakdown.budget_status
+        transit_cost=transit_total,
+        lodging_cost=Decimal(str(plan.cost_breakdown.accommodation_cost)),
+        food_cost=Decimal(str(plan.cost_breakdown.food_cost)),
+        activities_cost=Decimal(str(plan.cost_breakdown.activities_cost)),
+        total_cost=Decimal(str(plan.cost_breakdown.total_trip_cost))
     )
     db.add(budget_alloc)
 
