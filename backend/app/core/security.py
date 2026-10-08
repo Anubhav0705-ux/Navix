@@ -10,7 +10,7 @@ from app.core.config import settings
 from app.database.session import get_db
 from app.models.user import User
 
-SECRET_KEY = settings.SECRET_KEY if hasattr(settings, "SECRET_KEY") else "NAVIX_SECRET_KEY_2026_UNIVERSAL_STRONG"
+SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 7 days
 
