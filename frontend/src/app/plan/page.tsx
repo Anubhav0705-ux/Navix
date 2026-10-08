@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Navbar, Footer, PlannerTopNav, TripSetupStage, TransportStage, PlacesStage, FoodStage, StayStage, AutoPlanStage } from '@/components';
+import { Navbar, Footer, PlannerTopNav, TripSetupStage, TransportStage, PlacesStage, FoodStage, StayStage, AutoPlanStage, ReviewStage } from '@/components';
 import { PlannerProvider, usePlanner } from '@/context/PlannerContext';
 import { requestTripPlan, APIError } from '@/services';
 import { saveTripPlan, getTripPlan } from '@/lib';
 import { TripPlanResult } from '@/types';
 import { Loader2, Check, AlertTriangle, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
+
 
 const LOADING_CHECKLIST = [
   'Mapping viable multi-modal transit graph',
@@ -191,36 +192,14 @@ function InnerPlannerWorkspace() {
               />
             )}
 
-            {/* Stage 07 Shell View */}
+            {/* Stage 07 Final Review View */}
             {state.stage === 7 && (
-              <div className="bg-[#101419] border border-white/15 rounded-3xl p-8 sm:p-12 text-center space-y-6 backdrop-blur-xl shadow-2xl my-8">
-                <div className="w-16 h-16 rounded-2xl bg-[#0FA77A]/10 text-[#0FA77A] flex items-center justify-center mx-auto border border-[#0FA77A]/20">
-                  <ShieldCheck className="w-8 h-8" />
-                </div>
-                <div className="max-w-md mx-auto space-y-2">
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-white">
-                    Stage 07 &bull; Final Trip Command Center
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                    View final whole-trip breakdown, print PDF itinerary, or save to your NAVIX profile.
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-                  <button
-                    onClick={() => router.push('/trip/result')}
-                    className="px-8 py-3.5 bg-gradient-to-r from-[#0FA77A] to-[#0B8465] hover:brightness-110 text-white font-bold text-xs rounded-xl flex items-center gap-2 shadow-lg shadow-[#0FA77A]/20 transition-all uppercase tracking-wider"
-                  >
-                    <span>View Complete Trip Result &rarr;</span>
-                  </button>
-                  <button
-                    onClick={() => dispatch({ type: 'SET_STAGE', payload: 6 })}
-                    className="px-5 py-3 border border-white/15 hover:bg-white/10 text-slate-300 font-bold text-xs rounded-xl transition-all"
-                  >
-                    Back to Auto Plan
-                  </button>
-                </div>
-              </div>
+              <ReviewStage
+                planResult={planResult}
+                onBackToAutoPlan={() => dispatch({ type: 'SET_STAGE', payload: 6 })}
+              />
             )}
+
           </div>
         )}
 

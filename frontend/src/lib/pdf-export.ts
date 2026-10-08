@@ -8,55 +8,63 @@ export function exportTripPlanPDF(plan: TripPlanResult): void {
   let y = 15;
 
   // Header Banner
-  doc.setFillColor(10, 17, 40);
-  doc.rect(0, 0, 210, 28, 'F');
+  doc.setFillColor(11, 19, 32); // Deep Navy
+  doc.rect(0, 0, 210, 30, 'F');
 
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(18);
+  doc.setFontSize(20);
   doc.setTextColor(255, 255, 255);
   doc.text('NAVIX', 14, 18);
 
   doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(15, 167, 122); // Teal
+  doc.text('AUTOMATIC MULTI-MODAL TRAVEL ITINERARY', 48, 18);
+
+  doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
-  doc.setTextColor(14, 159, 122);
-  doc.text('BUDGET-FIRST TRAVEL ITINERARY', 45, 18);
+  doc.setTextColor(180, 190, 205);
+  doc.text('A* Time-Dependent Path Search & Constrained DP Budget Optimizer', 48, 24);
 
-  y = 38;
+  y = 40;
 
-  // Journey Overview Box
+  // Journey Title Box
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(16);
   doc.setTextColor(11, 19, 32);
   doc.text(`${plan.origin} to ${plan.destination}`, 14, y);
-  y += 7;
+  y += 6;
 
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(102, 112, 133);
-  doc.text(`Dates: ${plan.departure_date} to ${plan.return_date} (${plan.days} Days / ${plan.nights} Nights) | ${plan.travellers} Person(s)`, 14, y);
+  doc.text(`Dates: ${plan.departure_date} to ${plan.return_date} (${plan.days} Days / ${plan.nights} Nights) | ${plan.travellers} Traveler(s)`, 14, y);
   y += 12;
 
-  // Budget Summary Table
-  doc.setFillColor(247, 245, 240);
-  doc.rect(14, y, 182, 32, 'F');
-  doc.setDrawColor(231, 229, 224);
-  doc.rect(14, y, 182, 32, 'S');
+  // Financial Receipt Box
+  doc.setFillColor(248, 250, 252);
+  doc.rect(14, y, 182, 38, 'F');
+  doc.setDrawColor(226, 232, 240);
+  doc.rect(14, y, 182, 38, 'S');
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
   doc.setTextColor(11, 19, 32);
-  doc.text('FINANCIAL BUDGET SUMMARY', 18, y + 8);
+  doc.text('FINANCIAL BUDGET RECEIPT', 18, y + 8);
 
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   doc.text(`Total Planned Cost: INR ${cb.total_trip_cost.toLocaleString()}`, 18, y + 16);
   doc.text(`Maximum User Budget: INR ${cb.maximum_budget.toLocaleString()}`, 18, y + 23);
-  doc.text(`Remaining Surplus: INR ${cb.remaining_budget.toLocaleString()} (${cb.budget_status})`, 105, y + 16);
-  doc.text(`Transport Fare: INR ${cb.transport_cost.toLocaleString()}`, 105, y + 23);
+  doc.text(`Remaining Surplus: INR ${cb.remaining_budget.toLocaleString()} (${cb.budget_status})`, 18, y + 30);
 
-  y += 40;
+  doc.text(`Transport Fare: INR ${cb.transport_cost.toLocaleString()}`, 105, y + 16);
+  doc.text(`Lodging (${plan.stay.tier}): INR ${cb.accommodation_cost.toLocaleString()}`, 105, y + 23);
+  doc.text(`Dining (${plan.food.tier}): INR ${cb.food_cost.toLocaleString()}`, 105, y + 30);
 
-  // Route Segments
+  y += 46;
+
+  // Route Segments Header
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
   doc.setTextColor(11, 19, 32);
@@ -89,7 +97,7 @@ export function exportTripPlanPDF(plan: TripPlanResult): void {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
   doc.setTextColor(11, 19, 32);
-  doc.text('DAILY ITINERARY BREAKDOWN', 14, y);
+  doc.text('AUTOMATIC DAY-BY-DAY ITINERARY', 14, y);
   y += 8;
 
   doc.setFontSize(9);
@@ -99,21 +107,58 @@ export function exportTripPlanPDF(plan: TripPlanResult): void {
       y = 20;
     }
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(14, 159, 122);
-    doc.text(`${day.title} - Est. INR ${day.estimated_daily_spend}`, 14, y);
+    doc.setTextColor(15, 167, 122);
+    doc.text(`${day.title} -- Est. Spend: INR ${day.estimated_daily_spend}`, 14, y);
     y += 5;
 
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(60, 60, 60);
-    day.events.forEach((evt) => {
-      if (y > 275) {
-        doc.addPage();
-        y = 20;
-      }
-      doc.text(`• ${evt}`, 18, y);
-      y += 4.5;
-    });
+
+    if (day.structured_events && day.structured_events.length > 0) {
+      day.structured_events.forEach((ev) => {
+        if (y > 275) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.text(`• [${ev.start_time}-${ev.end_time}] ${ev.title} (${ev.event_type}) -- ${ev.description}`, 18, y);
+        y += 4.5;
+      });
+    } else {
+      day.events.forEach((evt) => {
+        if (y > 275) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.text(`• ${evt}`, 18, y);
+        y += 4.5;
+      });
+    }
     y += 3;
+  });
+
+  // Decision Explanations Section
+  if (y > 240) {
+    doc.addPage();
+    y = 20;
+  }
+  y += 4;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(11, 19, 32);
+  doc.text('ALGORITHMIC DECISION RATIONALE', 14, y);
+  y += 6;
+
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(80, 80, 80);
+
+  (plan.decision_explanations || []).forEach((exp) => {
+    if (y > 275) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.text(`• ${exp}`, 16, y);
+    y += 4;
   });
 
   // Footer Disclaimer
@@ -121,9 +166,9 @@ export function exportTripPlanPDF(plan: TripPlanResult): void {
     doc.addPage();
     y = 20;
   }
-  y += 5;
+  y += 6;
   doc.setFontSize(8);
-  doc.setTextColor(150, 150, 150);
+  doc.setTextColor(140, 140, 140);
   doc.text('Notice: Generated by NAVIX Algorithmic Travel Planner using Demo Transit Dataset.', 14, y);
 
   // Save File
