@@ -3,8 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import {
-  MapPin, Wallet, Users, ArrowRight, Sparkles, Compass,
-  CheckCircle2, Clock, Navigation, Heart, ShieldCheck, Tag
+  MapPin, ArrowRight, Sparkles, Tag
 } from 'lucide-react';
 
 /* --- 1. TRAVEL STAMP BADGE --- */

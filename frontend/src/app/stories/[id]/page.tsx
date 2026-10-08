@@ -6,8 +6,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { Navbar, Footer } from '@/components';
 import { SAMPLE_STORIES } from '@/lib/stories-data';
 import {
-  ArrowLeft, Clock, MapPin, Wallet, Calendar,
-  Share2, Compass, ArrowRight, CheckCircle2
+  ArrowLeft, Clock, MapPin, Wallet,
+  Compass, ArrowRight, CheckCircle2
 } from 'lucide-react';
 
 export default function StoryDetailPage() {

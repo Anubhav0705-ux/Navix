@@ -2,9 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Navbar, Footer } from '@/components';
-import { SAMPLE_STORIES, Story } from '@/lib/stories-data';
+import { SAMPLE_STORIES } from '@/lib/stories-data';
 import { Compass, Clock, Wallet, MapPin, ArrowRight, Sparkles, Filter } from 'lucide-react';
 
 export default function StoriesPage() {

@@ -13,7 +13,7 @@ import { TripPlanResult, UserResponse } from '@/types';
 import {
   Compass, CheckCircle2, Calendar, MapPin,
   ArrowRight, Info, Download, Bookmark, Check,
-  Bed, Utensils, Ticket, ShieldCheck, Sparkles, Navigation
+  Bed, Utensils, Ticket, Navigation
 } from 'lucide-react';
 
 const InteractiveMap = dynamic(() => import('@/components/InteractiveMap'), {

@@ -10,7 +10,7 @@ import {
 import { SAMPLE_STORIES } from '@/lib/stories-data';
 import {
   ArrowRight, ShieldCheck, MapPin, Users, Wallet, Compass,
-  Sparkles, BookOpen, Clock, CheckCircle2, Heart, Route, Tag
+  Sparkles, BookOpen, Clock, CheckCircle2, Route, Tag
 } from 'lucide-react';
 
 const DEMO_LOCATIONS = [
