@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Navbar, Footer, ReviewStage } from '@/components';
 import { getTripPlan } from '@/lib';
 import { TripPlanResult } from '@/types';
-import { Compass, ArrowRight } from 'lucide-react';
+import { Compass } from 'lucide-react';
 
 export default function TripResultPage() {
   const router = useRouter();

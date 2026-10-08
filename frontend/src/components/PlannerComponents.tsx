@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { usePlanner, TravellerProfile, TripPersonality } from '@/context/PlannerContext';
 import { Logo } from './Logo';
 import {
-  MapPin, Wallet, Calendar, Users, Check, ArrowLeft, ArrowRight,
-  Sparkles, Train, Bus, Car, Navigation, Compass, ShieldCheck, AlertTriangle,
-  Heart, Info, ChevronRight, Plus, Trash2, Utensils, Bed, Mountain, Coffee, Tag, Filter, CheckCircle2, Clock
+  MapPin, Wallet, Calendar, Users, Check, ArrowLeft,
+  Sparkles, Train, Bus, Car, Navigation, ShieldCheck,
+  Plus, Utensils, Coffee, Filter, Clock
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 

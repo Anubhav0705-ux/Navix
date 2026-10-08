@@ -9,9 +9,9 @@ import { getCurrentUser } from '@/services/auth';
 import { saveTrip } from '@/services/trips';
 import { exportTripPlanPDF } from '@/lib/pdf-export';
 import {
-  Sparkles, Calendar, Clock, MapPin, CheckCircle2, Download, Bookmark, Check,
-  Share2, ArrowLeft, Navigation, ShieldCheck, Ticket, Bed, Utensils, Compass,
-  Info, ExternalLink, Zap, Lock
+  Sparkles, Calendar, MapPin, CheckCircle2, Download, Bookmark, Check,
+  Share2, Navigation, ShieldCheck, Ticket, Bed, Utensils, Compass,
+  Zap
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 

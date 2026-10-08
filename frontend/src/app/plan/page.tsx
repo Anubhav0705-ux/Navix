@@ -7,7 +7,7 @@ import { PlannerProvider, usePlanner } from '@/context/PlannerContext';
 import { requestTripPlan, APIError } from '@/services';
 import { saveTripPlan, getTripPlan } from '@/lib';
 import { TripPlanResult } from '@/types';
-import { Loader2, Check, AlertTriangle, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
+import { Loader2, Check, AlertTriangle, Sparkles } from 'lucide-react';
 
 
 const LOADING_CHECKLIST = [
