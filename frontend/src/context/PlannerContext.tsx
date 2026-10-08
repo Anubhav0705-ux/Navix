@@ -43,6 +43,15 @@ export interface PlannerState {
   preferredModes: ('TRAIN' | 'BUS' | 'METRO' | 'LOCAL')[];
   maxTransfers: 'Any' | '≤3' | '≤2';
   allowOvernight: boolean;
+
+  // Phase 3 Discovery Selections & Metadata
+  selectedPlaces: string[];
+  selectedDiscoveryPlaces: string[];
+  foodPreferences: string[];
+  dietPreference: 'Vegetarian' | 'Non-Vegetarian' | 'No Preference';
+  departurePreference: 'Any' | 'Morning' | 'Afternoon' | 'Evening';
+  travelComfort: 'Basic' | 'Standard' | 'Comfort';
+  selectedRouteOption: 'BALANCED' | 'CHEAPEST' | 'FASTER';
 }
 
 export type PlannerAction =
@@ -67,6 +76,13 @@ export type PlannerAction =
   | { type: 'TOGGLE_PREFERRED_MODE'; payload: 'TRAIN' | 'BUS' | 'METRO' | 'LOCAL' }
   | { type: 'SET_MAX_TRANSFERS'; payload: 'Any' | '≤3' | '≤2' }
   | { type: 'SET_ALLOW_OVERNIGHT'; payload: boolean }
+  | { type: 'TOGGLE_SELECTED_PLACE'; payload: string }
+  | { type: 'TOGGLE_DISCOVERY_PLACE'; payload: string }
+  | { type: 'TOGGLE_FOOD_PREFERENCE'; payload: string }
+  | { type: 'SET_DIET_PREFERENCE'; payload: 'Vegetarian' | 'Non-Vegetarian' | 'No Preference' }
+  | { type: 'SET_DEPARTURE_PREFERENCE'; payload: 'Any' | 'Morning' | 'Afternoon' | 'Evening' }
+  | { type: 'SET_TRAVEL_COMFORT'; payload: 'Basic' | 'Standard' | 'Comfort' }
+  | { type: 'SET_ROUTE_OPTION'; payload: 'BALANCED' | 'CHEAPEST' | 'FASTER' }
   | { type: 'PREFILL_FROM_QUERY'; payload: Partial<PlannerState> };
 
 const INITIAL_STATE: PlannerState = {
@@ -92,7 +108,15 @@ const INITIAL_STATE: PlannerState = {
 
   preferredModes: ['TRAIN', 'BUS'],
   maxTransfers: 'Any',
-  allowOvernight: true
+  allowOvernight: true,
+
+  selectedPlaces: ['act_01', 'act_02', 'act_03'],
+  selectedDiscoveryPlaces: ['disc_05'],
+  foodPreferences: ['Local Cuisine', 'Café Hopping'],
+  dietPreference: 'No Preference',
+  departurePreference: 'Morning',
+  travelComfort: 'Standard',
+  selectedRouteOption: 'BALANCED'
 };
 
 const STORAGE_KEY = 'navix_planner_v2';
@@ -158,7 +182,7 @@ function plannerReducer(state: PlannerState, action: PlannerAction): PlannerStat
       return { ...state, avoid: next };
     }
     case 'SET_PROFILE':
-      return { ...state, profile: action.payload };
+      return { ...state, profile: action.payload, selectedRouteOption: action.payload };
     case 'SET_STAY_PREFERENCE':
       return { ...state, stayPreference: action.payload };
     case 'SET_FOOD_PREFERENCE':
@@ -176,6 +200,35 @@ function plannerReducer(state: PlannerState, action: PlannerAction): PlannerStat
       return { ...state, maxTransfers: action.payload };
     case 'SET_ALLOW_OVERNIGHT':
       return { ...state, allowOvernight: action.payload };
+    case 'TOGGLE_SELECTED_PLACE': {
+      const exists = state.selectedPlaces.includes(action.payload);
+      const next = exists
+        ? state.selectedPlaces.filter((p) => p !== action.payload)
+        : [...state.selectedPlaces, action.payload];
+      return { ...state, selectedPlaces: next };
+    }
+    case 'TOGGLE_DISCOVERY_PLACE': {
+      const exists = state.selectedDiscoveryPlaces.includes(action.payload);
+      const next = exists
+        ? state.selectedDiscoveryPlaces.filter((p) => p !== action.payload)
+        : [...state.selectedDiscoveryPlaces, action.payload];
+      return { ...state, selectedDiscoveryPlaces: next };
+    }
+    case 'TOGGLE_FOOD_PREFERENCE': {
+      const exists = state.foodPreferences.includes(action.payload);
+      const next = exists
+        ? state.foodPreferences.filter((f) => f !== action.payload)
+        : [...state.foodPreferences, action.payload];
+      return { ...state, foodPreferences: next };
+    }
+    case 'SET_DIET_PREFERENCE':
+      return { ...state, dietPreference: action.payload };
+    case 'SET_DEPARTURE_PREFERENCE':
+      return { ...state, departurePreference: action.payload };
+    case 'SET_TRAVEL_COMFORT':
+      return { ...state, travelComfort: action.payload };
+    case 'SET_ROUTE_OPTION':
+      return { ...state, selectedRouteOption: action.payload, profile: action.payload };
     case 'PREFILL_FROM_QUERY':
       return { ...state, ...action.payload };
     default:

@@ -9,10 +9,10 @@
 | Stage | Name | Status | Description |
 | :--- | :--- | :--- | :--- |
 | **01** | `TRIP SETUP` | **Active (Phase 2)** | Origin, Destination, Dates, Budget Cap, Travellers & Profiles, Trip Personality, Travel Pace |
-| **02** | `TRANSPORT` | **Active Shell (Phase 2)** | Transport Mode Choices (Train, Bus, Metro, Local Shuttles), Routing Profile & Transfer Preferences |
-| **03** | `PLACES` | **Muted (Phase 3)** | Must-see attraction discovery & activity preferences |
-| **04** | `FOOD` | **Muted (Phase 3)** | Dining style & regional food preferences |
-| **05** | `STAY` | **Muted (Phase 3)** | Lodging tier & accommodation style choices |
+| **02** | `TRANSPORT` | **Active Discovery (Phase 3)** | Multi-modal candidate routes (Balanced, Cheapest, Faster), Layover Safety windows, Mode Filters |
+| **03** | `PLACES` | **Active Discovery (Phase 3)** | Optimizer-backed activities vs discovery-only guide entries, Category filters & personality sorting |
+| **04** | `FOOD` | **Active Discovery (Phase 3)** | Functional budget dining tiers (Basic, Balanced, Flexible) & Himachali culinary inspiration guide |
+| **05** | `STAY` | **Active Discovery (Phase 3)** | Accommodation tiers (Budget, Standard, Comfort), rate/night calculator & trip workspace summary |
 | **06** | `AUTO PLAN` | **Active Execution** | Time-dependent A* search & DP Knapsack budget optimization solver execution |
 | **07** | `REVIEW` | **Active Review** | Final multi-modal itinerary, budget receipt breakdown, Leaflet map, PDF export |
 
@@ -51,6 +51,14 @@ export interface PlannerState {
   preferredModes: ('TRAIN' | 'BUS' | 'METRO' | 'LOCAL')[];
   maxTransfers: 'Any' | '≤3' | '≤2';
   allowOvernight: boolean;
+
+  selectedPlaces: string[];
+  selectedDiscoveryPlaces: string[];
+  foodPreferences: string[];
+  dietPreference: 'Vegetarian' | 'Non-Vegetarian' | 'No Preference';
+  departurePreference: 'Any' | 'Morning' | 'Afternoon' | 'Evening';
+  travelComfort: 'Basic' | 'Standard' | 'Comfort';
+  selectedRouteOption: 'BALANCED' | 'CHEAPEST' | 'FASTER';
 }
 ```
 

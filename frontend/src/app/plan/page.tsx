@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Navbar, Footer, PlannerTopNav, TripSetupStage, TransportStage } from '@/components';
+import { Navbar, Footer, PlannerTopNav, TripSetupStage, TransportStage, PlacesStage, FoodStage, StayStage } from '@/components';
 import { PlannerProvider, usePlanner } from '@/context/PlannerContext';
 import { requestTripPlan, APIError } from '@/services';
 import { saveTripPlan } from '@/lib';
@@ -176,19 +176,22 @@ function InnerPlannerWorkspace() {
           <div>
             {state.stage === 1 && <TripSetupStage />}
             {state.stage === 2 && <TransportStage onExecutePlan={handleExecutePlan} />}
+            {state.stage === 3 && <PlacesStage />}
+            {state.stage === 4 && <FoodStage />}
+            {state.stage === 5 && <StayStage onExecutePlan={handleExecutePlan} />}
 
-            {/* Future Stage Shell Views (3 to 7) */}
-            {state.stage > 2 && (
+            {/* Future Execution Shell Views (6 to 7) */}
+            {state.stage > 5 && (
               <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 sm:p-12 text-center space-y-6 backdrop-blur-xl shadow-2xl my-8">
                 <div className="w-16 h-16 rounded-2xl bg-teal-500/10 text-[#0E9F7A] flex items-center justify-center mx-auto border border-teal-500/20">
                   <ShieldCheck className="w-8 h-8" />
                 </div>
                 <div className="max-w-md mx-auto space-y-2">
                   <h3 className="text-xl sm:text-2xl font-extrabold text-white">
-                    Stage 0{state.stage} Framework Preview
+                    Stage 0{state.stage} Automatic Solver Trigger
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                    Detailed interactive discovery for Stage 0{state.stage} will be populated in Phase 3. You can trigger automatic itinerary computation right now.
+                    Execute time-dependent A* routing and constrained DP budget optimization for your customized selections.
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
