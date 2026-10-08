@@ -4,103 +4,114 @@
   :root {
     --font-sans: var(--font-manrope), system-ui, -apple-system, sans-serif;
     --font-serif: var(--font-playfair), Georgia, serif;
-    --bg-main: #F7F5F0;
-    --bg-surface: #FFFFFF;
-    --text-main: #0B1320;
-    --text-muted: #667085;
-    --primary-emerald: #0E9F7A;
-    --primary-emerald-hover: #0B8465;
-    --secondary-sky: #4C8BF5;
-    --border-warm: #E7E5E0;
-    --navy-dark: #0A1128;
+    
+    --bg-dark: #101419;
+    --bg-light: #F5F0E8;
+    --emerald: #0FA77A;
+    --electric-blue: #4D7CFE;
+    --coral: #FF6B5D;
+    --warm-yellow: #F7B955;
+    --sand-muted: #D8CBB8;
+    --text-dark: #101828;
   }
 
   body {
-    background-color: var(--bg-main);
-    color: var(--text-main);
+    background-color: var(--bg-light);
+    color: var(--text-dark);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
 }
 
-.font-serif-emphasis {
-  font-family: var(--font-playfair), Georgia, serif;
+.font-editorial {
+  font-family: var(--font-serif), Georgia, serif;
 }
 
-/* Custom UI Tokens */
-.bg-warm-main {
-  background-color: #F7F5F0;
+/* Custom Design Tokens V2 */
+.bg-v2-dark {
+  background-color: #101419;
 }
 
-.bg-warm-surface {
-  background-color: #FFFFFF;
+.bg-v2-light {
+  background-color: #F5F0E8;
 }
 
-.border-warm {
-  border-color: #E7E5E0;
+.text-v2-emerald {
+  color: #0FA77A;
 }
 
-.text-emerald-brand {
-  color: #0E9F7A;
+.bg-v2-emerald {
+  background-color: #0FA77A;
 }
 
-.bg-emerald-brand {
-  background-color: #0E9F7A;
-}
-
-.bg-emerald-brand:hover {
+.bg-v2-emerald:hover {
   background-color: #0B8465;
 }
 
-.border-emerald-brand {
-  border-color: #0E9F7A;
+.text-v2-blue {
+  color: #4D7CFE;
 }
 
-.text-muted-custom {
-  color: #667085;
+.bg-v2-blue {
+  background-color: #4D7CFE;
 }
 
-.text-navy-deep {
-  color: #0B1320;
+.text-v2-coral {
+  color: #FF6B5D;
 }
 
-.bg-navy-deep {
-  background-color: #0A1128;
+.bg-v2-coral {
+  background-color: #FF6B5D;
 }
 
-/* Segmented Control Animation */
-.segmented-control {
-  background-color: #F0EEE9;
-  padding: 4px;
-  border-radius: 12px;
+.text-v2-yellow {
+  color: #F7B955;
 }
 
-.segmented-option {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+.bg-v2-yellow {
+  background-color: #F7B955;
 }
 
-.segmented-option-active {
-  background-color: #FFFFFF;
-  color: #0B1320;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+/* Animated SVG Route Line Draw */
+@keyframes routeDraw {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
 }
 
-/* Micro-interactions & animations */
-.transition-smooth {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+.animate-route-draw {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: routeDraw 3s ease-out forwards;
 }
 
-@keyframes pulse-subtle {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+@keyframes heroZoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
 }
 
-.animate-pulse-subtle {
-  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.animate-hero-zoom {
+  animation: heroZoom 15s ease-out infinite alternate;
 }
 
-/* Thin route line styling */
-.route-line {
-  height: 2px;
-  background: linear-gradient(90deg, #0E9F7A 0%, #4C8BF5 100%);
+/* Photo card hover effect */
+.photo-card-hover {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.photo-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
 }
