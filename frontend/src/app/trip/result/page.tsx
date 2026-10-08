@@ -12,7 +12,8 @@ import { exportTripPlanPDF } from '@/lib/pdf-export';
 import { TripPlanResult, UserResponse } from '@/types';
 import {
   Compass, CheckCircle2, Calendar, MapPin,
-  ArrowRight, Info, Download, Bookmark, Check
+  ArrowRight, Info, Download, Bookmark, Check,
+  Bed, Utensils, Ticket, ShieldCheck, Sparkles, Navigation
 } from 'lucide-react';
 
 const InteractiveMap = dynamic(() => import('@/components/InteractiveMap'), {
@@ -64,15 +65,15 @@ export default function TripResultPage() {
         <Navbar />
         <main className="flex-1 max-w-4xl mx-auto px-4 py-20 text-center space-y-6">
           <div className="w-16 h-16 rounded-full bg-white border border-[#E7E5E0] flex items-center justify-center mx-auto text-[#667085]">
-            <Compass className="w-8 h-8" />
+            <Compass className="w-8 h-8 text-[#0E9F7A]" />
           </div>
           <h1 className="text-2xl font-bold text-[#0B1320]">No Generated Journey Found</h1>
-          <p className="text-xs text-[#667085] max-w-md mx-auto">
-            Please run the interactive trip planner to generate a real-time budget-optimized itinerary.
+          <p className="text-xs text-[#667085] max-w-md mx-auto leading-relaxed">
+            Please run the interactive trip planner to generate your budget-optimized itinerary.
           </p>
           <Link
             href="/plan"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0E9F7A] hover:bg-[#0B8465] text-white font-bold rounded-xl text-xs transition-smooth shadow-sm"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#0E9F7A] hover:bg-[#0B8465] text-white font-bold rounded-xl text-xs transition-smooth shadow-sm"
           >
             <span>Plan a Trip</span>
             <ArrowRight className="w-4 h-4" />
@@ -89,12 +90,12 @@ export default function TripResultPage() {
     <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#0B1320]">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         {/* EDITORIAL HEADER BANNER */}
         <div className="bg-white border border-[#E7E5E0] rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-[#E7E5E0] pb-6">
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0E9F7A]/10 border border-[#0E9F7A]/20 text-[#0E9F7A] text-xs font-bold uppercase">
                   <CheckCircle2 className="w-3.5 h-3.5" />
@@ -105,12 +106,15 @@ export default function TripResultPage() {
                 </span>
               </div>
               
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0B1320]">
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0B1320] tracking-tight">
                 {plan.origin} &rarr; {plan.destination}
               </h1>
 
-              <p className="text-xs text-[#667085]">
-                {plan.departure_date} to {plan.return_date} ({plan.days} Days / {plan.nights} Nights) &bull; {plan.travellers} Person(s)
+              <p className="text-xs text-[#667085] flex items-center gap-2">
+                <Calendar className="w-3.5 h-3.5 text-[#4C8BF5]" />
+                <span>{plan.departure_date} to {plan.return_date} ({plan.days} Days / {plan.nights} Nights)</span>
+                <span>&bull;</span>
+                <span>{plan.travellers} Person(s)</span>
               </p>
             </div>
 
@@ -122,7 +126,7 @@ export default function TripResultPage() {
                   ₹{cb.total_trip_cost.toLocaleString()}
                 </span>
                 <span className="block text-xs text-[#667085]">
-                  Max Budget: ₹{cb.maximum_budget.toLocaleString()} (₹{cb.remaining_budget.toLocaleString()} remaining)
+                  Max Budget: ₹{cb.maximum_budget.toLocaleString()} (₹{cb.remaining_budget.toLocaleString()} remaining surplus)
                 </span>
               </div>
 
@@ -163,26 +167,34 @@ export default function TripResultPage() {
             </div>
           )}
 
-          {/* Quick Category Summary Bar */}
+          {/* RICH CATEGORY SUMMARY CARDS */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-            <div className="bg-[#F7F5F0] p-4 rounded-xl border border-[#E7E5E0]">
-              <span className="block text-[#667085] mb-1">Transport Fare</span>
-              <span className="font-bold text-[#0B1320] text-sm">₹{cb.transport_cost.toLocaleString()}</span>
+            <div className="bg-[#F7F5F0] p-4 rounded-xl border border-[#E7E5E0] space-y-1">
+              <span className="text-[#667085] flex items-center gap-1.5 font-medium">
+                <Ticket className="w-3.5 h-3.5 text-[#0E9F7A]" /> Transport Fare
+              </span>
+              <span className="block font-bold text-[#0B1320] text-base">₹{cb.transport_cost.toLocaleString()}</span>
             </div>
 
-            <div className="bg-[#F7F5F0] p-4 rounded-xl border border-[#E7E5E0]">
-              <span className="block text-[#667085] mb-1">Stay ({plan.stay.tier})</span>
-              <span className="font-bold text-[#0B1320] text-sm">₹{cb.accommodation_cost.toLocaleString()}</span>
+            <div className="bg-[#F7F5F0] p-4 rounded-xl border border-[#E7E5E0] space-y-1">
+              <span className="text-[#667085] flex items-center gap-1.5 font-medium">
+                <Bed className="w-3.5 h-3.5 text-[#4C8BF5]" /> Stay ({plan.stay.tier})
+              </span>
+              <span className="block font-bold text-[#0B1320] text-base">₹{cb.accommodation_cost.toLocaleString()}</span>
             </div>
 
-            <div className="bg-[#F7F5F0] p-4 rounded-xl border border-[#E7E5E0]">
-              <span className="block text-[#667085] mb-1">Food ({plan.food.tier})</span>
-              <span className="font-bold text-[#0B1320] text-sm">₹{cb.food_cost.toLocaleString()}</span>
+            <div className="bg-[#F7F5F0] p-4 rounded-xl border border-[#E7E5E0] space-y-1">
+              <span className="text-[#667085] flex items-center gap-1.5 font-medium">
+                <Utensils className="w-3.5 h-3.5 text-[#0E9F7A]" /> Food ({plan.food.tier})
+              </span>
+              <span className="block font-bold text-[#0B1320] text-base">₹{cb.food_cost.toLocaleString()}</span>
             </div>
 
-            <div className="bg-[#F7F5F0] p-4 rounded-xl border border-[#E7E5E0]">
-              <span className="block text-[#667085] mb-1">Activities ({plan.activities.length})</span>
-              <span className="font-bold text-[#0B1320] text-sm">₹{cb.activities_cost.toLocaleString()}</span>
+            <div className="bg-[#F7F5F0] p-4 rounded-xl border border-[#E7E5E0] space-y-1">
+              <span className="text-[#667085] flex items-center gap-1.5 font-medium">
+                <Compass className="w-3.5 h-3.5 text-[#EAB308]" /> Activities ({plan.activities.length})
+              </span>
+              <span className="block font-bold text-[#0B1320] text-base">₹{cb.activities_cost.toLocaleString()}</span>
             </div>
           </div>
         </div>
@@ -213,7 +225,7 @@ export default function TripResultPage() {
             <div className="bg-white border border-[#E7E5E0] rounded-2xl p-6 space-y-6 shadow-sm">
               <div className="flex items-center justify-between pb-4 border-b border-[#E7E5E0]">
                 <h3 className="text-base font-bold text-[#0B1320] flex items-center gap-2">
-                  <Compass className="w-5 h-5 text-[#0E9F7A]" />
+                  <Navigation className="w-5 h-5 text-[#0E9F7A]" />
                   Multi-Modal Connected Timeline
                 </h3>
                 <span className="text-xs font-mono text-[#667085]">
@@ -225,7 +237,7 @@ export default function TripResultPage() {
                 {plan.route_segments.map((seg, idx) => (
                   <div
                     key={idx}
-                    className="bg-[#F7F5F0] border border-[#E7E5E0] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs"
+                    className="bg-[#F7F5F0] border border-[#E7E5E0] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs hover:border-[#0E9F7A]/40 transition-smooth"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
@@ -259,7 +271,7 @@ export default function TripResultPage() {
               <div className="pb-4 border-b border-[#E7E5E0]">
                 <h3 className="text-base font-bold text-[#0B1320] flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-[#4C8BF5]" />
-                  Deterministic Daily Execution Breakdown
+                  Day-by-Day Execution Breakdown
                 </h3>
               </div>
 

@@ -10,8 +10,8 @@ import {
   ActivityPreference, TripPlanResult
 } from '@/types';
 import {
-  ChevronRight, ChevronLeft,
-  AlertTriangle, Loader2, ArrowRight, Check
+  ChevronRight, ChevronLeft, AlertTriangle, Loader2, ArrowRight,
+  Check, Compass, Sparkles, MapPin, Wallet, Calendar, ShieldCheck, Heart
 } from 'lucide-react';
 
 const SUPPORTED_NODES = [
@@ -34,6 +34,29 @@ const LOADING_CHECKLIST = [
   'Optimizing whole-trip budget DP allocation',
   'Constructing daily itinerary & cost breakdown'
 ];
+
+const DESTINATION_PREVIEWS: Record<string, { image: string; tag: string }> = {
+  'Old Manali': {
+    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=600&auto=format&fit=crop',
+    tag: 'Pine Forests & Mountain Cafes'
+  },
+  'Manali': {
+    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=600&auto=format&fit=crop',
+    tag: 'Alpine Himalayan Trails'
+  },
+  'Pune': {
+    image: 'https://images.unsplash.com/photo-1588416936097-41850ab3d86d?q=80&w=600&auto=format&fit=crop',
+    tag: 'Peshwa Heritage & Fort Hikes'
+  },
+  'Delhi': {
+    image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=600&auto=format&fit=crop',
+    tag: 'ISBT Hub & Cultural Streets'
+  },
+  'Chandigarh': {
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop',
+    tag: 'Northern Transit Gateway'
+  }
+};
 
 function PlannerWizardContent() {
   const router = useRouter();
@@ -136,51 +159,88 @@ function PlannerWizardContent() {
     }
   };
 
+  const destPreview = DESTINATION_PREVIEWS[destination] || DESTINATION_PREVIEWS['Old Manali'];
+
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Page Heading */}
-      <div className="mb-8 space-y-1">
-        <span className="text-xs font-bold text-[#0E9F7A] uppercase tracking-widest block">
-          Interactive Journey Planner
-        </span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0B1320]">
-          Configure your trip requirements
-        </h1>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      
+      {/* VISUAL TOP BANNER / ROUTE MOOD STRIP */}
+      <div className="bg-white border border-[#E7E5E0] rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <div className="space-y-2 z-10 text-center md:text-left">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0E9F7A]/10 border border-[#0E9F7A]/20 text-[#0E9F7A] text-xs font-bold uppercase tracking-wider">
+            <Compass className="w-3.5 h-3.5" />
+            <span>Interactive Journey Planner</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0B1320] tracking-tight">
+            {origin} &rarr; {destination}
+          </h1>
+          <p className="text-xs sm:text-sm text-[#667085] max-w-lg leading-relaxed">
+            One budget cap. We will route your local shuttles, trains, mountain buses, homestays, and meals under ₹{maximumBudget.toLocaleString()}.
+          </p>
+        </div>
+
+        {/* Destination Mood Card Accent */}
+        <div className="relative w-full md:w-64 h-32 rounded-xl overflow-hidden border border-[#E7E5E0] shadow-sm flex-shrink-0 group">
+          <img
+            src={destPreview.image}
+            alt={destination}
+            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B1320]/80 to-transparent flex flex-col justify-end p-3 text-white">
+            <span className="text-xs font-bold flex items-center gap-1">
+              <MapPin className="w-3 h-3 text-[#0E9F7A]" /> {destination}
+            </span>
+            <span className="text-[10px] text-slate-300 font-medium">{destPreview.tag}</span>
+          </div>
+        </div>
       </div>
 
       {/* Main Grid: Left Narrow Rail + Right Workspace */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* LEFT PROGRESS RAIL (DESKTOP ~240px) */}
-        <div className="lg:col-span-3 bg-white border border-[#E7E5E0] rounded-2xl p-5 shadow-sm">
-          <span className="text-xs font-bold text-[#667085] uppercase tracking-wider block mb-4">
-            Planner Steps
-          </span>
-          <nav className="space-y-2">
-            {STEPS.map((s) => {
-              const isActive = step === s.id;
-              const isDone = step > s.id;
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => {
-                    if (s.id < step) setStep(s.id);
-                  }}
-                  disabled={s.id > step}
-                  className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-smooth ${
-                    isActive
-                      ? 'bg-[#0E9F7A]/10 text-[#0E9F7A] font-bold border border-[#0E9F7A]/20'
-                      : isDone
-                      ? 'text-[#0B1320] hover:bg-[#F7F5F0]'
-                      : 'text-[#667085] cursor-not-allowed opacity-60'
-                  }`}
-                >
-                  <span className="font-mono">{s.label}</span>
-                  {isDone && <Check className="w-3.5 h-3.5 text-[#0E9F7A]" />}
-                </button>
-              );
-            })}
-          </nav>
+        {/* LEFT PROGRESS RAIL & HELPFUL TIPS (DESKTOP ~240px) */}
+        <div className="lg:col-span-3 space-y-6">
+          <div className="bg-white border border-[#E7E5E0] rounded-2xl p-5 shadow-sm">
+            <span className="text-xs font-bold text-[#667085] uppercase tracking-wider block mb-4">
+              Planner Steps
+            </span>
+            <nav className="space-y-2">
+              {STEPS.map((s) => {
+                const isActive = step === s.id;
+                const isDone = step > s.id;
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => {
+                      if (s.id < step) setStep(s.id);
+                    }}
+                    disabled={s.id > step}
+                    className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-smooth ${
+                      isActive
+                        ? 'bg-[#0E9F7A]/10 text-[#0E9F7A] font-bold border border-[#0E9F7A]/20'
+                        : isDone
+                        ? 'text-[#0B1320] hover:bg-[#F7F5F0]'
+                        : 'text-[#667085] cursor-not-allowed opacity-60'
+                    }`}
+                  >
+                    <span className="font-mono">{s.label}</span>
+                    {isDone && <Check className="w-3.5 h-3.5 text-[#0E9F7A]" />}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Guided Tip Card */}
+          <div className="bg-white border border-[#E7E5E0] rounded-2xl p-5 space-y-3 shadow-sm text-xs">
+            <div className="flex items-center gap-2 text-[#0E9F7A] font-bold">
+              <ShieldCheck className="w-4 h-4" />
+              <span>Smart Layover Protection</span>
+            </div>
+            <p className="text-[#667085] leading-relaxed">
+              NAVIX automatically evaluates layover times between trains and buses to reject tight station connections.
+            </p>
+          </div>
         </div>
 
         {/* RIGHT WORKSPACE */}
@@ -235,7 +295,7 @@ function PlannerWizardContent() {
                   <Loader2 className="w-6 h-6 animate-spin" />
                 </div>
                 <h3 className="text-xl font-bold text-[#0B1320]">Building your journey</h3>
-                <p className="text-xs text-[#667085]">Executing A* pathfinding and Knapsack DP optimization engine...</p>
+                <p className="text-xs text-[#667085]">Executing time-dependent routing and DP budget optimization...</p>
               </div>
 
               {/* Progress Checklist */}
@@ -269,13 +329,13 @@ function PlannerWizardContent() {
                 <div className="space-y-6">
                   <div className="space-y-1 pb-4 border-b border-[#E7E5E0]">
                     <h3 className="text-lg font-bold text-[#0B1320]">Where are you starting &amp; heading?</h3>
-                    <p className="text-xs text-[#667085]">Select transit nodes supported in current demo dataset.</p>
+                    <p className="text-xs text-[#667085]">Select your origin and destination transit nodes.</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider mb-2">
-                        Origin Node
+                        Origin City / Node
                       </label>
                       <select
                         value={origin}
@@ -311,7 +371,7 @@ function PlannerWizardContent() {
                 <div className="space-y-6">
                   <div className="space-y-1 pb-4 border-b border-[#E7E5E0]">
                     <h3 className="text-lg font-bold text-[#0B1320]">When are you travelling?</h3>
-                    <p className="text-xs text-[#667085]">Select travel dates to evaluate schedule-aware transit windows.</p>
+                    <p className="text-xs text-[#667085]">Select departure and return dates for schedule-aware timing.</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -347,7 +407,7 @@ function PlannerWizardContent() {
                 <div className="space-y-6">
                   <div className="space-y-1 pb-4 border-b border-[#E7E5E0]">
                     <h3 className="text-lg font-bold text-[#0B1320]">Who is travelling &amp; maximum budget?</h3>
-                    <p className="text-xs text-[#667085]">Total trip cost includes transport, stay, food, activities, and local shuttles.</p>
+                    <p className="text-xs text-[#667085]">Total trip cost covers transport, stay, meals, activities, and shuttles.</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -386,19 +446,20 @@ function PlannerWizardContent() {
               {step === 4 && (
                 <div className="space-y-6">
                   <div className="space-y-1 pb-4 border-b border-[#E7E5E0]">
-                    <h3 className="text-lg font-bold text-[#0B1320]">How do you want to prioritize routing?</h3>
-                    <p className="text-xs text-[#667085]">Choose routing optimization profile.</p>
+                    <h3 className="text-lg font-bold text-[#0B1320]">Routing priority</h3>
+                    <p className="text-xs text-[#667085]">Choose how the routing solver prioritizes transit options.</p>
                   </div>
 
-                  {/* Segmented Control Selector */}
-                  <div className="segmented-control grid grid-cols-3 gap-1">
+                  <div className="grid grid-cols-3 gap-3">
                     {(['CHEAPEST', 'BALANCED', 'FASTER'] as OptimizationProfile[]).map((p) => (
                       <button
                         key={p}
                         type="button"
                         onClick={() => setProfile(p)}
-                        className={`py-3 px-4 rounded-xl text-xs font-bold transition-smooth ${
-                          profile === p ? 'segmented-option-active text-[#0E9F7A]' : 'text-[#667085] hover:text-[#0B1320]'
+                        className={`py-3.5 px-4 rounded-xl text-xs font-bold transition-smooth border ${
+                          profile === p
+                            ? 'bg-[#0E9F7A]/10 text-[#0E9F7A] border-[#0E9F7A]'
+                            : 'bg-[#F7F5F0] text-[#667085] border-[#E7E5E0] hover:text-[#0B1320]'
                         }`}
                       >
                         {p}
@@ -413,7 +474,7 @@ function PlannerWizardContent() {
                 <div className="space-y-6">
                   <div className="space-y-1 pb-4 border-b border-[#E7E5E0]">
                     <h3 className="text-lg font-bold text-[#0B1320]">Trip style preferences</h3>
-                    <p className="text-xs text-[#667085]">Customize lodging, dining, and activity expectations.</p>
+                    <p className="text-xs text-[#667085]">Select accommodation, dining, and activity style.</p>
                   </div>
 
                   {/* Stay Preference */}
@@ -421,14 +482,16 @@ function PlannerWizardContent() {
                     <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider">
                       Accommodation Tier
                     </label>
-                    <div className="segmented-control grid grid-cols-3 gap-1">
+                    <div className="grid grid-cols-3 gap-3">
                       {(['BUDGET', 'STANDARD', 'COMFORT'] as StayPreference[]).map((s) => (
                         <button
                           key={s}
                           type="button"
                           onClick={() => setStayPref(s)}
-                          className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-smooth ${
-                            stayPref === s ? 'segmented-option-active text-[#0E9F7A]' : 'text-[#667085] hover:text-[#0B1320]'
+                          className={`py-3 px-3 rounded-xl text-xs font-bold transition-smooth border ${
+                            stayPref === s
+                              ? 'bg-[#0E9F7A]/10 text-[#0E9F7A] border-[#0E9F7A]'
+                              : 'bg-[#F7F5F0] text-[#667085] border-[#E7E5E0] hover:text-[#0B1320]'
                           }`}
                         >
                           {s}
@@ -442,14 +505,16 @@ function PlannerWizardContent() {
                     <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider">
                       Food Allocation
                     </label>
-                    <div className="segmented-control grid grid-cols-3 gap-1">
+                    <div className="grid grid-cols-3 gap-3">
                       {(['BASIC', 'BALANCED', 'FLEXIBLE'] as FoodPreference[]).map((f) => (
                         <button
                           key={f}
                           type="button"
                           onClick={() => setFoodPref(f)}
-                          className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-smooth ${
-                            foodPref === f ? 'segmented-option-active text-[#0E9F7A]' : 'text-[#667085] hover:text-[#0B1320]'
+                          className={`py-3 px-3 rounded-xl text-xs font-bold transition-smooth border ${
+                            foodPref === f
+                              ? 'bg-[#0E9F7A]/10 text-[#0E9F7A] border-[#0E9F7A]'
+                              : 'bg-[#F7F5F0] text-[#667085] border-[#E7E5E0] hover:text-[#0B1320]'
                           }`}
                         >
                           {f}
@@ -463,14 +528,16 @@ function PlannerWizardContent() {
                     <label className="block text-xs font-semibold text-[#667085] uppercase tracking-wider">
                       Activity Level
                     </label>
-                    <div className="segmented-control grid grid-cols-3 gap-1">
+                    <div className="grid grid-cols-3 gap-3">
                       {(['LOW', 'MEDIUM', 'HIGH'] as ActivityPreference[]).map((a) => (
                         <button
                           key={a}
                           type="button"
                           onClick={() => setActivityPref(a)}
-                          className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-smooth ${
-                            activityPref === a ? 'segmented-option-active text-[#0E9F7A]' : 'text-[#667085] hover:text-[#0B1320]'
+                          className={`py-3 px-3 rounded-xl text-xs font-bold transition-smooth border ${
+                            activityPref === a
+                              ? 'bg-[#0E9F7A]/10 text-[#0E9F7A] border-[#0E9F7A]'
+                              : 'bg-[#F7F5F0] text-[#667085] border-[#E7E5E0] hover:text-[#0B1320]'
                           }`}
                         >
                           {a}
@@ -486,7 +553,7 @@ function PlannerWizardContent() {
                 <div className="space-y-6">
                   <div className="space-y-1 pb-4 border-b border-[#E7E5E0]">
                     <h3 className="text-lg font-bold text-[#0B1320]">Review your journey parameters</h3>
-                    <p className="text-xs text-[#667085]">Verify inputs before calling NAVIX solver backend.</p>
+                    <p className="text-xs text-[#667085]">Verify inputs before building your journey plan.</p>
                   </div>
 
                   {/* Summary Table */}

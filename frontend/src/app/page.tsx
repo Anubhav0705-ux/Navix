@@ -4,7 +4,11 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Navbar, Footer } from '@/components';
-import { ArrowRight, ShieldCheck, MapPin, Users, Wallet, Compass } from 'lucide-react';
+import { SAMPLE_STORIES } from '@/lib/stories-data';
+import {
+  ArrowRight, ShieldCheck, MapPin, Users, Wallet, Compass,
+  Sparkles, BookOpen, Clock, CheckCircle2, Heart, Star
+} from 'lucide-react';
 
 const DEMO_LOCATIONS = [
   'Sangli', 'Miraj', 'Pune', 'Mumbai', 'Delhi', 'Chandigarh', 'Manali', 'Old Manali'
@@ -33,67 +37,77 @@ export default function Home() {
       <Navbar />
 
       {/* --- HERO SECTION --- */}
-      <section className="pt-12 pb-16 md:pt-20 md:pb-24">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="pt-10 pb-16 md:pt-16 md:pb-24 relative overflow-hidden">
+        {/* Subtle background glow accent */}
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#0E9F7A]/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-[#4C8BF5]/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             
-            {/* HERO LEFT: EDITORIAL COPY */}
+            {/* HERO LEFT: HUMAN & INSPIRING COPY */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0E9F7A]/10 border border-[#0E9F7A]/20 text-[#0E9F7A] text-xs font-semibold tracking-wider uppercase">
-                <Compass className="w-3.5 h-3.5" />
-                <span>Budget-First Multi-Modal Travel</span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E7E5E0] shadow-sm text-[#0E9F7A] text-xs font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-[#0E9F7A]" />
+                <span>Travel smarter. Explore more.</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#0B1320] leading-[1.15]">
-                Plan the whole journey.{' '}
-                <span className="font-serif-emphasis italic text-[#0E9F7A] font-normal block sm:inline">
-                  Not just the ticket.
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#0B1320] leading-[1.12]">
+                From smaller cities to{' '}
+                <span className="font-serif italic text-[#0E9F7A] font-normal block sm:inline">
+                  unforgettable journeys.
                 </span>
               </h1>
 
               <p className="text-base sm:text-lg text-[#667085] leading-relaxed max-w-xl">
-                NAVIX connects local transport, trains, metros, and interstate buses starting from Tier-2 & Tier-3 cities — keeping transport, lodging, food, and activities under one total budget cap.
+                One total budget. One seamless itinerary. NAVIX connects local transport, trains, buses, homestays, and meals starting from Tier-2 &amp; Tier-3 Indian cities.
               </p>
 
               <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                 <Link
                   href="/plan"
-                  className="inline-flex items-center justify-center gap-2.5 text-sm font-bold bg-[#0E9F7A] hover:bg-[#0B8465] text-white px-6 py-3.5 rounded-xl transition-smooth shadow-sm"
+                  className="inline-flex items-center justify-center gap-2.5 text-sm font-bold bg-[#0E9F7A] hover:bg-[#0B8465] text-white px-7 py-4 rounded-xl transition-smooth shadow-sm"
                 >
-                  <span>Plan a Journey</span>
+                  <span>Build My Journey</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
 
-                <a
-                  href="#how-it-works"
-                  className="inline-flex items-center justify-center text-sm font-medium text-[#667085] hover:text-[#0B1320] px-4 py-3.5 transition-smooth"
+                <Link
+                  href="/stories"
+                  className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-[#0B1320] bg-white border border-[#E7E5E0] hover:bg-[#F7F5F0] px-5 py-4 rounded-xl transition-smooth shadow-sm"
                 >
-                  See how it works &rarr;
-                </a>
+                  <BookOpen className="w-4 h-4 text-[#0E9F7A]" />
+                  <span>Read Travel Stories</span>
+                </Link>
               </div>
 
-              {/* Small proof line */}
-              <div className="pt-4 border-t border-[#E7E5E0] flex items-center gap-6 text-xs text-[#667085]">
-                <span className="flex items-center gap-1.5">
+              {/* Value Badges */}
+              <div className="pt-4 border-t border-[#E7E5E0] flex flex-wrap items-center gap-6 text-xs text-[#667085]">
+                <span className="flex items-center gap-1.5 font-medium">
                   <ShieldCheck className="w-4 h-4 text-[#0E9F7A]" />
-                  A* Routing
+                  Hard Total Budget Cap
                 </span>
                 <span>&bull;</span>
-                <span>Safe Transfer Windows</span>
+                <span className="font-medium">Multi-Modal Connections</span>
                 <span>&bull;</span>
-                <span>Hard Budget Guarantee</span>
+                <span className="font-medium">Safe Layover Windows</span>
               </div>
             </div>
 
-            {/* HERO RIGHT: JOURNEY COMPOSER CARD */}
+            {/* HERO RIGHT: VIBRANT JOURNEY PLANNER CARD */}
             <div className="lg:col-span-5">
-              <div className="bg-white border border-[#E7E5E0] rounded-2xl p-6 sm:p-7 shadow-sm">
+              <div className="bg-white border border-[#E7E5E0] rounded-2xl p-6 sm:p-7 shadow-md relative">
+                {/* Decorative Postcard Stamp Tag */}
+                <div className="absolute -top-3 -right-3 bg-[#0E9F7A] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
+                  <Compass className="w-3 h-3" /> Quick Search
+                </div>
+
                 <div className="flex items-center justify-between pb-4 mb-5 border-b border-[#E7E5E0]">
                   <h3 className="text-sm font-bold text-[#0B1320] uppercase tracking-wider">
-                    Build Your Journey
+                    Where are you heading?
                   </h3>
-                  <span className="text-[11px] font-mono text-[#667085] bg-[#F7F5F0] px-2 py-0.5 rounded">
-                    Demo transit dataset
+                  <span className="text-[11px] font-mono text-[#667085] bg-[#F7F5F0] px-2.5 py-1 rounded-md border border-[#E7E5E0]">
+                    Demo Dataset
                   </span>
                 </div>
 
@@ -102,7 +116,7 @@ export default function Home() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold text-[#667085] mb-1.5 flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5 text-[#0E9F7A]" /> From
+                        <MapPin className="w-3.5 h-3.5 text-[#0E9F7A]" /> Starting City
                       </label>
                       <select
                         value={origin}
@@ -117,7 +131,7 @@ export default function Home() {
 
                     <div>
                       <label className="block text-xs font-semibold text-[#667085] mb-1.5 flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5 text-[#4C8BF5]" /> To
+                        <MapPin className="w-3.5 h-3.5 text-[#4C8BF5]" /> Destination
                       </label>
                       <select
                         value={destination}
@@ -135,7 +149,7 @@ export default function Home() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold text-[#667085] mb-1.5 flex items-center gap-1">
-                        <Wallet className="w-3.5 h-3.5 text-[#0E9F7A]" /> Max Budget (₹)
+                        <Wallet className="w-3.5 h-3.5 text-[#0E9F7A]" /> Total Budget (₹)
                       </label>
                       <input
                         type="number"
@@ -157,9 +171,9 @@ export default function Home() {
                         onChange={(e) => setTravellers(e.target.value)}
                         className="w-full bg-[#F7F5F0] border border-[#E7E5E0] rounded-xl px-3 py-2.5 text-sm text-[#0B1320] font-medium focus:outline-none focus:border-[#0E9F7A] transition-smooth"
                       >
-                        <option value="1">1 Traveller</option>
-                        <option value="2">2 Travellers</option>
-                        <option value="3">3 Travellers</option>
+                        <option value="1">1 Person</option>
+                        <option value="2">2 Persons</option>
+                        <option value="3">3 Persons</option>
                       </select>
                     </div>
                   </div>
@@ -167,9 +181,9 @@ export default function Home() {
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    className="w-full mt-2 bg-[#0E9F7A] hover:bg-[#0B8465] text-white font-bold py-3 px-4 rounded-xl transition-smooth flex items-center justify-center gap-2 shadow-sm text-sm"
+                    className="w-full mt-2 bg-[#0E9F7A] hover:bg-[#0B8465] text-white font-bold py-3.5 px-4 rounded-xl transition-smooth flex items-center justify-center gap-2 shadow-sm text-sm"
                   >
-                    <span>Build my journey</span>
+                    <span>Build My Journey</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </form>
@@ -180,208 +194,122 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- ELEGANT ROUTE CORRIDOR VISUAL --- */}
-      <section className="py-10 bg-white border-y border-[#E7E5E0]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#667085] mb-6 text-center">
-            Primary Multi-Modal Corridor &bull; Sangli to Old Manali
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-2">
-            {/* Sangli */}
-            <div className="flex flex-col items-center text-center">
-              <span className="w-3 h-3 rounded-full bg-[#0E9F7A] ring-4 ring-[#0E9F7A]/20" />
-              <span className="mt-2 text-sm font-bold text-[#0B1320]">Sangli</span>
-              <span className="text-xs text-[#667085]">Origin</span>
-            </div>
-
-            {/* Mode 1 */}
-            <div className="flex-1 flex flex-col items-center px-2 w-full sm:w-auto">
-              <span className="text-[11px] font-semibold text-[#0E9F7A] uppercase tracking-wider">AUTO / LOCAL</span>
-              <div className="w-full h-0.5 bg-[#0E9F7A] my-1" />
-            </div>
-
-            {/* Miraj */}
-            <div className="flex flex-col items-center text-center">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#667085]" />
-              <span className="mt-2 text-xs font-semibold text-[#0B1320]">Miraj Junction</span>
-              <span className="text-[11px] text-[#667085]">Rail Layover</span>
-            </div>
-
-            {/* Mode 2 */}
-            <div className="flex-1 flex flex-col items-center px-2 w-full sm:w-auto">
-              <span className="text-[11px] font-semibold text-[#4C8BF5] uppercase tracking-wider">TRAIN (Goa Exp)</span>
-              <div className="w-full h-0.5 bg-[#4C8BF5] my-1" />
-            </div>
-
-            {/* Delhi */}
-            <div className="flex flex-col items-center text-center">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#667085]" />
-              <span className="mt-2 text-xs font-semibold text-[#0B1320]">Delhi ISBT</span>
-              <span className="text-[11px] text-[#667085]">Metro &amp; Bus</span>
-            </div>
-
-            {/* Mode 3 */}
-            <div className="flex-1 flex flex-col items-center px-2 w-full sm:w-auto">
-              <span className="text-[11px] font-semibold text-[#0E9F7A] uppercase tracking-wider">BUS (HRTC Volvo)</span>
-              <div className="w-full h-0.5 bg-[#0E9F7A] my-1" />
-            </div>
-
-            {/* Old Manali */}
-            <div className="flex flex-col items-center text-center">
-              <span className="w-3 h-3 rounded-full bg-[#4C8BF5] ring-4 ring-[#4C8BF5]/20" />
-              <span className="mt-2 text-sm font-bold text-[#0B1320]">Old Manali</span>
-              <span className="text-xs text-[#667085]">Destination</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* --- HOW NAVIX WORKS --- */}
-      <section id="how-it-works" className="py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mb-14">
-            <h2 className="text-xs font-bold text-[#0E9F7A] uppercase tracking-widest mb-2">Connected Algorithmic Pipeline</h2>
-            <h3 className="text-3xl font-extrabold text-[#0B1320] leading-tight">
-              Four deterministic stages to solve your trip constraint.
-            </h3>
-          </div>
-
-          {/* Connected Horizontal Flow */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-            {/* Step 1 */}
-            <div className="bg-white border border-[#E7E5E0] rounded-xl p-6 relative">
-              <span className="text-xs font-bold font-mono text-[#0E9F7A] block mb-2">STAGE 01</span>
-              <h4 className="text-base font-bold text-[#0B1320] mb-2">Route Search</h4>
-              <p className="text-xs text-[#667085] leading-relaxed">
-                Time-dependent A* graph search discovers multi-modal transit legs across trains, buses, and local shuttles.
-              </p>
-            </div>
-
-            {/* Step 2 */}
-            <div className="bg-white border border-[#E7E5E0] rounded-xl p-6 relative">
-              <span className="text-xs font-bold font-mono text-[#4C8BF5] block mb-2">STAGE 02</span>
-              <h4 className="text-base font-bold text-[#0B1320] mb-2">Transfer Validation</h4>
-              <p className="text-xs text-[#667085] leading-relaxed">
-                Evaluates connection windows. Rejects tight or invalid station transfers, accepting only safe layovers.
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="bg-white border border-[#E7E5E0] rounded-xl p-6 relative">
-              <span className="text-xs font-bold font-mono text-[#0E9F7A] block mb-2">STAGE 03</span>
-              <h4 className="text-base font-bold text-[#0B1320] mb-2">Budget Optimization</h4>
-              <p className="text-xs text-[#667085] leading-relaxed">
-                Dynamic programming optimizes remaining funds for accommodation, food, and activities without exceeding cap.
-              </p>
-            </div>
-
-            {/* Step 4 */}
-            <div className="bg-white border border-[#E7E5E0] rounded-xl p-6 relative">
-              <span className="text-xs font-bold font-mono text-[#0B1320] block mb-2">STAGE 04</span>
-              <h4 className="text-base font-bold text-[#0B1320] mb-2">Complete Itinerary</h4>
-              <p className="text-xs text-[#667085] leading-relaxed">
-                Generates a day-by-day execution breakdown with transparent cost breakdowns and decision explanations.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* --- BUDGET STORY SECTION --- */}
-      <section id="example-journey" className="py-20 bg-white border-y border-[#E7E5E0]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Left: Summary Numbers */}
-            <div className="lg:col-span-5 space-y-6">
+      {/* --- FEATURED DESTINATION CORRIDORS (PHOTO GRID) --- */}
+      <section id="example-journey" className="py-14 bg-white border-y border-[#E7E5E0]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div className="space-y-1">
               <span className="text-xs font-bold text-[#0E9F7A] uppercase tracking-widest block">
-                Primary Demo Budget Allocation
+                Popular Budget Routes
               </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B1320]">
+                Curated Travel Corridors
+              </h2>
+            </div>
+            <Link
+              href="/plan"
+              className="text-xs font-bold text-[#0E9F7A] hover:text-[#0B8465] flex items-center gap-1 transition-smooth"
+            >
+              <span>Explore All Destinations</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
 
-              <h3 className="text-3xl font-extrabold text-[#0B1320] leading-tight">
-                Sangli &rarr; Old Manali under ₹20,000
-              </h3>
-
-              <div className="grid grid-cols-3 gap-4 pt-2">
-                <div className="bg-[#F7F5F0] p-4 rounded-xl border border-[#E7E5E0]">
-                  <span className="text-xs text-[#667085] block mb-1">Max Budget</span>
-                  <span className="text-lg font-bold text-[#0B1320]">₹20,000</span>
-                </div>
-
-                <div className="bg-[#F7F5F0] p-4 rounded-xl border border-[#E7E5E0]">
-                  <span className="text-xs text-[#667085] block mb-1">Planned Cost</span>
-                  <span className="text-lg font-bold text-[#0E9F7A]">₹19,090</span>
-                </div>
-
-                <div className="bg-[#F7F5F0] p-4 rounded-xl border border-[#E7E5E0]">
-                  <span className="text-xs text-[#667085] block mb-1">Remaining</span>
-                  <span className="text-lg font-bold text-[#4C8BF5]">₹910</span>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            {/* Card 1: Old Manali */}
+            <div className="bg-[#F7F5F0] border border-[#E7E5E0] rounded-2xl overflow-hidden shadow-sm flex flex-col group">
+              <div className="relative h-48 w-full overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800&auto=format&fit=crop"
+                  alt="Old Manali"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+                />
+                <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold text-[#0B1320] flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-[#0E9F7A]" /> Sangli &rarr; Old Manali
+                </span>
+                <span className="absolute bottom-3 right-3 bg-[#0B1320]/80 text-white font-mono font-bold text-xs px-2.5 py-1 rounded-full">
+                  Under ₹20,000
+                </span>
               </div>
-
-              <p className="text-xs text-[#667085] leading-relaxed">
-                Every category is computed deterministically by the Knapsack DP optimizer to balance stay comfort, food preferences, and activity tier while keeping overall spend strictly under your maximum cap.
-              </p>
+              <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-[#0B1320]">Himachal Mountain Escape</h3>
+                  <p className="text-xs text-[#667085] leading-relaxed mt-1">
+                    Connecting local auto shuttles from Sangli to Miraj, Goa Express to Delhi, and HRTC Volvo bus to Old Manali.
+                  </p>
+                </div>
+                <Link
+                  href="/plan?origin=Sangli&destination=Old+Manali&budget=20000"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#0E9F7A] hover:text-[#0B8465] pt-2"
+                >
+                  <span>Plan This Route</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
 
-            {/* Right: Proportional Horizontal Budget Bar */}
-            <div className="lg:col-span-7 bg-[#F7F5F0] border border-[#E7E5E0] rounded-2xl p-6 sm:p-8 space-y-6">
-              <div className="flex items-center justify-between text-sm font-bold text-[#0B1320]">
-                <span>Calculated Trip Spend</span>
-                <span className="text-[#0E9F7A]">₹19,090 / ₹20,000</span>
+            {/* Card 2: Pune */}
+            <div className="bg-[#F7F5F0] border border-[#E7E5E0] rounded-2xl overflow-hidden shadow-sm flex flex-col group">
+              <div className="relative h-48 w-full overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1588416936097-41850ab3d86d?q=80&w=800&auto=format&fit=crop"
+                  alt="Pune"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+                />
+                <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold text-[#0B1320] flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-[#4C8BF5]" /> Sangli &rarr; Pune
+                </span>
+                <span className="absolute bottom-3 right-3 bg-[#0B1320]/80 text-white font-mono font-bold text-xs px-2.5 py-1 rounded-full">
+                  Under ₹5,000
+                </span>
               </div>
-
-              {/* Stacked Bar */}
-              <div className="h-4 w-full bg-white rounded-full overflow-hidden flex p-0.5 border border-[#E7E5E0]">
-                <div className="bg-[#0E9F7A] h-full rounded-l-full" style={{ width: '11%' }} title="Transport (11%)" />
-                <div className="bg-[#4C8BF5] h-full" style={{ width: '47%' }} title="Accommodation (47%)" />
-                <div className="bg-[#05B386] h-full" style={{ width: '25%' }} title="Food (25%)" />
-                <div className="bg-[#EAB308] h-full" style={{ width: '10%' }} title="Activities (10%)" />
-                <div className="bg-[#94A3B8] h-full rounded-r-full" style={{ width: '7%' }} title="Buffer (7%)" />
+              <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-[#0B1320]">Pune Heritage &amp; Fort Weekend</h3>
+                  <p className="text-xs text-[#667085] leading-relaxed mt-1">
+                    Fast express trains from Miraj Junction to Pune Railway Station, connecting local bus transit to Sinhagad Fort.
+                  </p>
+                </div>
+                <Link
+                  href="/plan?origin=Sangli&destination=Pune&budget=5000"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#0E9F7A] hover:text-[#0B8465] pt-2"
+                >
+                  <span>Plan This Route</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
+            </div>
 
-              {/* Category Breakdown Details */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2 text-xs">
-                <div className="flex items-center gap-2.5">
-                  <span className="w-3 h-3 rounded bg-[#0E9F7A]" />
-                  <div>
-                    <span className="text-[#667085] block">Transport</span>
-                    <span className="font-bold text-[#0B1320]">₹2,190</span>
-                  </div>
+            {/* Card 3: Delhi Layover */}
+            <div className="bg-[#F7F5F0] border border-[#E7E5E0] rounded-2xl overflow-hidden shadow-sm flex flex-col group">
+              <div className="relative h-48 w-full overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=800&auto=format&fit=crop"
+                  alt="Delhi ISBT"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+                />
+                <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold text-[#0B1320] flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-[#0E9F7A]" /> Sangli &rarr; Delhi ISBT
+                </span>
+                <span className="absolute bottom-3 right-3 bg-[#0B1320]/80 text-white font-mono font-bold text-xs px-2.5 py-1 rounded-full">
+                  Under ₹12,000
+                </span>
+              </div>
+              <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-[#0B1320]">Delhi Cultural &amp; Food Transit</h3>
+                  <p className="text-xs text-[#667085] leading-relaxed mt-1">
+                    Multi-modal train route ending at Kashmere Gate ISBT with seamless Delhi Metro access to historic Old Delhi.
+                  </p>
                 </div>
-
-                <div className="flex items-center gap-2.5">
-                  <span className="w-3 h-3 rounded bg-[#4C8BF5]" />
-                  <div>
-                    <span className="text-[#667085] block">Stay (7 Nights)</span>
-                    <span className="font-bold text-[#0B1320]">₹9,000</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2.5">
-                  <span className="w-3 h-3 rounded bg-[#05B386]" />
-                  <div>
-                    <span className="text-[#667085] block">Food Allocation</span>
-                    <span className="font-bold text-[#0B1320]">₹4,900</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2.5">
-                  <span className="w-3 h-3 rounded bg-[#EAB308]" />
-                  <div>
-                    <span className="text-[#667085] block">Activities</span>
-                    <span className="font-bold text-[#0B1320]">₹2,000</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2.5">
-                  <span className="w-3 h-3 rounded bg-[#94A3B8]" />
-                  <div>
-                    <span className="text-[#667085] block">Contingency Buffer</span>
-                    <span className="font-bold text-[#0B1320]">₹1,000</span>
-                  </div>
-                </div>
+                <Link
+                  href="/plan?origin=Sangli&destination=Delhi&budget=12000"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#0E9F7A] hover:text-[#0B8465] pt-2"
+                >
+                  <span>Plan This Route</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </div>
 
@@ -389,58 +317,138 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- WHY NAVIX (EDITORIAL 3-COLUMN LAYOUT) --- */}
-      <section id="why-navix" className="py-20">
+      {/* --- FEATURED STORIES SECTION --- */}
+      <section className="py-16 bg-[#F7F5F0]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div className="space-y-1">
+              <span className="text-xs font-bold text-[#4C8BF5] uppercase tracking-widest block">
+                From Our Traveler Community
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B1320]">
+                Real Stories &amp; Backpacker Logs
+              </h2>
+            </div>
+            <Link
+              href="/stories"
+              className="text-xs font-bold text-[#0E9F7A] hover:text-[#0B8465] flex items-center gap-1 transition-smooth"
+            >
+              <span>Read All Stories</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {SAMPLE_STORIES.slice(0, 2).map((story) => (
+              <article
+                key={story.id}
+                className="bg-white border border-[#E7E5E0] rounded-2xl overflow-hidden shadow-sm flex flex-col sm:flex-row group"
+              >
+                <div className="sm:w-2/5 h-48 sm:h-auto relative overflow-hidden">
+                  <img
+                    src={story.coverImage}
+                    alt={story.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+                  />
+                </div>
+                <div className="p-6 sm:w-3/5 flex flex-col justify-between space-y-4">
+                  <div className="space-y-2">
+                    <span className="text-[11px] font-bold text-[#0E9F7A] uppercase">{story.category}</span>
+                    <h3 className="text-base font-bold text-[#0B1320] group-hover:text-[#0E9F7A] transition-smooth leading-snug">
+                      {story.title}
+                    </h3>
+                    <p className="text-xs text-[#667085] leading-relaxed line-clamp-2">
+                      {story.excerpt}
+                    </p>
+                  </div>
+                  <div className="pt-2 flex items-center justify-between border-t border-[#E7E5E0]">
+                    <span className="text-xs font-bold text-[#0B1320]">{story.author.name}</span>
+                    <Link
+                      href={`/stories/${story.id}`}
+                      className="text-xs font-bold text-[#0E9F7A] flex items-center gap-1"
+                    >
+                      <span>Read</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* --- HOW IT WORKS (FOUR EASY STAGES) --- */}
+      <section id="how-it-works" className="py-16 bg-white border-t border-[#E7E5E0]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-xl mb-14">
-            <h2 className="text-xs font-bold text-[#667085] uppercase tracking-widest mb-2">Built for Real Indian Travellers</h2>
-            <h3 className="text-3xl font-extrabold text-[#0B1320]">Why NAVIX?</h3>
+          <div className="max-w-2xl mb-12">
+            <span className="text-xs font-bold text-[#0E9F7A] uppercase tracking-widest block mb-1">
+              One budget. One plan. Fewer travel headaches.
+            </span>
+            <h2 className="text-3xl font-extrabold text-[#0B1320]">
+              How NAVIX plans your whole journey
+            </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="space-y-3">
-              <span className="text-sm font-mono font-bold text-[#0E9F7A]">01 /</span>
-              <h4 className="text-lg font-bold text-[#0B1320]">Tier-2 &amp; Tier-3 Hub Routing</h4>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="bg-[#F7F5F0] border border-[#E7E5E0] rounded-2xl p-6 space-y-3">
+              <span className="w-8 h-8 rounded-full bg-[#0E9F7A]/10 text-[#0E9F7A] font-bold text-xs flex items-center justify-center font-mono">
+                01
+              </span>
+              <h3 className="text-base font-bold text-[#0B1320]">Transit Graph Search</h3>
               <p className="text-xs text-[#667085] leading-relaxed">
-                Most travel tools assume you start in a metro. NAVIX natively stitches connections starting from smaller hubs like Sangli, Miraj, or Kolhapur.
+                Connects local shuttles, trains, and interstate buses starting from smaller hubs like Sangli or Miraj.
               </p>
             </div>
 
-            <div className="space-y-3">
-              <span className="text-sm font-mono font-bold text-[#4C8BF5]">02 /</span>
-              <h4 className="text-lg font-bold text-[#0B1320]">Hard Budget Protection</h4>
+            <div className="bg-[#F7F5F0] border border-[#E7E5E0] rounded-2xl p-6 space-y-3">
+              <span className="w-8 h-8 rounded-full bg-[#4C8BF5]/10 text-[#4C8BF5] font-bold text-xs flex items-center justify-center font-mono">
+                02
+              </span>
+              <h3 className="text-base font-bold text-[#0B1320]">Layover Validation</h3>
               <p className="text-xs text-[#667085] leading-relaxed">
-                Never get surprised by unexpected costs. Total trip budget includes transport, stay, food, activities, and local transfers under one strict cap.
+                Evaluates time-dependent connection windows between stations, rejecting risky or tight transfers.
               </p>
             </div>
 
-            <div className="space-y-3">
-              <span className="text-sm font-mono font-bold text-[#0B1320]">03 /</span>
-              <h4 className="text-lg font-bold text-[#0B1320]">Deterministic Reliability</h4>
+            <div className="bg-[#F7F5F0] border border-[#E7E5E0] rounded-2xl p-6 space-y-3">
+              <span className="w-8 h-8 rounded-full bg-[#0E9F7A]/10 text-[#0E9F7A] font-bold text-xs flex items-center justify-center font-mono">
+                03
+              </span>
+              <h3 className="text-base font-bold text-[#0B1320]">DP Budget Allocator</h3>
               <p className="text-xs text-[#667085] leading-relaxed">
-                Powered strictly by time-dependent A* graph search and Knapsack DP algorithms. Zero probabilistic guesses or AI hallucinated schedules.
+                Optimizes accommodation, food, and activity tiers so your total trip cost never exceeds your max budget.
+              </p>
+            </div>
+
+            <div className="bg-[#F7F5F0] border border-[#E7E5E0] rounded-2xl p-6 space-y-3">
+              <span className="w-8 h-8 rounded-full bg-[#0B1320]/10 text-[#0B1320] font-bold text-xs flex items-center justify-center font-mono">
+                04
+              </span>
+              <h3 className="text-base font-bold text-[#0B1320]">Complete Itinerary</h3>
+              <p className="text-xs text-[#667085] leading-relaxed">
+                Generates a day-by-day execution plan with transparent price breakdowns and PDF download.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- FINAL CTA (HIGH CONTRAST NAVY SECTION) --- */}
-      <section className="py-20 bg-[#0A1128] text-white">
+      {/* --- CALL TO ACTION (HIGH CONTRAST NAVY) --- */}
+      <section className="py-16 bg-[#0A1128] text-white">
         <div className="max-w-4xl mx-auto text-center px-4 space-y-6">
-          <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            Plan the whole journey.{' '}
-            <span className="font-serif-emphasis italic text-[#0E9F7A]">Not just the ticket.</span>
-          </h3>
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+            Ready for your next budget trip?
+          </h2>
           <p className="text-sm text-[#94A3B8] max-w-xl mx-auto leading-relaxed">
-            Experience multi-modal route planning subject to your maximum budget constraint.
+            Plan your complete multi-modal travel itinerary under one budget cap.
           </p>
-          <div className="pt-2">
+          <div>
             <Link
               href="/plan"
               className="inline-flex items-center gap-2 text-sm font-bold bg-[#0E9F7A] hover:bg-[#0B8465] text-white px-8 py-4 rounded-xl transition-smooth shadow-lg"
             >
-              <span>Start Planning Now</span>
+              <span>Build Your Journey Now</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

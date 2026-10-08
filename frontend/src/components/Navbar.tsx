@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Logo } from './Logo';
 import { getCurrentUser, logoutSession } from '@/services/auth';
 import { UserResponse } from '@/types';
-import { Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard, Shield } from 'lucide-react';
+import { Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard, Shield, BookOpen } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const router = useRouter();
@@ -26,9 +26,13 @@ export const Navbar: React.FC = () => {
         <Logo light={false} />
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[#667085]">
+        <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-[#667085]">
           <Link href="/plan" className="hover:text-[#0B1320] transition-smooth">
             Plan
+          </Link>
+          <Link href="/stories" className="hover:text-[#0B1320] transition-smooth flex items-center gap-1.5">
+            <BookOpen className="w-3.5 h-3.5 text-[#0E9F7A]" />
+            <span>Stories</span>
           </Link>
           <Link href="/#how-it-works" className="hover:text-[#0B1320] transition-smooth">
             How it Works
@@ -38,7 +42,7 @@ export const Navbar: React.FC = () => {
           </Link>
           {currentUser && (
             <Link href="/dashboard" className="hover:text-[#0B1320] transition-smooth flex items-center gap-1">
-              <LayoutDashboard className="w-3.5 h-3.5" /> Saved Trips
+              <LayoutDashboard className="w-3.5 h-3.5 text-[#4C8BF5]" /> Saved Trips
             </Link>
           )}
           {currentUser?.role.toLowerCase() === 'admin' && (
@@ -102,6 +106,13 @@ export const Navbar: React.FC = () => {
             className="block text-[#0B1320] hover:text-[#0E9F7A] py-2 text-sm font-medium"
           >
             Plan
+          </Link>
+          <Link
+            href="/stories"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-[#0B1320] hover:text-[#0E9F7A] py-2 text-sm font-medium"
+          >
+            Travel Stories
           </Link>
           {currentUser && (
             <Link
