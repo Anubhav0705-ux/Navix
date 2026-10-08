@@ -292,9 +292,20 @@ export const PlannerProvider: React.FC<{ children: React.ReactNode }> = ({ child
       profile: state.profile,
       stay_preference: state.stayPreference,
       food_preference: state.foodPreference,
-      activity_preference: state.activityPreference
+      activity_preference: state.activityPreference,
+      planner_preferences: {
+        selected_activity_ids: state.selectedPlaces,
+        trip_personalities: state.personalities,
+        pace: state.travelPace.toUpperCase() as 'RELAXED' | 'BALANCED' | 'PACKED',
+        must_include: state.mustInclude,
+        avoid: state.avoid,
+        food_preferences: state.foodPreferences,
+        departure_preference: state.departurePreference,
+        allow_overnight: state.allowOvernight
+      }
     };
   };
+
 
   return (
     <PlannerContext.Provider value={{ state, dispatch, getBackendPayload }}>

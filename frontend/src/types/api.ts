@@ -19,6 +19,17 @@ export interface TokenResponse {
   user: UserResponse;
 }
 
+export interface PlannerPreferences {
+  selected_activity_ids?: string[];
+  trip_personalities?: string[];
+  pace?: 'RELAXED' | 'BALANCED' | 'PACKED';
+  must_include?: string[];
+  avoid?: string[];
+  food_preferences?: string[];
+  departure_preference?: string;
+  allow_overnight?: boolean;
+}
+
 export interface TripPlanRequest {
   origin: string;
   destination: string;
@@ -30,6 +41,7 @@ export interface TripPlanRequest {
   stay_preference: StayPreference;
   food_preference: FoodPreference;
   activity_preference: ActivityPreference;
+  planner_preferences?: PlannerPreferences;
 }
 
 export interface RouteSegmentResult {
@@ -109,12 +121,44 @@ export interface CostBreakdown {
   budget_status: BudgetStatus;
 }
 
+export type ItineraryEventType = 'TRANSIT' | 'TRANSFER' | 'CHECK_IN' | 'ACTIVITY' | 'MEAL' | 'LOCAL_TRANSFER' | 'FREE_TIME' | 'STAY';
+
+export interface StructuredItineraryEvent {
+  event_type: ItineraryEventType;
+  start_time: string;
+  end_time: string;
+  title: string;
+  description: string;
+  cost: number;
+  location?: string;
+  category?: string;
+  reason?: string;
+  travel_minutes_before?: number;
+}
+
 export interface DailyItineraryItem {
   day_number: number;
   date: string;
   title: string;
   events: string[];
+  structured_events?: StructuredItineraryEvent[];
   estimated_daily_spend: number;
+  day_theme?: string;
+  total_activity_minutes?: number;
+  total_travel_minutes?: number;
+  experience_score?: number;
+}
+
+
+export interface ItineraryIntelligenceMetrics {
+  activities_scheduled: number;
+  total_experience_utility: number;
+  local_travel_minutes: number;
+  free_time_hours: number;
+  budget_utilization_percent: number;
+  must_visits_included: number;
+  must_visits_total: number;
+  pace_label: string;
 }
 
 export interface TripPlanResult {
@@ -135,9 +179,11 @@ export interface TripPlanResult {
   cost_breakdown: CostBreakdown;
   daily_itinerary: DailyItineraryItem[];
   decision_explanations: string[];
+  itinerary_metrics?: ItineraryIntelligenceMetrics;
 }
 
 export interface APIErrorDetail {
   code: string;
   message: string;
 }
+

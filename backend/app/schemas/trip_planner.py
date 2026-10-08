@@ -31,6 +31,23 @@ class BudgetStatus(str, Enum):
     EXCEEDED = "EXCEEDED"        # should never occur in valid plan
 
 
+class TravelPace(str, Enum):
+    RELAXED = "RELAXED"
+    BALANCED = "BALANCED"
+    PACKED = "PACKED"
+
+
+class PlannerPreferences(BaseModel):
+    selected_activity_ids: Optional[List[str]] = Field(default_factory=list)
+    trip_personalities: Optional[List[str]] = Field(default_factory=list)
+    pace: TravelPace = TravelPace.BALANCED
+    must_include: Optional[List[str]] = Field(default_factory=list)
+    avoid: Optional[List[str]] = Field(default_factory=list)
+    food_preferences: Optional[List[str]] = Field(default_factory=list)
+    departure_preference: Optional[str] = "Morning"
+    allow_overnight: Optional[bool] = True
+
+
 class TripPlanRequest(BaseModel):
     origin: str
     destination: str
@@ -42,6 +59,7 @@ class TripPlanRequest(BaseModel):
     stay_preference: StayPreference = StayPreference.STANDARD
     food_preference: FoodPreference = FoodPreference.BALANCED
     activity_preference: ActivityPreference = ActivityPreference.MEDIUM
+    planner_preferences: Optional[PlannerPreferences] = None
 
 
 class SelectedStay(BaseModel):
@@ -84,12 +102,52 @@ class CostBreakdown(BaseModel):
     budget_status: BudgetStatus
 
 
+class ItineraryEventType(str, Enum):
+    TRANSIT = "TRANSIT"
+    TRANSFER = "TRANSFER"
+    CHECK_IN = "CHECK_IN"
+    ACTIVITY = "ACTIVITY"
+    MEAL = "MEAL"
+    LOCAL_TRANSFER = "LOCAL_TRANSFER"
+    FREE_TIME = "FREE_TIME"
+    STAY = "STAY"
+
+
+class StructuredItineraryEvent(BaseModel):
+    event_type: ItineraryEventType
+    start_time: str
+    end_time: str
+    title: str
+    description: str
+    cost: Decimal
+    location: Optional[str] = None
+    category: Optional[str] = None
+    reason: Optional[str] = None
+    travel_minutes_before: Optional[int] = 0
+
+
 class DailyItineraryItem(BaseModel):
     day_number: int
     date: date
     title: str
     events: List[str]
+    structured_events: List[StructuredItineraryEvent] = Field(default_factory=list)
     estimated_daily_spend: Decimal
+    day_theme: Optional[str] = None
+    total_activity_minutes: Optional[int] = 0
+    total_travel_minutes: Optional[int] = 0
+    experience_score: Optional[float] = 0.0
+
+
+class ItineraryIntelligenceMetrics(BaseModel):
+    activities_scheduled: int
+    total_experience_utility: float
+    local_travel_minutes: int
+    free_time_hours: float
+    budget_utilization_percent: float
+    must_visits_included: int
+    must_visits_total: int
+    pace_label: str
 
 
 class TripPlanResult(BaseModel):
@@ -112,5 +170,7 @@ class TripPlanResult(BaseModel):
     cost_breakdown: CostBreakdown
     daily_itinerary: List[DailyItineraryItem]
     decision_explanations: List[str]
+    itinerary_metrics: Optional[ItineraryIntelligenceMetrics] = None
 
     model_config = ConfigDict(from_attributes=True)
+

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.algorithms import TransitGraph, search_routes, RoutingRequest, SearchError
 from app.algorithms.budget_optimizer import optimize_trip_budget
-from app.algorithms.itinerary_generator import generate_daily_itinerary
+from app.algorithms.itinerary_scheduler import generate_automatic_itinerary
 from app.schemas.trip_planner import TripPlanRequest, TripPlanResult
 
 
@@ -14,7 +14,7 @@ def generate_complete_trip_plan(db: Session, request: TripPlanRequest) -> TripPl
     1. Input Validation
     2. A* Time-Dependent Route Search with Schedule Projection
     3. Constrained Whole-Trip Budget Optimizer
-    4. Deterministic Daily Itinerary Generator
+    4. Deterministic Automatic Itinerary Scheduler
     """
     # 1. Input Validation
     if request.return_date <= request.departure_date:
@@ -66,16 +66,20 @@ def generate_complete_trip_plan(db: Session, request: TripPlanRequest) -> TripPl
         activity_preference=request.activity_preference
     )
 
-    # 4. Daily Itinerary Generation
-    daily_itinerary = generate_daily_itinerary(
+    # 4. Automatic Daily Itinerary Scheduling
+    daily_itinerary, sched_explanations, metrics = generate_automatic_itinerary(
         departure_date=request.departure_date,
         return_date=request.return_date,
         route_segments=route_res.segments,
         stay=stay,
         food=food,
         activities=activities,
-        travellers=request.travellers
+        travellers=request.travellers,
+        preferences=request.planner_preferences
     )
+
+    # Combine explanations
+    all_explanations = explanations + sched_explanations
 
     # 5. Assemble Result
     return TripPlanResult(
@@ -95,5 +99,7 @@ def generate_complete_trip_plan(db: Session, request: TripPlanRequest) -> TripPl
         activities=activities,
         cost_breakdown=breakdown,
         daily_itinerary=daily_itinerary,
-        decision_explanations=explanations
+        decision_explanations=all_explanations,
+        itinerary_metrics=metrics
     )
+

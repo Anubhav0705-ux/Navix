@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Navbar, Footer, PlannerTopNav, TripSetupStage, TransportStage, PlacesStage, FoodStage, StayStage } from '@/components';
+import { Navbar, Footer, PlannerTopNav, TripSetupStage, TransportStage, PlacesStage, FoodStage, StayStage, AutoPlanStage } from '@/components';
 import { PlannerProvider, usePlanner } from '@/context/PlannerContext';
 import { requestTripPlan, APIError } from '@/services';
-import { saveTripPlan } from '@/lib';
+import { saveTripPlan, getTripPlan } from '@/lib';
 import { TripPlanResult } from '@/types';
 import { Loader2, Check, AlertTriangle, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 
@@ -14,7 +14,7 @@ const LOADING_CHECKLIST = [
   'Evaluating time-dependent schedules & transfers',
   'Validating layover connection safety windows',
   'Optimizing whole-trip budget DP allocation',
-  'Constructing daily itinerary & cost breakdown'
+  'Constructing daily itinerary & experience timeline'
 ];
 
 function InnerPlannerWorkspace() {
@@ -25,6 +25,8 @@ function InnerPlannerWorkspace() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingStage, setLoadingStage] = useState(0);
   const [errorInfo, setErrorInfo] = useState<{ code: string; message: string } | null>(null);
+  const [planResult, setPlanResult] = useState<TripPlanResult | null>(() => getTripPlan());
+
 
   // Sync initial query params if present
   useEffect(() => {
@@ -61,7 +63,9 @@ function InnerPlannerWorkspace() {
     try {
       const result: TripPlanResult = await requestTripPlan(payload);
       saveTripPlan(result);
-      router.push('/trip/result');
+      setPlanResult(result);
+      setIsSubmitting(false);
+      dispatch({ type: 'SET_STAGE', payload: 6 });
     } catch (err: unknown) {
       setIsSubmitting(false);
       if (err instanceof APIError) {
@@ -179,34 +183,40 @@ function InnerPlannerWorkspace() {
             {state.stage === 3 && <PlacesStage />}
             {state.stage === 4 && <FoodStage />}
             {state.stage === 5 && <StayStage onExecutePlan={handleExecutePlan} />}
+            {state.stage === 6 && (
+              <AutoPlanStage
+                planResult={planResult}
+                onReOptimize={handleExecutePlan}
+                isSubmitting={isSubmitting}
+              />
+            )}
 
-            {/* Future Execution Shell Views (6 to 7) */}
-            {state.stage > 5 && (
-              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 sm:p-12 text-center space-y-6 backdrop-blur-xl shadow-2xl my-8">
-                <div className="w-16 h-16 rounded-2xl bg-teal-500/10 text-[#0E9F7A] flex items-center justify-center mx-auto border border-teal-500/20">
+            {/* Stage 07 Shell View */}
+            {state.stage === 7 && (
+              <div className="bg-[#101419] border border-white/15 rounded-3xl p-8 sm:p-12 text-center space-y-6 backdrop-blur-xl shadow-2xl my-8">
+                <div className="w-16 h-16 rounded-2xl bg-[#0FA77A]/10 text-[#0FA77A] flex items-center justify-center mx-auto border border-[#0FA77A]/20">
                   <ShieldCheck className="w-8 h-8" />
                 </div>
                 <div className="max-w-md mx-auto space-y-2">
                   <h3 className="text-xl sm:text-2xl font-extrabold text-white">
-                    Stage 0{state.stage} Automatic Solver Trigger
+                    Stage 07 &bull; Final Trip Command Center
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                    Execute time-dependent A* routing and constrained DP budget optimization for your customized selections.
+                    View final whole-trip breakdown, print PDF itinerary, or save to your NAVIX profile.
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
                   <button
-                    onClick={handleExecutePlan}
-                    className="px-6 py-3 bg-gradient-to-r from-[#0E9F7A] to-[#0B8465] hover:brightness-110 text-white font-bold text-sm rounded-xl flex items-center gap-2 shadow-lg shadow-[#0E9F7A]/20 transition-all"
+                    onClick={() => router.push('/trip/result')}
+                    className="px-8 py-3.5 bg-gradient-to-r from-[#0FA77A] to-[#0B8465] hover:brightness-110 text-white font-bold text-xs rounded-xl flex items-center gap-2 shadow-lg shadow-[#0FA77A]/20 transition-all uppercase tracking-wider"
                   >
-                    <span>Run Full Trip Generation</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <span>View Complete Trip Result &rarr;</span>
                   </button>
                   <button
-                    onClick={() => dispatch({ type: 'SET_STAGE', payload: 1 })}
-                    className="px-5 py-3 border border-slate-700 hover:bg-slate-800 text-slate-300 font-medium text-sm rounded-xl transition-all"
+                    onClick={() => dispatch({ type: 'SET_STAGE', payload: 6 })}
+                    className="px-5 py-3 border border-white/15 hover:bg-white/10 text-slate-300 font-bold text-xs rounded-xl transition-all"
                   >
-                    Return to Trip Setup
+                    Back to Auto Plan
                   </button>
                 </div>
               </div>
@@ -220,6 +230,7 @@ function InnerPlannerWorkspace() {
     </div>
   );
 }
+
 
 export default function PlannerPage() {
   return (

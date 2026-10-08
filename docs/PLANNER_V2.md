@@ -13,8 +13,8 @@
 | **03** | `PLACES` | **Active Discovery (Phase 3)** | Optimizer-backed activities vs discovery-only guide entries, Category filters & personality sorting |
 | **04** | `FOOD` | **Active Discovery (Phase 3)** | Functional budget dining tiers (Basic, Balanced, Flexible) & Himachali culinary inspiration guide |
 | **05** | `STAY` | **Active Discovery (Phase 3)** | Accommodation tiers (Budget, Standard, Comfort), rate/night calculator & trip workspace summary |
-| **06** | `AUTO PLAN` | **Active Execution** | Time-dependent A* search & DP Knapsack budget optimization solver execution |
-| **07** | `REVIEW` | **Active Review** | Final multi-modal itinerary, budget receipt breakdown, Leaflet map, PDF export |
+| **06** | `AUTO PLAN` | **Active Intelligence (Phase 4)** | Automatic Time-Dependent Scheduler & Experience Utility Maximizer (01-05 auto timeline generator) |
+| **07** | `REVIEW` | **Active Review (Phase 5 Target)** | Final multi-modal itinerary, budget receipt breakdown, Leaflet map, PDF export |
 
 ---
 
@@ -66,7 +66,7 @@ export interface PlannerState {
 
 ## 3. Backend Compatibility Mapping
 
-To maintain 100% backward and forward compatibility with the FastAPI backend endpoint `POST /api/v1/trips/plan`, `getBackendPayload()` extracts only the active schema fields:
+To maintain 100% backward and forward compatibility with the FastAPI backend endpoint `POST /api/v1/trips/plan`, `getBackendPayload()` formats:
 
 ```typescript
 {
@@ -79,8 +79,17 @@ To maintain 100% backward and forward compatibility with the FastAPI backend end
   profile,
   stay_preference: stayPreference,
   food_preference: foodPreference,
-  activity_preference: activityPreference
+  activity_preference: activityPreference,
+  planner_preferences: {
+    selected_activity_ids: selectedPlaces,
+    trip_personalities: personalities,
+    pace: travelPace.toUpperCase(),
+    must_include: mustInclude,
+    avoid,
+    food_preferences: foodPreferences,
+    departure_preference: departurePreference,
+    allow_overnight: allowOvernight
+  }
 }
 ```
 
-Additional Phase 2 UI metadata (traveller names/ages, trip personality chips, travel pace) are stored in the frontend planning workspace for future preference scoring.
