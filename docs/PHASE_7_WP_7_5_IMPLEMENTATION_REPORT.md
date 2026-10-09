@@ -70,8 +70,9 @@ Prior to WP-7.5, the repository lacked automated GitHub Actions workflows. Key f
 
 | File Path | Action | Description |
 | :--- | :--- | :--- |
-| `.github/workflows/ci.yml` | **Created** | Primary GitHub Actions CI pipeline defining backend, frontend, and Docker verification jobs. |
-| `docs/PHASE_7_WP_7_5_IMPLEMENTATION_REPORT.md` | **Created** | Official WP-7.5 implementation and verification report. |
+| `.github/workflows/ci.yml` | **Modified** | Primary GitHub Actions CI pipeline defining backend, frontend, and Docker verification jobs. Updated to install `backend/requirements-dev.txt`. |
+| `backend/requirements-dev.txt` | **Created** | Dedicated manifest for test-only backend dependencies (`pytest`, `httpx`, `anyio`), decoupling test tooling from production Docker images. |
+| `docs/PHASE_7_WP_7_5_IMPLEMENTATION_REPORT.md` | **Updated** | Official WP-7.5 implementation, security audit, and CI correction report. |
 
 ---
 
@@ -81,10 +82,14 @@ Job Name: `backend-verification`
 Runner: `ubuntu-latest`  
 Timeout: 10 minutes  
 
+### Initial Failure & Root Cause (Commit `e163809`)
+- **Root Cause**: `backend/requirements.txt` previously contained strictly production dependencies (`fastapi`, `uvicorn`, `sqlalchemy`, etc.). Test dependencies (`pytest`, `httpx`, `anyio`) were missing from `requirements.txt`, causing the initial GitHub Actions run to fail with `/opt/hostedtoolcache/Python/3.10.22/x64/bin/python: No module named pytest`.
+- **Correction Applied**: Created `backend/requirements-dev.txt` containing `pytest>=8.0.0`, `httpx>=0.27.0`, and `anyio>=4.0.0`. Updated `.github/workflows/ci.yml` to install both `-r backend/requirements.txt` and `-r backend/requirements-dev.txt`.
+
 ### Execution Sequence
 1. Checkout repository (`actions/checkout@v4`).
-2. Set up Python 3.10 with dependency caching (`actions/setup-python@v5`, `cache: pip`).
-3. Install backend requirements (`pip install -r backend/requirements.txt`).
+2. Set up Python 3.10 with dependency caching (`actions/setup-python@v5`, `cache: pip`, pathing `backend/requirements*.txt`).
+3. Install backend production and dev dependencies (`pip install -r backend/requirements.txt -r backend/requirements-dev.txt`).
 4. Execute `python -m pytest tests/` with environment override `APP_ENV=TESTING`.
 
 ```yaml
@@ -100,11 +105,13 @@ Timeout: 10 minutes
         with:
           python-version: "3.10"
           cache: "pip"
-          cache-dependency-path: "backend/requirements.txt"
-      - name: Install Backend Dependencies
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/requirements-dev.txt
+      - name: Install Backend & Testing Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r backend/requirements.txt
+          pip install -r backend/requirements.txt -r backend/requirements-dev.txt
       - name: Execute Backend Test Suite
         env:
           APP_ENV: TESTING
