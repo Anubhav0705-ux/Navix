@@ -1,0 +1,11 @@
+# Build context exclusions for NAVIX Frontend Next.js Docker image
+node_modules
+.next
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+README.md
+AGENTS.md
+CLAUDE.md
