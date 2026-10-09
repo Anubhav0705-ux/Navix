@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.v1.router import api_v1_router
 from app.database.session import verify_database_connection
+from app.core.redis import verify_redis_connection, redis_manager
+from app.middleware.rate_limit import RateLimitMiddleware
 
 app = FastAPI(
     title="NAVIX API",
@@ -26,6 +28,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Rate Limiting Middleware
+app.add_middleware(RateLimitMiddleware)
+
 # Mount API Routers
 app.include_router(api_v1_router, prefix="/api")
 
@@ -43,3 +48,15 @@ def health_check():
 def db_health_check():
     """Read-only database connectivity health check."""
     return verify_database_connection()
+
+
+@app.get("/health/redis", tags=["System"])
+async def redis_health_check():
+    """Read-only Redis connectivity and rate limiter health check."""
+    return await verify_redis_connection()
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Clean up application connections on shutdown."""
+    await redis_manager.close()

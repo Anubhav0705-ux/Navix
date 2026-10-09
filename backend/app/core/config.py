@@ -46,12 +46,20 @@ class Settings(BaseSettings):
     # CORS & Web Origin
     FRONTEND_ORIGIN: str = "http://localhost:3000"
 
-    # Redis Infrastructure Settings
+    # Redis Infrastructure Settings & Connection Pooling
     REDIS_HOST: str = "127.0.0.1"
     REDIS_PORT: int = 6379
+    REDIS_DB: int = Field(default=0, ge=0, le=15, description="Redis database index")
     REDIS_PASSWORD: Optional[str] = None
     REDIS_URL: Optional[str] = None
-    REDIS_FAIL_OPEN: bool = True
+    REDIS_SSL: bool = Field(default=False, description="Enable SSL/TLS for Redis connections")
+    REDIS_CONNECT_TIMEOUT: float = Field(default=2.0, ge=0.1, le=30.0, description="Redis connection timeout in seconds")
+    REDIS_SOCKET_TIMEOUT: float = Field(default=2.0, ge=0.1, le=30.0, description="Redis socket read/write timeout in seconds")
+    REDIS_MAX_CONNECTIONS: int = Field(default=50, ge=1, le=500, description="Redis connection pool max connections")
+    REDIS_KEY_PREFIX: str = Field(default="navix", description="Redis key namespace prefix")
+    REDIS_FAIL_OPEN: bool = Field(default=True, description="Fail open on Redis failure for search/planning endpoints")
+    ALLOW_LOCALHOST_REDIS: bool = Field(default=False, description="Explicit flag allowing localhost/127.0.0.1 Redis target in staging/production")
+    TRUSTED_PROXIES: List[str] = Field(default_factory=lambda: ["127.0.0.1", "::1"], description="List of trusted reverse proxy IP addresses")
 
     # Rate Limiting & Diagnostics
     RATE_LIMIT_ENABLED: bool = True
@@ -97,6 +105,17 @@ class Settings(BaseSettings):
         # 4. Validate Redis & CORS Configuration
         if not (1 <= self.REDIS_PORT <= 65535):
             raise ValueError(f"Invalid REDIS_PORT {self.REDIS_PORT}. Port must be between 1 and 65535.")
+
+        if self.APP_ENV in (EnvironmentOption.STAGING.value, EnvironmentOption.PRODUCTION.value):
+            if not self.ALLOW_LOCALHOST_REDIS and ("REDIS_HOST" in self.model_fields_set or "REDIS_URL" in self.model_fields_set):
+                redis_check = self.REDIS_HOST.lower()
+                if self.REDIS_URL:
+                    redis_check = self.REDIS_URL.lower()
+                if "127.0.0.1" in redis_check or "localhost" in redis_check:
+                    raise ValueError(
+                        f"Redis host in {self.APP_ENV} environment cannot target localhost/127.0.0.1 "
+                        "without explicit ALLOW_LOCALHOST_REDIS=True override."
+                    )
 
         if self.APP_ENV == EnvironmentOption.PRODUCTION.value:
             if not self.FRONTEND_ORIGIN.startswith("https://"):
@@ -165,6 +184,15 @@ class Settings(BaseSettings):
             sep = "&" if "?" in url else "?"
             url = f"{url}{sep}sslmode={self.DB_SSL_MODE}"
         return url
+
+    @property
+    def redis_connection_url(self) -> str:
+        """Construct Redis connection URL."""
+        if self.REDIS_URL:
+            return self.REDIS_URL
+        scheme = "rediss" if self.REDIS_SSL else "redis"
+        auth = f":{self.REDIS_PASSWORD}@" if self.REDIS_PASSWORD else ""
+        return f"{scheme}://{auth}{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
 
     @property
     def is_development(self) -> bool:
