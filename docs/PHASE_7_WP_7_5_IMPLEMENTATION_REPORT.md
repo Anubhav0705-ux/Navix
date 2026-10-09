@@ -70,9 +70,10 @@ Prior to WP-7.5, the repository lacked automated GitHub Actions workflows. Key f
 
 | File Path | Action | Description |
 | :--- | :--- | :--- |
-| `.github/workflows/ci.yml` | **Modified** | Primary GitHub Actions CI pipeline defining backend, frontend, and Docker verification jobs. Updated to install `backend/requirements-dev.txt`. |
+| `.github/workflows/ci.yml` | **Modified** | Primary GitHub Actions CI pipeline. Configured `postgis/postgis:15-3.3-alpine` service container for backend CI job. |
+| `backend/tests/conftest.py` | **Created** | Session-level Pytest fixture (`setup_test_database`) initializing PostGIS extension, ORM schema tables, test users (`usr_01`, `usr_02`), and demo transit schedules. |
 | `backend/requirements-dev.txt` | **Created** | Dedicated manifest for test-only backend dependencies (`pytest`, `httpx`, `anyio`), decoupling test tooling from production Docker images. |
-| `docs/PHASE_7_WP_7_5_IMPLEMENTATION_REPORT.md` | **Updated** | Official WP-7.5 implementation, security audit, and CI correction report. |
+| `docs/PHASE_7_WP_7_5_IMPLEMENTATION_REPORT.md` | **Updated** | Official WP-7.5 technical report covering CI service containers and reproducible database test fixtures. |
 
 ---
 
@@ -82,21 +83,31 @@ Job Name: `backend-verification`
 Runner: `ubuntu-latest`  
 Timeout: 10 minutes  
 
-### Initial Failure & Root Cause (Commit `e163809`)
-- **Root Cause**: `backend/requirements.txt` previously contained strictly production dependencies (`fastapi`, `uvicorn`, `sqlalchemy`, etc.). Test dependencies (`pytest`, `httpx`, `anyio`) were missing from `requirements.txt`, causing the initial GitHub Actions run to fail with `/opt/hostedtoolcache/Python/3.10.22/x64/bin/python: No module named pytest`.
-- **Correction Applied**: Created `backend/requirements-dev.txt` containing `pytest>=8.0.0`, `httpx>=0.27.0`, and `anyio>=4.0.0`. Updated `.github/workflows/ci.yml` to install both `-r backend/requirements.txt` and `-r backend/requirements-dev.txt`.
-
-### Execution Sequence
-1. Checkout repository (`actions/checkout@v4`).
-2. Set up Python 3.10 with dependency caching (`actions/setup-python@v5`, `cache: pip`, pathing `backend/requirements*.txt`).
-3. Install backend production and dev dependencies (`pip install -r backend/requirements.txt -r backend/requirements-dev.txt`).
-4. Execute `python -m pytest tests/` with environment override `APP_ENV=TESTING`.
+### CI Run #2 Root Cause Analysis & Resolution (Commit `aa71d9c`)
+- **Root Cause**: CI Run #2 failed during authentication integration tests (`test_auth_and_persistence.py`). While `ci.yml` configured `DB_HOST=127.0.0.1` and `DB_PORT=5433`, the GitHub runner did not declare a PostgreSQL service container. Furthermore, tests requiring pre-existing database user records (`anubhav@example.com`, `admin@navix.com`) failed due to empty uninitialized database state.
+- **Service Container Provisioning**: Added a `postgis/postgis:15-3.3-alpine` service container to `backend-verification` in `.github/workflows/ci.yml`, mapping host port `5433:5432` with automated health checks (`pg_isready`).
+- **Reproducible Test Fixture (`conftest.py`)**: Authored `backend/tests/conftest.py` containing a session-scoped fixture (`setup_test_database`). When tests execute against an active PostgreSQL database, `conftest.py` automatically initializes PostGIS extensions, creates ORM tables via `Base.metadata.create_all()`, and seeds standard test users (`usr_01`, `usr_02`) and demo transit schedules (`seed_data()`).
 
 ```yaml
   backend-verification:
     name: Backend Pytest & Core Logic Gates
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    services:
+      postgres:
+        image: postgis/postgis:15-3.3-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_password
+          POSTGRES_DB: NavixTest
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d NavixTest"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -118,6 +129,13 @@ Timeout: 10 minutes
           SECRET_KEY: ci_test_secret_key_32_characters_minimum_phrase_2026
           ALLOW_LOCALHOST_DB: "true"
           ALLOW_LOCALHOST_REDIS: "true"
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5433
+          DB_NAME: NavixTest
+          DB_USER: postgres
+          DB_PASSWORD: postgres_password
         run: |
           cd backend
           python -m pytest tests/ -v
@@ -224,13 +242,27 @@ Timeout: 15 minutes
 
 ---
 
-## 9. Database Migration Safeguards & Pre-Deployment Gates
+## 9. Database Isolation Safeguards & Pre-Deployment Gates
 
+### 9.1 Test Database Bootstrap Safety Guardrails (`backend/tests/conftest.py`)
+To prevent accidental DDL operations (`create_all`), PostGIS extension creation, or record mutations against local developer or production databases (`Navix`), `conftest.py` enforces 6 mandatory safety checks before executing any write:
+1. **Explicit Environment Authorization**: Requires `ALLOW_TEST_DB_BOOTSTRAP="true"`. If missing or set to `false`, test database bootstrap aborts immediately.
+2. **Environment Contract**: Requires `settings.APP_ENV == "TESTING"`. Aborts if set to `DEVELOPMENT`, `STAGING`, or `PRODUCTION`.
+3. **Server-Side Identity Query**: Executes `SELECT current_database(), current_user;` on the active SQLAlchemy connection.
+4. **Primary Database Rejection**: Strictly REJECTS connections targeting database `Navix` (case-insensitive).
+5. **Disposable Test Database Validation**: Requires target database name to be explicitly designated as a disposable test database (`NavixTest` or ending with `test`).
+6. **Graceful Fail-Safe Execution**: If database identity cannot be verified, bootstrap logs an error and halts schema creation without throwing unhandled exceptions.
+
+### 9.2 PostGIS Service Container Version Alignment
+- **CI Container Image**: `postgis/postgis:15-3.3-alpine` declared in `.github/workflows/ci.yml`.
+- **Target Production Architecture**: PostgreSQL 18 with PostGIS 3.6.x.
+- **Compatibility Alignment**: Official `postgis/postgis` Docker Hub images currently support stable releases up to PostgreSQL 15/16/17 with PostGIS 3.3/3.4. Spatial functions (`ST_SetSRID`, `ST_MakePoint`, `ST_Distance`) and geometry column types used by NAVIX are 100% identical and fully compatible across these versions.
+
+### 9.3 Pre-Deployment Migration Gates
 1. **Zero Automatic Startup Migrations**: Application container entrypoints (`backend/Dockerfile`) run `uvicorn app.main:app` without executing `alembic upgrade head`. Startup migrations across multi-instance ECS tasks risk lock contention and schema corruption.
 2. **Pre-Deployment Isolation**: Schema migrations in staging/production are executed as isolated single-instance pre-deployment tasks prior to application deployment.
-3. **CI Database Protection**: CI verification jobs operate with `APP_ENV=TESTING` and execute zero DDL operations against development or production databases.
-4. **Expand-Migrate-Contract Pattern**: Schema evolution must follow additive expansion (adding nullable columns/tables), data migration, and eventual contraction in a subsequent release to maintain zero-downtime application compatibility.
-5. **Mandatory Pre-Migration Backups & PITR**: AWS RDS Point-In-Time Recovery (PITR) snapshots must be verified active prior to applying production schema migrations.
+3. **Expand-Migrate-Contract Pattern**: Schema evolution must follow additive expansion (adding nullable columns/tables), data migration, and eventual contraction in a subsequent release to maintain zero-downtime application compatibility.
+4. **Mandatory Pre-Migration Backups & PITR**: AWS RDS Point-In-Time Recovery (PITR) snapshots must be verified active prior to applying production schema migrations.
 
 ---
 

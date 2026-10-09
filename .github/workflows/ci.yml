@@ -22,6 +22,21 @@ jobs:
     name: Backend Pytest & Core Logic Gates
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    services:
+      postgres:
+        image: postgis/postgis:15-3.3-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_password
+          POSTGRES_DB: NavixTest
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d NavixTest"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -43,6 +58,7 @@ jobs:
       - name: Execute Backend Test Suite
         env:
           APP_ENV: TESTING
+          ALLOW_TEST_DB_BOOTSTRAP: "true"
           SECRET_KEY: ci_test_secret_key_32_characters_minimum_phrase_2026
           ALLOW_LOCALHOST_DB: "true"
           ALLOW_LOCALHOST_REDIS: "true"
