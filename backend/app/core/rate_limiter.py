@@ -1,4 +1,5 @@
 import time
+import uuid
 import logging
 import asyncio
 from typing import Optional, Tuple, Dict, Any
@@ -164,7 +165,7 @@ class DistributedRateLimiter:
         redis_key = build_rate_limit_key(policy.name, client_ip, user_id)
         
         now = time.time()
-        req_member = f"{now}:{id(request)}"
+        req_member = f"{now}:{uuid.uuid4().hex}"
 
         client = redis_manager.get_async_client()
         if client is None:

@@ -83,13 +83,16 @@ class RedisClientManager:
                 return None
         return self._sync_client
 
-    async def verify_connection_async(self) -> Dict[str, Any]:
+    async def verify_connection_async(self, include_diagnostics: bool = False) -> Dict[str, Any]:
         """
-        Executes an asynchronous PING to test Redis connectivity and query server metadata.
-        Sanitizes connection URLs and errors in output.
+        Executes an asynchronous PING to test Redis connectivity.
+        When include_diagnostics is False, returns minimal non-sensitive status.
+        When include_diagnostics is True, includes server metadata and connection info for internal inspection.
         """
         client = self.get_async_client()
         if client is None:
+            if not include_diagnostics:
+                return {"status": "unhealthy", "service": "redis"}
             return {
                 "connected": False,
                 "circuit_broken": self.is_circuit_broken(),
@@ -100,14 +103,17 @@ class RedisClientManager:
         try:
             pong = await client.ping()
             if pong:
+                self._is_available = True
+                self._circuit_broken_until = 0.0
+                if not include_diagnostics:
+                    return {"status": "healthy", "service": "redis"}
+
                 info = {}
                 try:
                     info = await client.info("server")
                 except Exception:
                     pass
 
-                self._is_available = True
-                self._circuit_broken_until = 0.0
                 return {
                     "connected": True,
                     "circuit_broken": False,
@@ -121,6 +127,8 @@ class RedisClientManager:
             self.trigger_circuit_breaker()
             sanitized_err = mask_redis_credentials(str(e))
             logger.warning(f"Redis ping check failed: {sanitized_err}")
+            if not include_diagnostics:
+                return {"status": "unhealthy", "service": "redis"}
             return {
                 "connected": False,
                 "circuit_broken": True,
@@ -128,6 +136,8 @@ class RedisClientManager:
                 "message": f"Redis connection error: {sanitized_err}"
             }
 
+        if not include_diagnostics:
+            return {"status": "unhealthy", "service": "redis"}
         return {"connected": False, "circuit_broken": self.is_circuit_broken(), "fail_open": settings.REDIS_FAIL_OPEN, "message": "Unknown Redis state."}
 
     def verify_connection_sync(self) -> Dict[str, Any]:
@@ -186,6 +196,6 @@ class RedisClientManager:
 redis_manager = RedisClientManager()
 
 
-async def verify_redis_connection() -> Dict[str, Any]:
+async def verify_redis_connection(include_diagnostics: bool = False) -> Dict[str, Any]:
     """Helper function to verify Redis connection state asynchronously."""
-    return await redis_manager.verify_connection_async()
+    return await redis_manager.verify_connection_async(include_diagnostics=include_diagnostics)

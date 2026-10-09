@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
@@ -51,9 +51,12 @@ def db_health_check():
 
 
 @app.get("/health/redis", tags=["System"])
-async def redis_health_check():
-    """Read-only Redis connectivity and rate limiter health check."""
-    return await verify_redis_connection()
+async def redis_health_check(response: Response):
+    """Read-only Redis connectivity health check (minimal, non-sensitive)."""
+    res = await verify_redis_connection(include_diagnostics=False)
+    if res.get("status") != "healthy":
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    return res
 
 
 @app.on_event("shutdown")

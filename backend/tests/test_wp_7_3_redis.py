@@ -176,3 +176,72 @@ def test_cache_manager_key_and_metadata_construction():
     cm = RedisCacheManager(key_prefix="navix_test")
     key = cm.build_cache_key("locations", "sangli_nodes", version="v1")
     assert key == "navix_test:cache:locations:v1:sangli_nodes"
+
+
+def test_rate_limiter_unique_member_id_generation():
+    """Verify rate limiter generates cryptographically unique sorted-set member IDs even at identical timestamps."""
+    async def run_member_id_test():
+        limiter = DistributedRateLimiter()
+        mock_client = MagicMock()
+        eval_args = []
+
+        async def mock_eval(script, numkeys, key, now, window, limit, member):
+            eval_args.append(member)
+            return [1, 9, 0, 10]
+
+        mock_client.eval = mock_eval
+
+        req = MagicMock(spec=Request)
+        req.client = MagicMock(host="127.0.0.1")
+        req.headers = {}
+
+        # Simulate fast concurrent requests
+        with pytest.MonkeyPatch.context() as m:
+            m.setattr(redis_manager, "get_async_client", lambda: mock_client)
+            await limiter.check_rate_limit(req, policy_name="routes")
+            await limiter.check_rate_limit(req, policy_name="routes")
+
+        assert len(eval_args) == 2
+        # Verify member format <timestamp>:<uuid_hex>
+        mem1_ts, mem1_uuid = eval_args[0].split(":")
+        mem2_ts, mem2_uuid = eval_args[1].split(":")
+        assert mem1_uuid != mem2_uuid
+        assert len(mem1_uuid) == 32  # 128-bit hex UUID
+
+    asyncio.run(run_member_id_test())
+
+
+def test_public_redis_health_endpoint_privacy():
+    """Verify public verify_redis_connection(include_diagnostics=False) returns non-sensitive status."""
+    async def run_privacy_test():
+        res_public = await redis_manager.verify_connection_async(include_diagnostics=False)
+        assert "status" in res_public
+        assert "service" in res_public
+        assert res_public["service"] == "redis"
+        # Sensitive details MUST be excluded from public health endpoint responses
+        for sensitive_key in ["sanitized_url", "redis_version", "fail_open", "key_prefix", "circuit_broken"]:
+            assert sensitive_key not in res_public
+
+        res_diag = await redis_manager.verify_connection_async(include_diagnostics=True)
+        assert "connected" in res_diag
+        assert "fail_open" in res_diag
+
+    asyncio.run(run_privacy_test())
+
+
+def test_auth_rate_limiting_fails_closed_in_staging_and_production():
+    """Verify auth policy fails closed (allowed=False) in both STAGING and PRODUCTION when Redis is offline."""
+    limiter = DistributedRateLimiter()
+    auth_policy = POLICIES["auth"]
+
+    for env in ["STAGING", "PRODUCTION"]:
+        orig_env = settings.APP_ENV
+        try:
+            settings.APP_ENV = env
+            allowed, remaining, retry_after, limit = limiter._handle_redis_degraded(auth_policy)
+            assert allowed is False, f"Auth policy must fail closed in {env}"
+            assert remaining == 0
+            assert retry_after == auth_policy.window_seconds
+        finally:
+            settings.APP_ENV = orig_env
+
