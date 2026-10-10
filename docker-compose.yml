@@ -1,0 +1,79 @@
+# ==============================================================================
+# NAVIX Local & Smoke-Test Container Orchestration Architecture (Docker Compose)
+# ==============================================================================
+
+services:
+  # Redis Infrastructure & Rate Limiting Cluster
+  redis:
+    image: redis:7-alpine
+    container_name: navix-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - navix-network
+
+  # FastAPI Backend ASGI Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: navix-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=DEVELOPMENT
+      - SECRET_KEY=navix_dev_secret_key_32_characters_minimum_secure_phrase_2026
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5433
+      - DB_NAME=Navix
+      - DB_USER=postgres
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ALLOW_LOCALHOST_DB=true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - navix-network
+
+  # Next.js App Router Standalone Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000/api/v1
+    container_name: navix-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api/v1
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - navix-network
+
+networks:
+  navix-network:
+    driver: bridge

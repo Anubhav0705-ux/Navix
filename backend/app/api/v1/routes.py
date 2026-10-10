@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.algorithms import RoutingRequest, RouteSearchResult, SearchError
 from app.services.routing_service import plan_route
+from app.core.metrics import metrics
 
 routes_router = APIRouter(prefix="/routes", tags=["Route Search"])
 
@@ -13,6 +14,7 @@ def search_transit_routes(request: RoutingRequest, db: Session = Depends(get_db)
     """
     Search multi-modal transit routes subject to layover constraints and transport budget cap.
     """
+    metrics.record_route_search()
     try:
         return plan_route(db=db, request=request)
     except SearchError as e:

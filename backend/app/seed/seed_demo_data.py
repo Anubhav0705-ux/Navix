@@ -137,7 +137,15 @@ DEMO_SCHEDULES = [
     },
 
     # --- Option B: Sangli -> Pune -> Delhi -> Manali -> Old Manali (Cheaper / Slower) ---
-    # Note: sch_100 (node_SLI -> node_PUNE) already exists in DB
+    {
+        "schedule_id": "sch_100",
+        "source_node_id": "node_SLI",
+        "dest_node_id": "node_PUNE",
+        "provider": "MSRTC Shivneri Express (Bus)",
+        "departure_time": datetime(2026, 9, 1, 8, 0),
+        "arrival_time": datetime(2026, 9, 1, 13, 0),
+        "base_cost": Decimal("350.00")
+    },
     {
         "schedule_id": "sch_106",
         "source_node_id": "node_PUNE",

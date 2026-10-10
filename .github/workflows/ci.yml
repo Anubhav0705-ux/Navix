@@ -1,0 +1,135 @@
+name: NAVIX Continuous Integration & Quality Gates
+
+on:
+  push:
+    branches:
+      - main
+      - 'feat/**'
+  pull_request:
+    branches:
+      - main
+      - 'feat/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-verification:
+    name: Backend Pytest & Core Logic Gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgis/postgis:15-3.3-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_password
+          POSTGRES_DB: NavixTest
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d NavixTest"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set Up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/requirements-dev.txt
+
+      - name: Install Backend & Testing Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt -r backend/requirements-dev.txt
+
+      - name: Execute Backend Test Suite
+        env:
+          APP_ENV: TESTING
+          ALLOW_TEST_DB_BOOTSTRAP: "true"
+          SECRET_KEY: ci_test_secret_key_32_characters_minimum_phrase_2026
+          ALLOW_LOCALHOST_DB: "true"
+          ALLOW_LOCALHOST_REDIS: "true"
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5433
+          DB_NAME: NavixTest
+          DB_USER: postgres
+          DB_PASSWORD: postgres_password
+        run: |
+          cd backend
+          python -m pytest tests/ -v
+
+  frontend-verification:
+    name: Frontend ESLint & Standalone Build Gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run Frontend Linter (ESLint)
+        run: |
+          cd frontend
+          npm run lint
+
+      - name: Build Next.js Production App (Standalone Mode)
+        env:
+          NEXT_PUBLIC_API_BASE_URL: http://localhost:8000/api/v1
+        run: |
+          cd frontend
+          npm run build
+
+  docker-verification:
+    name: Multi-Stage Docker Image Build Gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set Up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build FastAPI Backend Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: false
+          tags: navix-backend:ci
+
+      - name: Build Next.js Frontend Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: false
+          tags: navix-frontend:ci
+          build-args: |
+            NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api/v1
