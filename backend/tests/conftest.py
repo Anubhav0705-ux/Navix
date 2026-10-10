@@ -81,42 +81,47 @@ def setup_test_database():
         Base.metadata.create_all(bind=engine)
     except Exception as schema_err:
         logger.error(f"Failed to create schema in test database: {schema_err}")
-        return
+        raise RuntimeError(f"Authorized test database schema creation failed: {schema_err}") from schema_err
 
     # 9. Seed test users and profiles in disposable test database
-    with SessionLocal() as db:
-        user = db.query(User).filter(User.email == "anubhav@example.com").first()
-        if not user:
-            u = User(
-                user_id="usr_01",
-                name="Anubhav User",
-                email="anubhav@example.com",
-                role="user",
-                password_hash=hash_password("Password123!")
-            )
-            db.add(u)
-            db.flush()
-            t = Traveler(traveler_id="trv_01", user_id="usr_01", home_city="Sangli")
-            db.add(t)
+    try:
+        with SessionLocal() as db:
+            user = db.query(User).filter(User.email == "anubhav@example.com").first()
+            if not user:
+                u = User(
+                    user_id="usr_01",
+                    name="Anubhav User",
+                    email="anubhav@example.com",
+                    role="user",
+                    password_hash=hash_password("Password123!")
+                )
+                db.add(u)
+                db.flush()
+                t = Traveler(traveler_id=u.user_id, preferences="Budget Traveler")
+                db.add(t)
 
-        admin_user = db.query(User).filter(User.email == "admin@navix.com").first()
-        if not admin_user:
-            a_usr = User(
-                user_id="usr_02",
-                name="System Admin",
-                email="admin@navix.com",
-                role="admin",
-                password_hash=hash_password("AdminPassword123!")
-            )
-            db.add(a_usr)
-            db.flush()
-            adm = Admin(admin_id="usr_02", department="Operations")
-            db.add(adm)
+            admin_user = db.query(User).filter(User.email == "admin@navix.com").first()
+            if not admin_user:
+                a_usr = User(
+                    user_id="usr_02",
+                    name="System Admin",
+                    email="admin@navix.com",
+                    role="admin",
+                    password_hash=hash_password("AdminPassword123!")
+                )
+                db.add(a_usr)
+                db.flush()
+                adm = Admin(admin_id=a_usr.user_id, department="Operations")
+                db.add(adm)
 
-        db.commit()
+            db.commit()
+    except Exception as seed_user_err:
+        logger.error(f"Failed to seed test users in test database: {seed_user_err}")
+        raise RuntimeError(f"Authorized test user seeding failed: {seed_user_err}") from seed_user_err
 
     # 10. Seed demo transit nodes and schedules
     try:
         seed_data()
     except Exception as seed_err:
-        logger.warning(f"Demo transit data seeding warning: {seed_err}")
+        logger.error(f"Failed to seed demo transit data in test database: {seed_err}")
+        raise RuntimeError(f"Authorized demo transit seeding failed: {seed_err}") from seed_err

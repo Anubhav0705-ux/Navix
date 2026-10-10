@@ -70,10 +70,11 @@ Prior to WP-7.5, the repository lacked automated GitHub Actions workflows. Key f
 
 | File Path | Action | Description |
 | :--- | :--- | :--- |
-| `.github/workflows/ci.yml` | **Modified** | Primary GitHub Actions CI pipeline. Configured `postgis/postgis:15-3.3-alpine` service container for backend CI job. |
-| `backend/tests/conftest.py` | **Created** | Session-level Pytest fixture (`setup_test_database`) initializing PostGIS extension, ORM schema tables, test users (`usr_01`, `usr_02`), and demo transit schedules. |
+| `.github/workflows/ci.yml` | **Modified** | Primary GitHub Actions CI pipeline. Configured `postgis/postgis:15-3.3-alpine` service container for backend CI job with `ALLOW_TEST_DB_BOOTSTRAP: "true"`. |
+| `backend/tests/conftest.py` | **Modified** | Session-level Pytest fixture (`setup_test_database`). Corrected `Traveler` ORM constructor to `Traveler(traveler_id=u.user_id, preferences="Budget Traveler")` matching schema PK/FK constraints, and added fail-fast exception handling. |
+| `backend/app/seed/seed_demo_data.py` | **Modified** | Added missing `sch_100` (`node_SLI` -> `node_PUNE`) to `DEMO_SCHEDULES` for 100% deterministic fresh database seeding. |
 | `backend/requirements-dev.txt` | **Created** | Dedicated manifest for test-only backend dependencies (`pytest`, `httpx`, `anyio`), decoupling test tooling from production Docker images. |
-| `docs/PHASE_7_WP_7_5_IMPLEMENTATION_REPORT.md` | **Updated** | Official WP-7.5 technical report covering CI service containers and reproducible database test fixtures. |
+| `docs/PHASE_7_WP_7_5_IMPLEMENTATION_REPORT.md` | **Updated** | Official WP-7.5 technical report covering CI service containers, model constructor fixes, and test database fixtures. |
 
 ---
 
@@ -83,10 +84,12 @@ Job Name: `backend-verification`
 Runner: `ubuntu-latest`  
 Timeout: 10 minutes  
 
-### CI Run #2 Root Cause Analysis & Resolution (Commit `aa71d9c`)
-- **Root Cause**: CI Run #2 failed during authentication integration tests (`test_auth_and_persistence.py`). While `ci.yml` configured `DB_HOST=127.0.0.1` and `DB_PORT=5433`, the GitHub runner did not declare a PostgreSQL service container. Furthermore, tests requiring pre-existing database user records (`anubhav@example.com`, `admin@navix.com`) failed due to empty uninitialized database state.
-- **Service Container Provisioning**: Added a `postgis/postgis:15-3.3-alpine` service container to `backend-verification` in `.github/workflows/ci.yml`, mapping host port `5433:5432` with automated health checks (`pg_isready`).
-- **Reproducible Test Fixture (`conftest.py`)**: Authored `backend/tests/conftest.py` containing a session-scoped fixture (`setup_test_database`). When tests execute against an active PostgreSQL database, `conftest.py` automatically initializes PostGIS extensions, creates ORM tables via `Base.metadata.create_all()`, and seeds standard test users (`usr_01`, `usr_02`) and demo transit schedules (`seed_data()`).
+### CI Run #3 Root Cause Analysis & Resolution (Commit `3e02faa`)
+- **Root Cause**: CI Run #3 failed during `conftest.py` fixture setup with `TypeError: 'user_id' is an invalid keyword argument for Traveler`. The test fixture previously attempted to construct `Traveler(traveler_id="trv_01", user_id="usr_01", home_city="Sangli")`. In the production SQLAlchemy model (`backend/app/models/traveler.py`), `traveler_id` is both the primary key and foreign key referencing `users.user_id`, and `user_id` / `home_city` columns do not exist. Additionally, `sch_100` (`node_SLI` -> `node_PUNE`) was missing from `DEMO_SCHEDULES` for fresh test databases.
+- **ORM Model & Seed Seeder Corrections**:
+  - Updated `conftest.py` to construct `Traveler(traveler_id=u.user_id, preferences="Budget Traveler")` and `Admin(admin_id=a_usr.user_id, department="Operations")`, cleanly aligning test fixtures with actual SQLAlchemy ORM relationships.
+  - Added schedule `sch_100` (`node_SLI` $\rightarrow$ `node_PUNE`, MSRTC Shivneri Express) to `DEMO_SCHEDULES` in `backend/app/seed/seed_demo_data.py`, ensuring 3 complete outgoing route options from Sangli (`node_MRJ`, `node_PUNE`, `node_MUM`) exist in fresh test databases.
+- **Fail-Fast Exception Handling**: Refactored `conftest.py` so that when `ALLOW_TEST_DB_BOOTSTRAP="true"` is explicitly authorized, any database schema creation or seeding error raises a `RuntimeError` rather than swallowing exceptions, preventing CI jobs from reporting false successes.
 
 ```yaml
   backend-verification:
