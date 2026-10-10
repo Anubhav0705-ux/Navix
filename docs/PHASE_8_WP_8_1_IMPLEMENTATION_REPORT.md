@@ -119,6 +119,14 @@ The migration test in `backend/tests/test_v2_to_phase8_migration.py` builds a pu
 - **No Destructive Column Changes**: All V2 table schemas remained 100% untouched.
 - **Additive Bridge**: `legacy_geo_mapping` table created cleanly without forcing immediate remapping of existing V2 rows.
 
+### 7.5 GitHub CI Migration Gate Repair
+
+- **Original Failure**: The initial WP-8.1 migration gate test contained a hardcoded fallback database URL `127.0.0.1:15437/NavixV2MigrationTest`. In GitHub Actions CI, PostgreSQL/PostGIS runs as a single service on port `5433` (no separate container on port `15437`). This caused a `psycopg2.OperationalError: connection refused` in CI.
+- **Same-Server / Separate-Database Fix**: Updated connection resolution in `test_v2_to_phase8_migration.py` to extract PostgreSQL host, port, user, and password dynamically from `MIGRATION_TEST_DATABASE_URL`, `DATABASE_URL`, or standard `DB_*` environment variables.
+- **Isolation Architecture**: In GitHub Actions CI (port `5433`), isolation is achieved by running standard test suites against database `NavixTest` and the Alembic migration gate against database `NavixV2MigrationTest` on the exact same PostgreSQL server instance.
+- **Safety Guardrails**: Implemented `validate_migration_db_safety()` to ensure database auto-creation only operates when `APP_ENV == "TESTING"` or `CI == "true"`, `ALLOW_TEST_DB_BOOTSTRAP == "true"`, and targets `NavixV2MigrationTest`, refusing protected development/production databases (`Navix`, `navix_dev`, `production`, `staging`).
+- **Final Result**: **PASS (3/3 migration gate tests passing)**. Dedicated gate commit: `0a7f99d fix(ci): isolate Phase 8 migration gate database`.
+
 ---
 
 ## 8. Test Suite Results
