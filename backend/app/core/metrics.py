@@ -63,6 +63,30 @@ class MetricsCollector:
 
         self._route_searches: int = 0
         self._trip_plans: int = 0
+        self._location_searches: int = 0
+        self._location_search_no_results: int = 0
+        self._location_resolutions: int = 0
+        self._nearby_searches: int = 0
+
+    def record_search_request(self):
+        """Records location search execution."""
+        with self._lock:
+            self._location_searches += 1
+
+    def record_search_no_results(self):
+        """Records location search with zero matching results."""
+        with self._lock:
+            self._location_search_no_results += 1
+
+    def record_resolution_request(self):
+        """Records canonical location resolution execution."""
+        with self._lock:
+            self._location_resolutions += 1
+
+    def record_nearby_request(self):
+        """Records nearby spatial facility search execution."""
+        with self._lock:
+            self._nearby_searches += 1
 
     def record_request(self, method: str, path: str, status_code: int, duration_seconds: float):
         """Records completed HTTP request metrics."""

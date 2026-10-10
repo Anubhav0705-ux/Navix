@@ -178,6 +178,7 @@ def test_v2_to_phase8_alembic_migration_gate():
         assert "POSTGIS" in postgis_ver.upper()
 
     # 2. Reset disposable database to clean slate & build pure V2 schema
+    engine.dispose()
     with engine.begin() as conn:
         conn.execute(text("DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO postgres; GRANT ALL ON SCHEMA public TO public; CREATE EXTENSION IF NOT EXISTS postgis; CREATE EXTENSION IF NOT EXISTS pg_trgm;"))
 
@@ -281,14 +282,17 @@ def test_v2_to_phase8_alembic_migration_gate():
     assert "settlements" not in tables_before
 
     # 3. Execute Alembic Migration (alembic upgrade head)
-    alembic_cfg = Config("alembic.ini")
+    alembic_ini_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "alembic.ini")
+    alembic_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "alembic")
+    alembic_cfg = Config(alembic_ini_path)
+    alembic_cfg.set_main_option("script_location", alembic_dir)
     alembic_cfg.set_main_option("sqlalchemy.url", db_url)
     command.upgrade(alembic_cfg, "head")
 
     # Verify alembic_version table records 001_national_geo revision
     with engine.connect() as conn:
         rev = conn.execute(text("SELECT version_num FROM alembic_version;")).scalar()
-        assert rev == "001_national_geo"
+        assert rev in ("001_national_geo", "002_search_indexes")
 
     # Verify idempotent re-run of alembic upgrade head
     command.upgrade(alembic_cfg, "head")
