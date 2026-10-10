@@ -39,47 +39,34 @@ def resolve_test_db_url() -> str:
 @pytest.fixture(scope="module")
 def setup_search_db():
     """
-    Module-level fixture initializing and populating NavixTest with WP-8.2 real data seed.
+    Module-level fixture populating NavixTest with WP-8.2 real-data seed.
+    Uses the existing shared NavixTest database bootstrapped by conftest.py.
     """
     db_url = resolve_test_db_url()
 
-    # Ensure database exists
-    admin_url = db_url.rsplit("/", 1)[0] + "/postgres"
-    admin_engine = create_engine(admin_url, isolation_level="AUTOCOMMIT")
-    with admin_engine.connect() as aconn:
-        exists = aconn.execute(text("SELECT 1 FROM pg_database WHERE datname='NavixTest'")).scalar()
-        if not exists:
-            aconn.execute(text('CREATE DATABASE "NavixTest"'))
+    # Safety check: target must be an explicitly designated test database
+    db_name = db_url.rsplit("/", 1)[1].lower()
+    if not ("test" in db_name or db_name == "navixtest"):
+        raise ValueError(f"Refusing to run search tests against non-test database: {db_url}")
 
     engine = create_engine(db_url, echo=False)
 
-    # Enable PostGIS & pg_trgm extensions
+    # Ensure PostGIS and pg_trgm extensions are enabled
     with engine.begin() as conn:
-        conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis; CREATE EXTENSION IF NOT EXISTS pg_trgm;"))
-
-    # Apply Alembic migrations
-    from alembic.config import Config
-    from alembic import command
-
-    alembic_ini_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "alembic.ini")
-    alembic_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "alembic")
-    alembic_cfg = Config(alembic_ini_path)
-    alembic_cfg.set_main_option("script_location", alembic_dir)
-    alembic_cfg.set_main_option("sqlalchemy.url", db_url)
-    command.upgrade(alembic_cfg, "head")
+        conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
+        conn.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm;"))
 
     SessionLocal = sessionmaker(bind=engine)
     session = SessionLocal()
 
-    # Seed real-data catalog if not populated
-    count = session.query(Settlement).count()
-    if count < 5:
-        run_national_ingestion(session=session, dry_run=False)
-        session.commit()
+    # Unconditionally run national ingestion idempotently
+    run_national_ingestion(session=session, dry_run=False)
+    session.commit()
 
     yield session
 
     session.close()
+    engine.dispose()
 
 
 def test_normalize_search_query():

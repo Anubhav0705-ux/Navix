@@ -228,12 +228,27 @@ Integrated with `app.core.metrics.metrics`:
 
 ---
 
-## 16. WP-8.4 Readiness
+## 16. GitHub CI Test Bootstrap Repair
+
+### 16.1 Confirmed Root Cause
+* **Global Bootstrap Ownership**: `backend/tests/conftest.py` session fixture executes `Base.metadata.create_all(bind=engine)` against the shared test database `NavixTest`. This creates all Phase 8 ORM tables (`countries`, `settlements`, `transit_facilities`, etc.).
+* **Fixture Conflict**: `backend/tests/test_phase_8_3_location_search.py` fixture `setup_search_db()` previously attempted to execute `command.upgrade(alembic_cfg, "head")` against the SAME `NavixTest` database.
+* **Database Crash**: Alembic revision `001_national_geo` attempted `CREATE TABLE countries`, raising `psycopg2.errors.DuplicateTable: relation "countries" already exists` in CI, causing all 16 dependent search tests to error out during fixture setup.
+
+### 16.2 Architectural Fix & Isolation Strategy
+1. **NavixTest Schema Ownership**: Retained strictly with `conftest.py` (`Base.metadata.create_all()`).
+2. **Search Fixture Repair**: Removed DB creation and Alembic `command.upgrade()` from `setup_search_db()`. Updated the fixture to reuse the existing `NavixTest` database and run `run_national_ingestion(session=session, dry_run=False)` unconditionally and idempotently.
+3. **Extension Guarantee**: Added `CREATE EXTENSION IF NOT EXISTS pg_trgm;` to the shared `conftest.py` bootstrap alongside `postgis`.
+4. **Migration Test Isolation**: Preserved dedicated Alembic migration verification in `backend/tests/test_v2_to_phase8_migration.py` running against the isolated `NavixV2MigrationTest` database.
+
+---
+
+## 17. WP-8.4 Readiness
 
 The location search, autocomplete, and resolution APIs are 100% complete, fully tested against disposable PostGIS databases, documented, and ready for WP-8.4 (Frontend Travel Command Center Geographic Autocomplete Integration).
 
 ---
 
-## 17. Final Verdict
+## 18. Final Verdict
 
 **PASS** — Work Package WP-8.3 is complete, fully tested, documented, verified against 146 backend tests and frontend ESLint, and ready for review.

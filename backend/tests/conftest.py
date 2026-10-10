@@ -67,12 +67,13 @@ def setup_test_database():
                 logger.error(f"Test database bootstrap aborted: Database '{current_db}' is not a designated test database.")
                 return
 
-            # 7. Enable PostGIS extension in disposable test database
+            # 7. Enable PostGIS and pg_trgm extensions in disposable test database
             try:
                 conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
+                conn.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm;"))
                 conn.commit()
             except Exception as ext_err:
-                logger.warning(f"PostGIS extension creation in test DB warning: {ext_err}")
+                logger.warning(f"Extension creation in test DB warning: {ext_err}")
 
     except Exception as err:
         logger.error(f"Test database identity check failed: {err}")
