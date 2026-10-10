@@ -5,6 +5,7 @@ from app.database.session import get_db
 from app.schemas.trip_planner import TripPlanRequest, TripPlanResult
 from app.algorithms import SearchError
 from app.services.trip_planner_service import generate_complete_trip_plan
+from app.core.metrics import metrics
 
 trips_router = APIRouter(prefix="/trips", tags=["Trip Planning"])
 
@@ -16,6 +17,7 @@ def plan_trip(request: TripPlanRequest, db: Session = Depends(get_db)):
     Combines A* route search, transfer validation, stay & food optimization,
     activity selection, and daily itinerary generation under a strict maximum budget.
     """
+    metrics.record_trip_plan()
     try:
         return generate_complete_trip_plan(db=db, request=request)
     except SearchError as e:

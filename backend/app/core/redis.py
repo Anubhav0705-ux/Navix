@@ -6,6 +6,7 @@ import redis.asyncio as aioredis
 import redis
 
 from app.core.config import settings
+from app.core.metrics import metrics
 
 logger = logging.getLogger("navix.redis")
 
@@ -34,6 +35,7 @@ class RedisClientManager:
 
     def trigger_circuit_breaker(self):
         """Trips connection circuit breaker for cooldown period to prevent latency degradation during outages."""
+        metrics.record_redis_failure()
         self._circuit_broken_until = time.time() + self.circuit_cooldown_seconds
         self._is_available = False
 

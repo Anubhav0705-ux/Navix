@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, Session
 
 from app.core.config import settings
+from app.core.metrics import metrics
 
 
 def mask_database_credentials(text_str: str) -> str:
@@ -45,6 +46,7 @@ def verify_database_connection() -> Dict[str, Any]:
     Sanitizes database credentials in outputs and error tracebacks.
     """
     if not settings.DB_PASSWORD and not settings.DATABASE_URL:
+        metrics.record_db_failure()
         return {
             "connected": False,
             "message": "Database credentials not configured in backend/.env"
@@ -76,10 +78,12 @@ def verify_database_connection() -> Dict[str, Any]:
                     "message": f"Successfully connected to PostgreSQL database '{db_name}' as user '{db_user}'"
                 }
     except Exception as e:
+        metrics.record_db_failure()
         sanitized_error = mask_database_credentials(str(e))
         return {
             "connected": False,
             "message": f"Database connection error: {sanitized_error}"
         }
 
+    metrics.record_db_failure()
     return {"connected": False, "message": "Unknown connection state"}

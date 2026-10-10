@@ -5,6 +5,7 @@ from starlette.requests import Request
 from starlette.responses import Response, JSONResponse
 
 from app.core.rate_limiter import rate_limiter, POLICIES, extract_client_ip
+from app.core.metrics import metrics
 
 logger = logging.getLogger("navix.middleware.ratelimit")
 
@@ -40,6 +41,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         )
 
         if not allowed:
+            metrics.record_rate_limit_rejection(policy_name)
+            logger.warning(
+                f"Rate limit exceeded for category '{policy_name}' (IP: {extract_client_ip(request)}). "
+                f"Retry after {retry_after}s."
+            )
             headers = {
                 "Retry-After": str(retry_after),
                 "X-RateLimit-Limit": str(limit),
