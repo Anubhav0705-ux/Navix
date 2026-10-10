@@ -40,6 +40,22 @@ def setup_test_database():
         logger.warning(f"Test database bootstrap aborted: APP_ENV={settings.APP_ENV} is not TESTING")
         return
 
+    # Ensure target test database exists
+    try:
+        db_url = settings.DATABASE_URL
+        target_db_name = db_url.rsplit("/", 1)[1]
+        if "test" in target_db_name.lower() or target_db_name.lower() == "navixtest":
+            admin_url = db_url.rsplit("/", 1)[0] + "/postgres"
+            from sqlalchemy import create_engine
+            admin_engine = create_engine(admin_url, isolation_level="AUTOCOMMIT")
+            with admin_engine.connect() as aconn:
+                db_exists = aconn.execute(text("SELECT 1 FROM pg_database WHERE datname=:dbname"), {"dbname": target_db_name}).scalar()
+                if not db_exists:
+                    aconn.execute(text(f'CREATE DATABASE "{target_db_name}"'))
+            admin_engine.dispose()
+    except Exception as db_create_err:
+        logger.warning(f"Test database auto-creation check failed: {db_create_err}")
+
     # 3. Verify database connectivity
     db_health = verify_database_connection()
     if not db_health.get("connected"):

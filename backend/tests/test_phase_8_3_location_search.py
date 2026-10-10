@@ -310,3 +310,32 @@ def test_fastapi_endpoints_integration(setup_search_db):
 
     finally:
         app.dependency_overrides.clear()
+
+
+def test_canonical_geography_data_ownership_integrity(setup_search_db):
+    """
+    Regression assertion: Verifies that real WP-8.2 ingested data owns canonical geography.
+    Confirms synthetic fac_sli_rail does NOT exist in real integration database,
+    and fac_sangli_sli owns the IRCTC/SLI provider mapping.
+    """
+    session = setup_search_db
+
+    # 1. Synthetic fac_sli_rail MUST NOT exist in real-data integration state
+    synthetic_fac = session.query(TransitFacility).filter(TransitFacility.facility_id == "fac_sli_rail").first()
+    assert synthetic_fac is None, "Synthetic fac_sli_rail detected in real integration database!"
+
+    # 2. Exactly one Sangli railway station exists
+    sangli_rail_facs = session.query(TransitFacility).filter(
+        TransitFacility.settlement_id == "stl_sangli",
+        TransitFacility.facility_type == "RAIL_STATION"
+    ).all()
+    assert len(sangli_rail_facs) == 1
+    assert sangli_rail_facs[0].facility_id == "fac_sangli_sli"
+
+    # 3. Provider mapping SLI belongs strictly to fac_sangli_sli
+    sli_mapping = session.query(ProviderLocationMapping).filter(
+        ProviderLocationMapping.provider_name == "IRCTC",
+        ProviderLocationMapping.provider_entity_id == "SLI"
+    ).first()
+    assert sli_mapping is not None
+    assert sli_mapping.facility_id == "fac_sangli_sli"

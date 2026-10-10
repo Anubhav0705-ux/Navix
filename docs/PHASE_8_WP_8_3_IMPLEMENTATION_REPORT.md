@@ -243,12 +243,31 @@ Integrated with `app.core.metrics.metrics`:
 
 ---
 
-## 17. WP-8.4 Readiness
+## 17. GitHub CI Canonical Geography Collision Repair
+
+### 17.1 Confirmed Root Cause
+* **Synthetic vs Real Data Collision**: `backend/tests/test_phase_8_1_geography_schema.py` previously inserted a synthetic facility `fac_sli_rail` with provider code `IRCTC` / `SLI` into the shared `NavixTest` database.
+* **Code Hijacking**: When `run_national_ingestion()` ran in subsequent test modules, it encountered the existing `IRCTC` / `SLI` provider mapping on `fac_sli_rail`. Because `(provider_name, provider_entity_id)` is unique, the ingestion pipeline skipped attaching `SLI` to the real ingested facility `fac_sangli_sli`.
+* **Impact**: `SLI` queries returned `fac_sli_rail` instead of `fac_sangli_sli`, and `fac_sangli_sli` was left with empty `provider_mappings`.
+
+### 17.2 Architectural Fix & Test Isolation
+1. **Isolated Test Namespace**: Refactored `backend/tests/test_phase_8_1_geography_schema.py` to use non-production IDs prefixed with `t8_` (e.g., `ctry_t8_in`, `stl_t8_sangli`, `fac_t8_sli_rail`, `T8_SLI`).
+2. **Automatic Teardown Cleanup**: Added a `DELETE` cleanup block to `db_session` fixture in `test_phase_8_1_geography_schema.py` to purge all synthetic `t8_` entities upon module completion.
+3. **Canonical Data Ownership**: Real-data ingested entities (e.g. `fac_sangli_sli`, `stl_sangli`) are now the sole owners of real provider mappings (`IRCTC` / `SLI`).
+4. **Data Ownership Regression Assertion**: Added `test_canonical_geography_data_ownership_integrity` to `test_phase_8_3_location_search.py` proving synthetic `fac_sli_rail` does not exist in real integration state, and `fac_sangli_sli` owns `SLI`.
+
+### 17.3 Verification Runs
+* **Fresh Full-Suite Run #1**: 147 / 147 PASSED in 31.90s against fresh `NavixTest` state.
+* **Fresh Full-Suite Run #2**: 147 / 147 PASSED in 22.01s after complete database reset.
+
+---
+
+## 18. WP-8.4 Readiness
 
 The location search, autocomplete, and resolution APIs are 100% complete, fully tested against disposable PostGIS databases, documented, and ready for WP-8.4 (Frontend Travel Command Center Geographic Autocomplete Integration).
 
 ---
 
-## 18. Final Verdict
+## 19. Final Verdict
 
-**PASS** — Work Package WP-8.3 is complete, fully tested, documented, verified against 146 backend tests and frontend ESLint, and ready for review.
+**PASS** — Work Package WP-8.3 is complete, fully tested, documented, verified against 147 backend tests (including 2 fresh database resets), and ready for review.
