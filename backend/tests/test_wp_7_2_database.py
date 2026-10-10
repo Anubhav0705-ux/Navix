@@ -60,8 +60,9 @@ def test_staging_production_localhost_guardrail():
     assert s.ALLOW_LOCALHOST_DB is True
 
 
-def test_production_ssl_mode_default_and_validation():
+def test_production_ssl_mode_default_and_validation(monkeypatch):
     """Verify production defaults DB_SSL_MODE to require and validates valid modes."""
+    monkeypatch.delenv("DATABASE_URL", raising=False)
     s_prod = Settings(
         APP_ENV="PRODUCTION",
         SECRET_KEY="a_very_secure_production_secret_key_32_chars_min",

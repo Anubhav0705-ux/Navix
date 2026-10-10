@@ -187,3 +187,77 @@ export interface APIErrorDetail {
   message: string;
 }
 
+// Phase 8 Location Search & Resolution Types
+export interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
+export interface AdminContext {
+  country_id: string;
+  country_name: string;
+  state_id?: string;
+  state_name?: string;
+  district_id?: string;
+  district_name?: string;
+  display_hierarchy: string;
+}
+
+export interface ProviderCodeMap {
+  provider: string;
+  code: string;
+}
+
+export interface LocationSearchResultItem {
+  id: string;
+  entity_type: 'SETTLEMENT' | 'TRANSIT_FACILITY' | 'LOCALITY' | 'POI' | string;
+  name: string;
+  canonical_name: string;
+  display_name: string;
+  matched_on: 'provider_code' | 'exact_canonical' | 'exact_alias' | 'prefix_canonical' | 'prefix_alias' | 'fuzzy' | string;
+  matched_name?: string;
+  score: number;
+  settlement_id?: string;
+  settlement_name?: string;
+  admin_context?: AdminContext;
+  facility_type?: 'RAIL_STATION' | 'AIRPORT' | 'BUS_TERMINAL' | 'METRO_STATION' | string;
+  codes: ProviderCodeMap[];
+  coordinates: Coordinates;
+  coverage_status: 'COVERED' | 'PARTIAL' | 'UNCOVERED' | string;
+  badge: string;
+}
+
+export interface LocationSearchResponse {
+  query: string;
+  total_matches: number;
+  results: LocationSearchResultItem[];
+}
+
+export interface LocationDetailResponse {
+  id: string;
+  entity_type: string;
+  name: string;
+  canonical_name: string;
+  coordinates: Coordinates;
+  coverage_status: string;
+  badge: string;
+  admin_context?: AdminContext;
+  settlement_id?: string;
+  settlement_name?: string;
+  facility_type?: string;
+  is_multimodal?: boolean;
+  operating_status?: string;
+  population_tier?: number;
+  aliases: Record<string, unknown>[];
+  provider_mappings: Record<string, unknown>[];
+}
+
+export interface LocationCoverageResponse {
+  location_id: string;
+  name: string;
+  entity_type: string;
+  coverage_status: string;
+  badge: string;
+  details: string;
+}
+

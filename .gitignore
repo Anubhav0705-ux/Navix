@@ -45,3 +45,17 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Geographic Raw Data & Cache Directories
+data/raw/
+data/cache/
+data/staging/
+backend/data/raw/
+backend/data/cache/
+backend/data/staging/
+*.pbf
+*.shp
+*.shx
+*.dbf
+*.prj
+*.gpkg

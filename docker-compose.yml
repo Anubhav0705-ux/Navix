@@ -33,6 +33,7 @@ services:
       - DB_PORT=5433
       - DB_NAME=Navix
       - DB_USER=postgres
+      - DB_PASSWORD=root123
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - ALLOW_LOCALHOST_DB=true

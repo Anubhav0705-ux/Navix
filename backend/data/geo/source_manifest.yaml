@@ -1,0 +1,82 @@
+# NAVIX Phase 8 Geographic Data Source Manifest
+# Version: 1.0.0
+# Description: Authoritative source manifest for India national geographic data ingestion
+
+version: "1.0.0"
+updated_at: "2026-10-10"
+
+datasets:
+  - dataset_id: "src_in_lgd_admin"
+    source_name: "Local Government Directory (LGD)"
+    source_url: "https://lgdirectory.gov.in/"
+    license: "GODL-India"
+    attribution: "Data sourced from Local Government Directory (LGD), Ministry of Panchayati Raj, Govt of India"
+    source_version: "2026.1 (Oct 2026)"
+    expected_format: "JSON / GeoJSON"
+    imported_entity_types:
+      - "Country"
+      - "AdminDivision"
+    status: "APPROVED"
+    notes: "Official administrative hierarchy of India: States, Union Territories, and Districts. Initial real-data catalog seed manually curated from official LGD directory records."
+
+  - dataset_id: "src_in_settlements"
+    source_name: "GeoNames India Settlement Catalog"
+    source_url: "http://www.geonames.org/"
+    license: "CC-BY 4.0"
+    attribution: "Data derived from GeoNames India database under Creative Commons Attribution 4.0 License"
+    source_version: "2026.1 (Oct 2026)"
+    expected_format: "JSON"
+    imported_entity_types:
+      - "Settlement"
+      - "Locality"
+    status: "APPROVED"
+    notes: "Indian cities, towns, and major settlements classified into Metro, City, Town, and Village tiers with population metadata. Initial real-data coverage seed curated from GeoNames open dataset."
+
+  - dataset_id: "src_in_railway_stations"
+    source_name: "Data.gov.in Open Railway Station Catalog"
+    source_url: "https://data.gov.in/"
+    license: "GODL-India"
+    attribution: "Railway station codes & location data sourced from Data.gov.in open catalogs"
+    source_version: "2026.1 (Oct 2026)"
+    expected_format: "JSON"
+    imported_entity_types:
+      - "TransitFacility"
+      - "TransitStop"
+      - "ProviderLocationMapping"
+    status: "APPROVED"
+    notes: "Railway stations across India with official IRCTC station codes (e.g. SLI, MRJ, PUNE, NDLS, CDG, CSTM, MAS, SBC, HWH). Initial real-data catalog seed manually curated from open government catalogs."
+
+  - dataset_id: "src_in_airports"
+    source_name: "OurAirports India Airport Catalog"
+    source_url: "https://ourairports.com/countries/IN/"
+    license: "Public Domain (CC0)"
+    attribution: "Airport location data sourced from OurAirports public domain catalog"
+    source_version: "2026.1 (Oct 2026)"
+    expected_format: "JSON / CSV"
+    imported_entity_types:
+      - "TransitFacility"
+      - "ProviderLocationMapping"
+    status: "APPROVED"
+    notes: "Operational civil airports in India with IATA and ICAO location identifiers (e.g. DEL/VIDP, BOM/VABB, BLR/VOBL, PNQ/VAPO, IXC/VICG, KUU/VIBR). Initial real-data catalog seed curated from public domain airport registry."
+
+  - dataset_id: "src_in_bus_terminals"
+    source_name: "OpenStreetMap India Transport Infrastructure"
+    source_url: "https://www.openstreetmap.org/"
+    license: "ODbL 1.0"
+    attribution: "Bus terminal location data derived from OpenStreetMap contributors under Open Database License (ODbL)"
+    source_version: "2026.1 (Oct 2026)"
+    expected_format: "JSON"
+    imported_entity_types:
+      - "TransitFacility"
+      - "ProviderLocationMapping"
+    status: "APPROVED"
+    notes: "Major ISBTs, state transport central bus stands, and inter-modal transfer hubs. Initial real-data coverage seed curated from OSM open transport features."
+
+blocked_sources:
+  - source_name: "IRCTC Proprietary Portal / Live Web Scraping"
+    reason: "No scraping or unauthorized private API access permitted. Data obtained exclusively via open government public catalogs."
+  - source_name: "redBus Portal Scraping"
+    reason: "Unauthorized scraping prohibited by terms of service."
+  - source_name: "Google Maps Places API Bulk Geocoding"
+    reason: "Bulk caching or database storage of Google Maps Places data violates Google Maps Platform Terms §3.2.3."
+

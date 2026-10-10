@@ -22,6 +22,10 @@ export interface PlannerState {
   stage: PlannerStage;
   origin: string;
   destination: string;
+  originLocationId?: string;
+  destinationLocationId?: string;
+  originEntityType?: string;
+  destinationEntityType?: string;
   departureDate: string;
   returnDate: string;
   maximumBudget: number;
@@ -58,6 +62,10 @@ export type PlannerAction =
   | { type: 'SET_STAGE'; payload: PlannerStage }
   | { type: 'SET_ORIGIN'; payload: string }
   | { type: 'SET_DESTINATION'; payload: string }
+  | { type: 'SET_ORIGIN_LOCATION'; payload: { name: string; locationId?: string; entityType?: string } }
+  | { type: 'SET_DESTINATION_LOCATION'; payload: { name: string; locationId?: string; entityType?: string } }
+  | { type: 'CLEAR_ORIGIN_LOCATION' }
+  | { type: 'CLEAR_DESTINATION_LOCATION' }
   | { type: 'SET_DEPARTURE_DATE'; payload: string }
   | { type: 'SET_RETURN_DATE'; payload: string }
   | { type: 'SET_MAXIMUM_BUDGET'; payload: number }
@@ -89,6 +97,10 @@ const INITIAL_STATE: PlannerState = {
   stage: 1,
   origin: 'Sangli',
   destination: 'Old Manali',
+  originLocationId: 'stl_sangli',
+  destinationLocationId: 'stl_manali',
+  originEntityType: 'SETTLEMENT',
+  destinationEntityType: 'SETTLEMENT',
   departureDate: '2026-12-12',
   returnDate: '2026-12-18',
   maximumBudget: 20000,
@@ -129,6 +141,32 @@ function plannerReducer(state: PlannerState, action: PlannerAction): PlannerStat
       return { ...state, origin: action.payload };
     case 'SET_DESTINATION':
       return { ...state, destination: action.payload };
+    case 'SET_ORIGIN_LOCATION':
+      return {
+        ...state,
+        origin: action.payload.name,
+        originLocationId: action.payload.locationId,
+        originEntityType: action.payload.entityType
+      };
+    case 'SET_DESTINATION_LOCATION':
+      return {
+        ...state,
+        destination: action.payload.name,
+        destinationLocationId: action.payload.locationId,
+        destinationEntityType: action.payload.entityType
+      };
+    case 'CLEAR_ORIGIN_LOCATION':
+      return {
+        ...state,
+        originLocationId: undefined,
+        originEntityType: undefined
+      };
+    case 'CLEAR_DESTINATION_LOCATION':
+      return {
+        ...state,
+        destinationLocationId: undefined,
+        destinationEntityType: undefined
+      };
     case 'SET_DEPARTURE_DATE':
       return { ...state, departureDate: action.payload };
     case 'SET_RETURN_DATE':

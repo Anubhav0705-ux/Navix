@@ -1,0 +1,82 @@
+{
+  "version": "2026.1",
+  "country": {
+    "iso2": "IN",
+    "iso3": "IND",
+    "name": "India",
+    "currency_code": "INR",
+    "is_active": true
+  },
+  "admin_divisions": [
+    { "name": "Maharashtra", "division_type": "STATE", "state_code": "MH", "code": "IN-MH" },
+    { "name": "Himachal Pradesh", "division_type": "STATE", "state_code": "HP", "code": "IN-HP" },
+    { "name": "Delhi", "division_type": "UNION_TERRITORY", "state_code": "DL", "code": "IN-DL" },
+    { "name": "Karnataka", "division_type": "STATE", "state_code": "KA", "code": "IN-KA" },
+    { "name": "Punjab", "division_type": "STATE", "state_code": "PB", "code": "IN-PB" },
+    { "name": "Chandigarh", "division_type": "UNION_TERRITORY", "state_code": "CH", "code": "IN-CH" },
+    { "name": "Tamil Nadu", "division_type": "STATE", "state_code": "TN", "code": "IN-TN" },
+    { "name": "West Bengal", "division_type": "STATE", "state_code": "WB", "code": "IN-WB" },
+    { "name": "Goa", "division_type": "STATE", "state_code": "GA", "code": "IN-GA" },
+    { "name": "Gujarat", "division_type": "STATE", "state_code": "GJ", "code": "IN-GJ" },
+    { "name": "Rajasthan", "division_type": "STATE", "state_code": "RJ", "code": "IN-RJ" },
+    { "name": "Sangli District", "division_type": "DISTRICT", "state_code": "MH" },
+    { "name": "Kullu District", "division_type": "DISTRICT", "state_code": "HP" },
+    { "name": "Pune District", "division_type": "DISTRICT", "state_code": "MH" },
+    { "name": "New Delhi District", "division_type": "DISTRICT", "state_code": "DL" }
+  ],
+  "settlements": [
+    { "name": "Sangli", "settlement_type": "CITY", "population_tier": 2, "state_code": "MH", "district_name": "Sangli District", "latitude": 16.8524, "longitude": 74.5815 },
+    { "name": "Miraj", "settlement_type": "TOWN", "population_tier": 3, "state_code": "MH", "district_name": "Sangli District", "latitude": 16.8202, "longitude": 74.6468 },
+    { "name": "Pune", "settlement_type": "METRO", "population_tier": 1, "state_code": "MH", "district_name": "Pune District", "latitude": 18.5204, "longitude": 73.8567 },
+    { "name": "Old Manali", "settlement_type": "TOWN", "population_tier": 3, "state_code": "HP", "district_name": "Kullu District", "latitude": 32.2562, "longitude": 77.1740 },
+    { "name": "New Delhi", "settlement_type": "METRO", "population_tier": 1, "state_code": "DL", "district_name": "New Delhi District", "latitude": 28.6139, "longitude": 77.2090 },
+    { "name": "Chandigarh", "settlement_type": "CITY", "population_tier": 2, "state_code": "CH", "latitude": 30.7333, "longitude": 76.7794 },
+    { "name": "Bengaluru", "settlement_type": "METRO", "population_tier": 1, "state_code": "KA", "latitude": 12.9716, "longitude": 77.5946 },
+    { "name": "Mumbai", "settlement_type": "METRO", "population_tier": 1, "state_code": "MH", "latitude": 19.0760, "longitude": 72.8777 },
+    { "name": "Chennai", "settlement_type": "METRO", "population_tier": 1, "state_code": "TN", "latitude": 13.0827, "longitude": 80.2707 },
+    { "name": "Kolkata", "settlement_type": "METRO", "population_tier": 1, "state_code": "WB", "latitude": 22.5726, "longitude": 88.3639 },
+    { "name": "Shimla", "settlement_type": "CITY", "population_tier": 2, "state_code": "HP", "latitude": 31.1048, "longitude": 77.1734 },
+    { "name": "Panaji", "settlement_type": "CITY", "population_tier": 2, "state_code": "GA", "latitude": 15.4909, "longitude": 73.8278 }
+  ],
+  "localities": [
+    { "name": "Old Manali Tourist Zone", "settlement_name": "Old Manali", "locality_type": "TOURIST_ZONE", "pincode": "175131", "latitude": 32.2562, "longitude": 77.1740 },
+    { "name": "Swargate Pune", "settlement_name": "Pune", "locality_type": "SUBURB", "pincode": "411042", "latitude": 18.5018, "longitude": 73.8580 },
+    { "name": "Kashmere Gate Delhi", "settlement_name": "New Delhi", "locality_type": "SUBURB", "pincode": "110006", "latitude": 28.6665, "longitude": 77.2285 }
+  ],
+  "facilities": [
+    { "name": "Sangli Railway Station", "facility_type": "RAIL_STATION", "settlement_name": "Sangli", "station_code": "SLI", "latitude": 16.8524, "longitude": 74.5815 },
+    { "name": "Miraj Junction Railway Station", "facility_type": "RAIL_STATION", "settlement_name": "Miraj", "station_code": "MRJ", "latitude": 16.8202, "longitude": 74.6468 },
+    { "name": "Pune Junction Railway Station", "facility_type": "RAIL_STATION", "settlement_name": "Pune", "station_code": "PUNE", "latitude": 18.5204, "longitude": 73.8567 },
+    { "name": "New Delhi Railway Station", "facility_type": "RAIL_STATION", "settlement_name": "New Delhi", "station_code": "NDLS", "latitude": 28.6431, "longitude": 77.2197 },
+    { "name": "Chandigarh Junction Railway Station", "facility_type": "RAIL_STATION", "settlement_name": "Chandigarh", "station_code": "CDG", "latitude": 30.7061, "longitude": 76.8041 },
+    { "name": "Chhatrapati Shivaji Maharaj Terminus", "facility_type": "RAIL_STATION", "settlement_name": "Mumbai", "station_code": "CSTM", "latitude": 18.9400, "longitude": 72.8353 },
+    { "name": "KSR Bengaluru City Railway Station", "facility_type": "RAIL_STATION", "settlement_name": "Bengaluru", "station_code": "SBC", "latitude": 12.9781, "longitude": 77.5694 },
+    { "name": "Puratchi Thalaivar Dr. M.G. Ramachandran Central Railway Station", "facility_type": "RAIL_STATION", "settlement_name": "Chennai", "station_code": "MAS", "latitude": 13.0827, "longitude": 80.2757 },
+    { "name": "Howrah Junction Railway Station", "facility_type": "RAIL_STATION", "settlement_name": "Kolkata", "station_code": "HWH", "latitude": 22.5838, "longitude": 88.3426 },
+    { "name": "Shimla Railway Station", "facility_type": "RAIL_STATION", "settlement_name": "Shimla", "station_code": "SMC", "latitude": 31.1030, "longitude": 77.1630 },
+    { "name": "Indira Gandhi International Airport", "facility_type": "AIRPORT", "settlement_name": "New Delhi", "iata_code": "DEL", "icao_code": "VIDP", "latitude": 28.5562, "longitude": 77.1000 },
+    { "name": "Chhatrapati Shivaji Maharaj International Airport", "facility_type": "AIRPORT", "settlement_name": "Mumbai", "iata_code": "BOM", "icao_code": "VABB", "latitude": 19.0896, "longitude": 72.8656 },
+    { "name": "Kempegowda International Airport", "facility_type": "AIRPORT", "settlement_name": "Bengaluru", "iata_code": "BLR", "icao_code": "VOBL", "latitude": 13.1986, "longitude": 77.7066 },
+    { "name": "Pune Airport", "facility_type": "AIRPORT", "settlement_name": "Pune", "iata_code": "PNQ", "icao_code": "VAPO", "latitude": 18.5822, "longitude": 73.9197 },
+    { "name": "Chandigarh International Airport", "facility_type": "AIRPORT", "settlement_name": "Chandigarh", "iata_code": "IXC", "icao_code": "VICG", "latitude": 30.6735, "longitude": 76.7885 },
+    { "name": "Kullu-Manali Airport Bhuntar", "facility_type": "AIRPORT", "settlement_name": "Old Manali", "iata_code": "KUU", "icao_code": "VIBR", "latitude": 31.8767, "longitude": 77.1542 },
+    { "name": "Sangli Central Bus Stand", "facility_type": "BUS_TERMINAL", "settlement_name": "Sangli", "bus_code": "BS_SLI", "latitude": 16.8550, "longitude": 74.5800 },
+    { "name": "Swargate Central Bus Stand Pune", "facility_type": "BUS_TERMINAL", "settlement_name": "Pune", "bus_code": "BS_PUNE_SW", "latitude": 18.5018, "longitude": 73.8580 },
+    { "name": "Maharana Pratap ISBT Kashmere Gate Delhi", "facility_type": "BUS_TERMINAL", "settlement_name": "New Delhi", "bus_code": "BS_DEL_ISBT", "latitude": 28.6665, "longitude": 77.2285 },
+    { "name": "Old Manali Bus Stand Hub", "facility_type": "BUS_TERMINAL", "settlement_name": "Old Manali", "bus_code": "BS_MNL", "latitude": 32.2562, "longitude": 77.1740 }
+  ],
+  "aliases": [
+    { "entity_type": "SETTLEMENT", "entity_id": "stl_sangli", "alias_name": "सांगली", "language_code": "mr", "alias_type": "TRANSLITERATION" },
+    { "entity_type": "SETTLEMENT", "entity_id": "stl_pune", "alias_name": "पुणे", "language_code": "mr", "alias_type": "TRANSLITERATION" },
+    { "entity_type": "SETTLEMENT", "entity_id": "stl_old_manali", "alias_name": "मनाली", "language_code": "hi", "alias_type": "TRANSLITERATION" },
+    { "entity_type": "SETTLEMENT", "entity_id": "stl_new_delhi", "alias_name": "दिल्ली", "language_code": "hi", "alias_type": "TRANSLITERATION" },
+    { "entity_type": "SETTLEMENT", "entity_id": "stl_miraj", "alias_name": "मिरज", "language_code": "mr", "alias_type": "TRANSLITERATION" },
+    { "entity_type": "SETTLEMENT", "entity_id": "stl_mumbai", "alias_name": "Bombay", "language_code": "en", "alias_type": "HISTORICAL" }
+  ],
+  "legacy_mappings": [
+    { "legacy_node_id": "node_SLI", "v1_facility_id": "fac_sangli_sli", "v1_settlement_id": "stl_sangli" },
+    { "legacy_node_id": "node_MRJ", "v1_facility_id": "fac_miraj_mrj", "v1_settlement_id": "stl_miraj" },
+    { "legacy_node_id": "node_PUNE", "v1_facility_id": "fac_pune_pune", "v1_settlement_id": "stl_pune" },
+    { "legacy_node_id": "node_OLD_MNL", "v1_facility_id": "fac_old_manali_bs_mnl", "v1_settlement_id": "stl_old_manali" }
+  ]
+}
