@@ -6,6 +6,7 @@ export * from './TravelUI';
 export * from './PlannerComponents';
 export * from './AutoPlanStage';
 export * from './ReviewStage';
+export * from './LocationAutocomplete';
 
 
 

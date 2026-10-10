@@ -9,3 +9,7 @@ node_modules
 README.md
 AGENTS.md
 CLAUDE.md
+test-results
+playwright-report
+blob-report
+

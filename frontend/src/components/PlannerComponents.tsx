@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePlanner, TravellerProfile, TripPersonality } from '@/context/PlannerContext';
 import { Logo } from './Logo';
+import { LocationAutocomplete } from './LocationAutocomplete';
 import {
   MapPin, Wallet, Calendar, Users, Check, ArrowLeft,
   Sparkles, Train, Bus, Car, Navigation, ShieldCheck,
@@ -20,9 +21,6 @@ const InteractiveMap = dynamic(() => import('@/components/InteractiveMap'), {
   )
 });
 
-const SUPPORTED_NODES = [
-  'Sangli', 'Miraj', 'Pune', 'Mumbai', 'Delhi', 'Chandigarh', 'Manali', 'Old Manali'
-];
 
 const NODE_METADATA: Record<string, { state: string; label: string }> = {
   'Sangli': { state: 'Maharashtra', label: 'Starting City Hub' },
@@ -157,50 +155,62 @@ export const TripSetupStage: React.FC = () => {
             </p>
           </div>
 
-          {/* Location Selectors */}
+          {/* Location Autocomplete Selectors */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             
-            {/* Origin */}
-            <div className="space-y-1.5 bg-white/5 p-4 rounded-xl border border-white/10">
-              <label className="block text-xs font-bold text-[#D8CBB8] uppercase tracking-wider flex items-center justify-between">
-                <span className="flex items-center gap-1 text-[#0FA77A]">
-                  <MapPin className="w-3.5 h-3.5" /> Starting City
-                </span>
-                <span className="text-[10px] text-slate-400 font-mono">{origMeta.state}</span>
-              </label>
-              <select
+            {/* Origin Autocomplete */}
+            <div className="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1">
+              <LocationAutocomplete
+                id="planner-origin-autocomplete"
+                label="Starting City / Hub"
                 value={state.origin}
-                onChange={(e) => dispatch({ type: 'SET_ORIGIN', payload: e.target.value })}
-                className="w-full bg-[#101419] border border-white/20 rounded-xl px-3.5 py-2.5 text-sm text-white font-bold focus:outline-none focus:border-[#0FA77A]"
-              >
-                {SUPPORTED_NODES.map((n) => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
-              <span className="block text-[11px] text-[#0FA77A] font-mono">{origMeta.label}</span>
+                selectedLocationId={state.originLocationId}
+                onChangeText={(text) => dispatch({ type: 'SET_ORIGIN', payload: text })}
+                onSelectLocation={(item) =>
+                  dispatch({
+                    type: 'SET_ORIGIN_LOCATION',
+                    payload: { name: item.canonical_name, locationId: item.id, entityType: item.entity_type }
+                  })
+                }
+                onClear={() => dispatch({ type: 'CLEAR_ORIGIN_LOCATION' })}
+                placeholder="Search origin city, station (e.g. Sangli, SLI)..."
+                iconColor="#0FA77A"
+                excludeLocationId={state.destinationLocationId}
+                subLabel={origMeta.state}
+              />
             </div>
 
-            {/* Destination */}
-            <div className="space-y-1.5 bg-white/5 p-4 rounded-xl border border-white/10">
-              <label className="block text-xs font-bold text-[#D8CBB8] uppercase tracking-wider flex items-center justify-between">
-                <span className="flex items-center gap-1 text-[#4D7CFE]">
-                  <MapPin className="w-3.5 h-3.5" /> Destination
-                </span>
-                <span className="text-[10px] text-slate-400 font-mono">{destMeta.state}</span>
-              </label>
-              <select
+            {/* Destination Autocomplete */}
+            <div className="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1">
+              <LocationAutocomplete
+                id="planner-dest-autocomplete"
+                label="Destination"
                 value={state.destination}
-                onChange={(e) => dispatch({ type: 'SET_DESTINATION', payload: e.target.value })}
-                className="w-full bg-[#101419] border border-white/20 rounded-xl px-3.5 py-2.5 text-sm text-white font-bold focus:outline-none focus:border-[#0FA77A]"
-              >
-                {SUPPORTED_NODES.map((n) => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
-              <span className="block text-[11px] text-[#4D7CFE] font-mono">{destMeta.label}</span>
+                selectedLocationId={state.destinationLocationId}
+                onChangeText={(text) => dispatch({ type: 'SET_DESTINATION', payload: text })}
+                onSelectLocation={(item) =>
+                  dispatch({
+                    type: 'SET_DESTINATION_LOCATION',
+                    payload: { name: item.canonical_name, locationId: item.id, entityType: item.entity_type }
+                  })
+                }
+                onClear={() => dispatch({ type: 'CLEAR_DESTINATION_LOCATION' })}
+                placeholder="Search destination city, station (e.g. Manali, NDLS)..."
+                iconColor="#4D7CFE"
+                excludeLocationId={state.originLocationId}
+                subLabel={destMeta.state}
+              />
             </div>
 
           </div>
+
+          {/* Same Origin and Destination Warning */}
+          {state.origin && state.destination && state.origin.trim().toLowerCase() === state.destination.trim().toLowerCase() && (
+            <div className="p-3 bg-amber-950/60 border border-amber-500/40 rounded-xl text-amber-200 text-xs flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              <span>Starting City and Destination must be distinct locations for routing calculation.</span>
+            </div>
+          )}
 
           {/* Dates & Duration Banner */}
           <div className="space-y-3 pt-2">

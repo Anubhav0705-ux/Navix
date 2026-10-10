@@ -32,7 +32,7 @@ class LocationAlias(Base):
 class ProviderLocationMapping(Base):
     __tablename__ = "provider_mappings"
     __table_args__ = (
-        CheckConstraint("provider_name IN ('IRCTC', 'GTFS_RAIL', 'GTFS_BUS', 'RED_BUS', 'IATA', 'OSM')", name="chk_provider_name"),
+        CheckConstraint("provider_name IN ('IRCTC', 'INDIAN_RAILWAYS', 'GTFS_RAIL', 'GTFS_BUS', 'RED_BUS', 'IATA', 'OSM')", name="chk_provider_name"),
         UniqueConstraint("provider_name", "provider_entity_id", name="uq_provider_mapping"),
     )
 

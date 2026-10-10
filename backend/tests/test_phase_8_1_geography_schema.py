@@ -160,7 +160,7 @@ def test_transit_facility_and_provider_mapping(db_session):
 
     mapping = db_session.scalars(
         select(ProviderLocationMapping).filter(
-            ProviderLocationMapping.provider_name == "IRCTC",
+            ProviderLocationMapping.provider_name == "INDIAN_RAILWAYS",
             ProviderLocationMapping.provider_entity_id == "T8_SLI"
         )
     ).first()
@@ -168,7 +168,7 @@ def test_transit_facility_and_provider_mapping(db_session):
     if not mapping:
         mapping = ProviderLocationMapping(
             facility_id=facility.facility_id,
-            provider_name="IRCTC",
+            provider_name="INDIAN_RAILWAYS",
             provider_entity_id="T8_SLI",
             is_primary=True
         )
@@ -281,7 +281,7 @@ def test_provider_mapping_uniqueness_constraint(db_session):
     """Verify provider mapping enforces unique (provider_name, provider_entity_id)."""
     dup_mapping = ProviderLocationMapping(
         facility_id="fac_t8_sli_rail",
-        provider_name="IRCTC",
+        provider_name="INDIAN_RAILWAYS",
         provider_entity_id="T8_SLI",  # Already inserted in previous test
         is_primary=False
     )

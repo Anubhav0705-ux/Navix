@@ -316,7 +316,7 @@ def test_canonical_geography_data_ownership_integrity(setup_search_db):
     """
     Regression assertion: Verifies that real WP-8.2 ingested data owns canonical geography.
     Confirms synthetic fac_sli_rail does NOT exist in real integration database,
-    and fac_sangli_sli owns the IRCTC/SLI provider mapping.
+    and fac_sangli_sli owns the INDIAN_RAILWAYS/SLI provider mapping.
     """
     session = setup_search_db
 
@@ -334,7 +334,7 @@ def test_canonical_geography_data_ownership_integrity(setup_search_db):
 
     # 3. Provider mapping SLI belongs strictly to fac_sangli_sli
     sli_mapping = session.query(ProviderLocationMapping).filter(
-        ProviderLocationMapping.provider_name == "IRCTC",
+        ProviderLocationMapping.provider_name == "INDIAN_RAILWAYS",
         ProviderLocationMapping.provider_entity_id == "SLI"
     ).first()
     assert sli_mapping is not None

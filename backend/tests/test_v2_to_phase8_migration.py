@@ -292,7 +292,7 @@ def test_v2_to_phase8_alembic_migration_gate():
     # Verify alembic_version table records 001_national_geo revision
     with engine.connect() as conn:
         rev = conn.execute(text("SELECT version_num FROM alembic_version;")).scalar()
-        assert rev in ("001_national_geo", "002_search_indexes")
+        assert rev in ("001_national_geo", "002_search_indexes", "003_railway_semantics")
 
     # Verify idempotent re-run of alembic upgrade head
     command.upgrade(alembic_cfg, "head")

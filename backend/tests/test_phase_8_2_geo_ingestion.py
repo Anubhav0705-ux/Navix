@@ -84,7 +84,7 @@ def test_stable_identity_generation():
     assert generate_admin_div_id("MH") == "div_in_mh"
     assert generate_settlement_id("Sangli") == "stl_sangli"
     assert generate_facility_id("RAIL_STATION", "Sangli Station") == "fac_sangli_station"
-    assert generate_provider_mapping_id("IRCTC", "SLI") == "map_irctc_sli"
+    assert generate_provider_mapping_id("INDIAN_RAILWAYS", "SLI") == "map_indian_railways_sli"
     assert generate_provenance_id("stl_sangli", "src_in_settlements") == "prov_stl_sangli_src_in_settlements"
 
 
@@ -215,7 +215,7 @@ def test_national_ingestion_end_to_end_on_disposable_postgis():
         assert sli_station is not None
         assert sli_station.facility_type == "RAIL_STATION"
 
-        sli_irctc = session.query(ProviderLocationMapping).filter_by(provider_name="IRCTC", provider_entity_id="SLI").first()
+        sli_irctc = session.query(ProviderLocationMapping).filter_by(provider_name="INDIAN_RAILWAYS", provider_entity_id="SLI").first()
         assert sli_irctc is not None
         assert sli_irctc.facility_id == "fac_sangli_sli"
 

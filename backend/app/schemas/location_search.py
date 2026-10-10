@@ -30,7 +30,7 @@ class LocationSearchResultItem(BaseModel):
     settlement_name: Optional[str] = None
     admin_context: Optional[AdminContextSchema] = None
     facility_type: Optional[str] = None
-    codes: List[Dict[str, str]] = Field(default_factory=list, description="Associated provider codes e.g. [{'provider': 'IRCTC', 'code': 'SLI'}]")
+    codes: List[Dict[str, str]] = Field(default_factory=list, description="Associated provider codes e.g. [{'provider': 'INDIAN_RAILWAYS', 'code': 'SLI'}]")
     coordinates: CoordinatesSchema
     coverage_status: str = Field("UNCOVERED", description="COVERED, PARTIAL, UNCOVERED")
     badge: str = Field(..., description="User-facing coverage badge e.g. ACTIVE ROUTE COVERAGE")

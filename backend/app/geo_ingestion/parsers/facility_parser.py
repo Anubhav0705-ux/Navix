@@ -35,8 +35,8 @@ def parse_transit_facilities(raw_items: List[Dict[str, Any]]) -> List[Dict[str, 
             st_code = normalize_code(item["station_code"])
             if st_code:
                 mappings.append({
-                    "mapping_id": generate_provider_mapping_id("IRCTC", st_code),
-                    "provider_name": "IRCTC",
+                    "mapping_id": generate_provider_mapping_id("INDIAN_RAILWAYS", st_code),
+                    "provider_name": "INDIAN_RAILWAYS",
                     "provider_entity_id": st_code,
                     "navix_entity_type": "TransitFacility",
                     "navix_entity_id": fac_id,
