@@ -88,20 +88,89 @@ class V2BudgetAllocation(V2Base):
     total_cost = Column(Numeric(10, 2), nullable=False)
 
 
+def resolve_migration_test_db_url() -> str:
+    explicit = os.getenv("MIGRATION_TEST_DATABASE_URL")
+    if explicit:
+        return explicit
+
+    base_url = os.getenv("DATABASE_URL")
+    if base_url:
+        parts = base_url.rsplit("/", 1)
+        return f"{parts[0]}/NavixV2MigrationTest"
+
+    host = os.getenv("DB_HOST", "127.0.0.1")
+    port = os.getenv("DB_PORT", "5433")
+    user = os.getenv("DB_USER", "postgres")
+    password = os.getenv("DB_PASSWORD", "postgres")
+    return f"postgresql://{user}:{password}@{host}:{port}/NavixV2MigrationTest"
+
+
+def validate_migration_db_safety(db_url: str) -> None:
+    app_env = os.getenv("APP_ENV", "TESTING").upper()
+    allow_bootstrap = os.getenv("ALLOW_TEST_DB_BOOTSTRAP", "true").lower()
+
+    if app_env != "TESTING" and os.getenv("CI") != "true":
+        raise ValueError(f"Database bootstrap permitted only under APP_ENV=TESTING, got: {app_env}")
+
+    if allow_bootstrap not in ("true", "1", "yes"):
+        raise ValueError(f"Database bootstrap disabled by ALLOW_TEST_DB_BOOTSTRAP={allow_bootstrap}")
+
+    db_name = db_url.rsplit("/", 1)[-1]
+    protected_names = ("navix", "navix_dev", "postgres", "production", "staging")
+    if db_name.lower() in protected_names or "prod" in db_name.lower() or "staging" in db_name.lower():
+        raise ValueError(f"Refusing to execute migration test against protected database name: '{db_name}'")
+
+    if db_name != "NavixV2MigrationTest":
+        raise ValueError(f"Migration test must target 'NavixV2MigrationTest', got: '{db_name}'")
+
+
+def test_migration_db_safety_guardrails(monkeypatch):
+    """Verify safety guardrails reject non-TESTING environments or protected database names."""
+    # 1. Reject protected production/dev database names
+    with pytest.raises(ValueError, match="protected database name"):
+        validate_migration_db_safety("postgresql://user:pass@localhost:5433/Navix")
+
+    with pytest.raises(ValueError, match="protected database name"):
+        validate_migration_db_safety("postgresql://user:pass@localhost:5433/production_db")
+
+    with pytest.raises(ValueError, match="must target 'NavixV2MigrationTest'"):
+        validate_migration_db_safety("postgresql://user:pass@localhost:5433/ArbitraryTestDb")
+
+    # 2. Reject non-TESTING APP_ENV
+    monkeypatch.setenv("APP_ENV", "PRODUCTION")
+    monkeypatch.delenv("CI", raising=False)
+    with pytest.raises(ValueError, match="APP_ENV=TESTING"):
+        validate_migration_db_safety("postgresql://user:pass@localhost:5433/NavixV2MigrationTest")
+
+    # 3. Reject disabled ALLOW_TEST_DB_BOOTSTRAP
+    monkeypatch.setenv("APP_ENV", "TESTING")
+    monkeypatch.setenv("ALLOW_TEST_DB_BOOTSTRAP", "false")
+    with pytest.raises(ValueError, match="ALLOW_TEST_DB_BOOTSTRAP"):
+        validate_migration_db_safety("postgresql://user:pass@localhost:5433/NavixV2MigrationTest")
+
+
 def test_v2_to_phase8_alembic_migration_gate():
     """
     Dedicated V2 -> Phase 8 Alembic Migration Gate Verification Test.
-    Executes against isolated disposable PostGIS container on port 15437.
+    Executes against isolated disposable PostGIS database NavixV2MigrationTest.
     Guarantees Alembic itself executes the migration without relying on create_all().
     """
-    db_url = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@127.0.0.1:15437/NavixV2MigrationTest")
-    if "15437" not in db_url and "NavixV2MigrationTest" not in db_url:
-        pytest.skip("Migration gate test requires dedicated disposable database NavixV2MigrationTest on port 15437")
+    db_url = resolve_migration_test_db_url()
+    validate_migration_db_safety(db_url)
+
+    # Ensure database exists
+    admin_url = db_url.rsplit("/", 1)[0] + "/postgres"
+    admin_engine = create_engine(admin_url, isolation_level="AUTOCOMMIT")
+    with admin_engine.connect() as aconn:
+        exists = aconn.execute(text("SELECT 1 FROM pg_database WHERE datname='NavixV2MigrationTest'")).scalar()
+        if not exists:
+            aconn.execute(text('CREATE DATABASE "NavixV2MigrationTest"'))
 
     engine = create_engine(db_url, echo=False)
 
     # 1. Query Server & PostGIS Versions
-    with engine.connect() as conn:
+    with engine.begin() as conn:
+        conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis; CREATE EXTENSION IF NOT EXISTS pg_trgm;"))
         pg_version = conn.execute(text("SELECT version();")).scalar()
         postgis_ver = conn.execute(text("SELECT PostGIS_Full_Version();")).scalar()
         assert pg_version is not None
