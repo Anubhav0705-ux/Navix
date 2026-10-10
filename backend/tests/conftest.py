@@ -1,12 +1,14 @@
 import os
 import logging
+from datetime import date, datetime
+from decimal import Decimal
 import pytest
 from sqlalchemy import text
 
 from app.core.config import settings
 from app.database.session import engine, verify_database_connection, SessionLocal
 from app.database.base import Base
-from app.models import User, Traveler, Admin
+from app.models import User, Traveler, Admin, Trip, TransitSegment, BudgetAllocation
 from app.core.security import hash_password
 from app.seed.seed_demo_data import seed_data
 
@@ -92,7 +94,7 @@ def setup_test_database():
                     user_id="usr_01",
                     name="Anubhav User",
                     email="anubhav@example.com",
-                    role="user",
+                    role="traveler",
                     password_hash=hash_password("Password123!")
                 )
                 db.add(u)
@@ -125,3 +127,48 @@ def setup_test_database():
     except Exception as seed_err:
         logger.error(f"Failed to seed demo transit data in test database: {seed_err}")
         raise RuntimeError(f"Authorized demo transit seeding failed: {seed_err}") from seed_err
+
+    # 11. Seed test trip, segment, and budget allocation in disposable test database
+    try:
+        with SessionLocal() as db:
+            test_trip = db.query(Trip).filter(Trip.trip_id == "trip_test_01").first()
+            if not test_trip:
+                tr = Trip(
+                    trip_id="trip_test_01",
+                    traveler_id="usr_01",
+                    origin="Sangli",
+                    destination="Old Manali",
+                    travel_date=date(2026, 9, 1),
+                    budget_cap=Decimal("5000.00"),
+                    plan_data="{}"
+                )
+                db.add(tr)
+                db.flush()
+
+                seg = TransitSegment(
+                    segment_id="seg_test_01",
+                    trip_id=tr.trip_id,
+                    source_node_id="node_SLI",
+                    dest_node_id="node_MRJ",
+                    mode_type="Train",
+                    provider_name="Sangli Express",
+                    departure_time=datetime(2026, 9, 1, 6, 0),
+                    arrival_time=datetime(2026, 9, 1, 6, 30),
+                    cost=Decimal("50.00")
+                )
+                db.add(seg)
+
+                alloc = BudgetAllocation(
+                    allocation_id="alloc_test_01",
+                    trip_id=tr.trip_id,
+                    transit_cost=Decimal("50.00"),
+                    lodging_cost=Decimal("1000.00"),
+                    food_cost=Decimal("500.00"),
+                    activities_cost=Decimal("300.00"),
+                    total_cost=Decimal("1850.00")
+                )
+                db.add(alloc)
+                db.commit()
+    except Exception as seed_trip_err:
+        logger.error(f"Failed to seed test trip data in test database: {seed_trip_err}")
+        raise RuntimeError(f"Authorized test trip seeding failed: {seed_trip_err}") from seed_trip_err

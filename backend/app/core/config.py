@@ -164,7 +164,7 @@ class Settings(BaseSettings):
         if self.APP_ENV == EnvironmentOption.TESTING.value and self.DATABASE_URL:
             db_url_lower = self.DATABASE_URL.lower()
             remote_indicators = [".rds.amazonaws.com", ".aivencloud.com", ".supabase.co", ".cockroachlabs.cloud"]
-            if any(ind in db_url_lower for ind in remote_indicators) and not self.ALLOW_LOCALHOST_DB:
+            if any(ind in db_url_lower for ind in remote_indicators):
                 raise ValueError(
                     "TESTING environment cannot target remote production database hosts. "
                     "Use isolated local test databases."

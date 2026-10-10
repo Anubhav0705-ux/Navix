@@ -4,8 +4,10 @@ from app.core.config import Settings, EnvironmentOption
 from app.database.session import mask_database_credentials, verify_database_connection, engine
 
 
-def test_database_config_default_pool_settings():
+def test_database_config_default_pool_settings(monkeypatch):
     """Verify default database pooling configuration parameters."""
+    monkeypatch.delenv("ALLOW_LOCALHOST_DB", raising=False)
+    monkeypatch.delenv("DATABASE_URL", raising=False)
     s = Settings(SECRET_KEY="a_very_secure_test_secret_key_32_chars_min")
     assert s.DB_POOL_SIZE == 10
     assert s.DB_MAX_OVERFLOW == 10
@@ -85,6 +87,18 @@ def test_testing_remote_database_guardrail():
             APP_ENV="TESTING",
             SECRET_KEY="a_very_secure_test_secret_key_32_chars_min",
             DATABASE_URL="postgresql://user:pass@production-db.rds.amazonaws.com:5432/Navix"
+        )
+    assert "cannot target remote production database hosts" in str(exc.value)
+
+
+def test_testing_remote_database_guardrail_strict_even_with_allow_localhost_db():
+    """Verify TESTING environment blocks remote production DBs even when ALLOW_LOCALHOST_DB=True."""
+    with pytest.raises(ValueError) as exc:
+        Settings(
+            APP_ENV="TESTING",
+            SECRET_KEY="a_very_secure_test_secret_key_32_chars_min",
+            DATABASE_URL="postgresql://user:pass@production-db.rds.amazonaws.com:5432/Navix",
+            ALLOW_LOCALHOST_DB=True
         )
     assert "cannot target remote production database hosts" in str(exc.value)
 

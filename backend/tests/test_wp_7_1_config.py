@@ -6,8 +6,9 @@ VALID_DEV_SECRET = "navix_dev_secret_key_32_characters_minimum_secure_phrase_202
 VALID_PROD_SECRET = "a_super_secure_production_secret_key_random_string_2026_xyz"
 
 
-def test_valid_development_configuration():
+def test_valid_development_configuration(monkeypatch):
     """Verify default development settings pass validation and resolve properties correctly."""
+    monkeypatch.delenv("DATABASE_URL", raising=False)
     settings = Settings(
         APP_ENV="DEVELOPMENT",
         SECRET_KEY=VALID_DEV_SECRET,
@@ -23,8 +24,9 @@ def test_valid_development_configuration():
     assert settings.sync_database_url == "postgresql://postgres:root123@127.0.0.1:5433/Navix"
 
 
-def test_valid_testing_configuration():
+def test_valid_testing_configuration(monkeypatch):
     """Verify testing environment settings validation."""
+    monkeypatch.delenv("DATABASE_URL", raising=False)
     settings = Settings(
         APP_ENV="TESTING",
         SECRET_KEY=VALID_DEV_SECRET,
@@ -61,8 +63,9 @@ def test_unsafe_production_default_secret_rejection():
     assert "Insecure SECRET_KEY configured for PRODUCTION environment" in str(exc_info.value)
 
 
-def test_missing_database_credentials_in_production():
+def test_missing_database_credentials_in_production(monkeypatch):
     """Verify PRODUCTION environment requires non-empty DB password or DATABASE_URL."""
+    monkeypatch.delenv("DATABASE_URL", raising=False)
     with pytest.raises(ValueError) as exc_info:
         Settings(
             APP_ENV="PRODUCTION",

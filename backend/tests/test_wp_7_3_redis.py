@@ -12,8 +12,13 @@ from app.core.rate_limiter import (
 from app.core.cache import RedisCacheManager
 
 
-def test_redis_config_defaults():
+def test_redis_config_defaults(monkeypatch):
     """Verify default Redis infrastructure settings in Settings."""
+    monkeypatch.delenv("ALLOW_LOCALHOST_REDIS", raising=False)
+    monkeypatch.delenv("REDIS_HOST", raising=False)
+    monkeypatch.delenv("REDIS_PORT", raising=False)
+    monkeypatch.delenv("REDIS_DB", raising=False)
+    monkeypatch.delenv("REDIS_SSL", raising=False)
     s = Settings(SECRET_KEY="a_very_secure_test_secret_key_32_chars_min")
     assert s.REDIS_HOST == "127.0.0.1"
     assert s.REDIS_PORT == 6379
