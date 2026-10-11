@@ -1,0 +1,106 @@
+[
+  {
+    "service_code": "MSRTC-701",
+    "service_name": "Sangli - Pune Shivneri AC Express",
+    "provider_id": "prv_msrtc",
+    "provider_name": "MSRTC",
+    "operator_name": "Maharashtra State Road Transport Corporation",
+    "code_system": "MSRTC",
+    "transport_mode": "BUS",
+    "data_state": "STATIC",
+    "data_class": "SYNTHETIC_CONTRACT_FIXTURE",
+    "calendar": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "calling_points": [
+      {
+        "provider_stop_code": "SGL-BUS",
+        "stop_name": "Sangli Central Bus Stand",
+        "facility_id": "fac_sangli_bs_sli",
+        "stop_sequence": 1,
+        "arrival_time": "06:00:00",
+        "departure_time": "06:00:00",
+        "day_offset": 0
+      },
+      {
+        "provider_stop_code": "PNE-SWG",
+        "stop_name": "Swargate Central Bus Stand Pune",
+        "facility_id": "fac_pune_bs_pune_sw",
+        "stop_sequence": 2,
+        "arrival_time": "11:30:00",
+        "departure_time": "11:30:00",
+        "day_offset": 0
+      }
+    ],
+    "fares": [
+      {
+        "origin_facility_id": "fac_sangli_bs_sli",
+        "destination_facility_id": "fac_pune_bs_pune_sw",
+        "fare_class": "SHIVNERI_AC",
+        "fare_status": "NOT_PROVIDED",
+        "amount": null,
+        "currency": "INR",
+        "is_estimated": false,
+        "data_source": "Contract Test Fixture (Fare Not Provided in Open Data Feed)"
+      }
+    ]
+  },
+  {
+    "service_code": "HR-VOLVO-91",
+    "service_name": "Delhi ISBT - Manali Super Deluxe Volvo",
+    "provider_id": "prv_hrtc",
+    "provider_name": "HRTC",
+    "operator_name": "Himachal Road Transport Corporation",
+    "code_system": "HRTC",
+    "transport_mode": "BUS",
+    "data_state": "STATIC",
+    "data_class": "SYNTHETIC_CONTRACT_FIXTURE",
+    "calendar": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "calling_points": [
+      {
+        "provider_stop_code": "DEL-ISBT",
+        "stop_name": "Maharana Pratap ISBT Kashmere Gate Delhi",
+        "facility_id": "fac_new_delhi_bs_del_isbt",
+        "stop_sequence": 1,
+        "arrival_time": "20:00:00",
+        "departure_time": "20:00:00",
+        "day_offset": 0
+      },
+      {
+        "provider_stop_code": "MNL-ISBT",
+        "stop_name": "Old Manali Bus Stand Hub",
+        "facility_id": "fac_old_manali_bs_mnl",
+        "stop_sequence": 2,
+        "arrival_time": "08:30:00",
+        "departure_time": "08:30:00",
+        "day_offset": 1
+      }
+    ],
+    "fares": [
+      {
+        "origin_facility_id": "fac_new_delhi_bs_del_isbt",
+        "destination_facility_id": "fac_old_manali_bs_mnl",
+        "fare_class": "VOLVO_AC",
+        "fare_status": "NOT_PROVIDED",
+        "amount": null,
+        "currency": "INR",
+        "is_estimated": false,
+        "data_source": "Contract Test Fixture (Fare Not Provided in Open Data Feed)"
+      }
+    ]
+  }
+]

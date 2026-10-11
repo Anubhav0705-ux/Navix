@@ -42,10 +42,11 @@ def setup_test_database():
 
     # Ensure target test database exists
     try:
-        db_url = settings.DATABASE_URL
-        target_db_name = db_url.rsplit("/", 1)[1]
+        db_url = settings.sync_database_url
+        clean_url = db_url.split("?")[0]
+        target_db_name = clean_url.rsplit("/", 1)[1]
         if "test" in target_db_name.lower() or target_db_name.lower() == "navixtest":
-            admin_url = db_url.rsplit("/", 1)[0] + "/postgres"
+            admin_url = f"{clean_url.rsplit('/', 1)[0]}/postgres"
             from sqlalchemy import create_engine
             admin_engine = create_engine(admin_url, isolation_level="AUTOCOMMIT")
             with admin_engine.connect() as aconn:

@@ -1,0 +1,261 @@
+[
+  {
+    "service_code": "11029",
+    "service_name": "Koyna Express",
+    "provider_id": "prv_indian_railways",
+    "provider_name": "Indian Railways",
+    "operator_name": "Central Railway",
+    "code_system": "INDIAN_RAILWAYS",
+    "transport_mode": "RAIL",
+    "data_state": "STATIC",
+    "data_class": "REAL_SOURCE_DERIVED",
+    "calendar": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "calling_points": [
+      {
+        "provider_stop_code": "CSMT",
+        "stop_name": "Mumbai CSMT Railway Station",
+        "facility_id": "fac_mumbai_cstm",
+        "stop_sequence": 1,
+        "arrival_time": "08:40:00",
+        "departure_time": "08:40:00",
+        "day_offset": 0
+      },
+      {
+        "provider_stop_code": "DR",
+        "stop_name": "Dadar Central",
+        "facility_id": "fac_mumbai_cstm",
+        "stop_sequence": 2,
+        "arrival_time": "08:51:00",
+        "departure_time": "08:53:00",
+        "day_offset": 0
+      },
+      {
+        "provider_stop_code": "PUNE",
+        "stop_name": "Pune Junction",
+        "facility_id": "fac_pune_pune",
+        "stop_sequence": 3,
+        "arrival_time": "12:35:00",
+        "departure_time": "12:40:00",
+        "day_offset": 0
+      },
+      {
+        "provider_stop_code": "SLI",
+        "stop_name": "Sangli Railway Station",
+        "facility_id": "fac_sangli_sli",
+        "stop_sequence": 4,
+        "arrival_time": "18:42:00",
+        "departure_time": "18:45:00",
+        "day_offset": 0
+      },
+      {
+        "provider_stop_code": "MRJ",
+        "stop_name": "Miraj Junction",
+        "facility_id": "fac_miraj_mrj",
+        "stop_sequence": 5,
+        "arrival_time": "19:05:00",
+        "departure_time": "19:10:00",
+        "day_offset": 0
+      }
+    ],
+    "fares": [
+      {
+        "origin_facility_id": "fac_mumbai_cstm",
+        "destination_facility_id": "fac_sangli_sli",
+        "fare_class": "SL",
+        "fare_status": "NOT_PROVIDED",
+        "amount": null,
+        "currency": "INR",
+        "is_estimated": false,
+        "data_source": "Ministry of Railways OGD Timetable (Fare Not Provided in Open Timetable Feed)"
+      },
+      {
+        "origin_facility_id": "fac_mumbai_cstm",
+        "destination_facility_id": "fac_sangli_sli",
+        "fare_class": "3A",
+        "fare_status": "NOT_PROVIDED",
+        "amount": null,
+        "currency": "INR",
+        "is_estimated": false,
+        "data_source": "Ministry of Railways OGD Timetable (Fare Not Provided in Open Timetable Feed)"
+      },
+      {
+        "origin_facility_id": "fac_pune_pune",
+        "destination_facility_id": "fac_sangli_sli",
+        "fare_class": "SL",
+        "fare_status": "NOT_PROVIDED",
+        "amount": null,
+        "currency": "INR",
+        "is_estimated": false,
+        "data_source": "Ministry of Railways OGD Timetable (Fare Not Provided in Open Timetable Feed)"
+      }
+    ]
+  },
+  {
+    "service_code": "17412",
+    "service_name": "Mahalaxmi Express",
+    "provider_id": "prv_indian_railways",
+    "provider_name": "Indian Railways",
+    "operator_name": "Central Railway",
+    "code_system": "INDIAN_RAILWAYS",
+    "transport_mode": "RAIL",
+    "data_state": "STATIC",
+    "data_class": "REAL_SOURCE_DERIVED",
+    "calendar": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "calling_points": [
+      {
+        "provider_stop_code": "MRJ",
+        "stop_name": "Miraj Junction",
+        "facility_id": "fac_miraj_mrj",
+        "stop_sequence": 1,
+        "arrival_time": "21:20:00",
+        "departure_time": "21:25:00",
+        "day_offset": 0
+      },
+      {
+        "provider_stop_code": "SLI",
+        "stop_name": "Sangli Railway Station",
+        "facility_id": "fac_sangli_sli",
+        "stop_sequence": 2,
+        "arrival_time": "21:37:00",
+        "departure_time": "21:40:00",
+        "day_offset": 0
+      },
+      {
+        "provider_stop_code": "PUNE",
+        "stop_name": "Pune Junction",
+        "facility_id": "fac_pune_pune",
+        "stop_sequence": 3,
+        "arrival_time": "03:30:00",
+        "departure_time": "03:35:00",
+        "day_offset": 1
+      },
+      {
+        "provider_stop_code": "CSMT",
+        "stop_name": "Mumbai CSMT Railway Station",
+        "facility_id": "fac_mumbai_cstm",
+        "stop_sequence": 4,
+        "arrival_time": "07:25:00",
+        "departure_time": "07:25:00",
+        "day_offset": 1
+      }
+    ],
+    "fares": [
+      {
+        "origin_facility_id": "fac_sangli_sli",
+        "destination_facility_id": "fac_mumbai_cstm",
+        "fare_class": "SL",
+        "fare_status": "NOT_PROVIDED",
+        "amount": null,
+        "currency": "INR",
+        "is_estimated": false,
+        "data_source": "Ministry of Railways OGD Timetable (Fare Not Provided in Open Timetable Feed)"
+      },
+      {
+        "origin_facility_id": "fac_sangli_sli",
+        "destination_facility_id": "fac_mumbai_cstm",
+        "fare_class": "3A",
+        "fare_status": "NOT_PROVIDED",
+        "amount": null,
+        "currency": "INR",
+        "is_estimated": false,
+        "data_source": "Ministry of Railways OGD Timetable (Fare Not Provided in Open Timetable Feed)"
+      }
+    ]
+  },
+  {
+    "service_code": "12779",
+    "service_name": "Goa Express",
+    "provider_id": "prv_indian_railways",
+    "provider_name": "Indian Railways",
+    "operator_name": "South Western Railway",
+    "code_system": "INDIAN_RAILWAYS",
+    "transport_mode": "RAIL",
+    "data_state": "STATIC",
+    "data_class": "REAL_SOURCE_DERIVED",
+    "calendar": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "calling_points": [
+      {
+        "provider_stop_code": "MRJ",
+        "stop_name": "Miraj Junction",
+        "facility_id": "fac_miraj_mrj",
+        "stop_sequence": 1,
+        "arrival_time": "22:40:00",
+        "departure_time": "22:45:00",
+        "day_offset": 0
+      },
+      {
+        "provider_stop_code": "PUNE",
+        "stop_name": "Pune Junction",
+        "facility_id": "fac_pune_pune",
+        "stop_sequence": 2,
+        "arrival_time": "04:15:00",
+        "departure_time": "04:30:00",
+        "day_offset": 1
+      },
+      {
+        "provider_stop_code": "NDLS",
+        "stop_name": "New Delhi Railway Station",
+        "facility_id": "fac_new_delhi_ndls",
+        "stop_sequence": 3,
+        "arrival_time": "06:25:00",
+        "departure_time": "06:40:00",
+        "day_offset": 2
+      },
+      {
+        "provider_stop_code": "CDG",
+        "stop_name": "Chandigarh Junction",
+        "facility_id": "fac_chandigarh_cdg",
+        "stop_sequence": 4,
+        "arrival_time": "09:50:00",
+        "departure_time": "09:50:00",
+        "day_offset": 2
+      }
+    ],
+    "fares": [
+      {
+        "origin_facility_id": "fac_miraj_mrj",
+        "destination_facility_id": "fac_new_delhi_ndls",
+        "fare_class": "SL",
+        "fare_status": "NOT_PROVIDED",
+        "amount": null,
+        "currency": "INR",
+        "is_estimated": false,
+        "data_source": "Ministry of Railways OGD Timetable (Fare Not Provided in Open Timetable Feed)"
+      },
+      {
+        "origin_facility_id": "fac_miraj_mrj",
+        "destination_facility_id": "fac_new_delhi_ndls",
+        "fare_class": "3A",
+        "fare_status": "NOT_PROVIDED",
+        "amount": null,
+        "currency": "INR",
+        "is_estimated": false,
+        "data_source": "Ministry of Railways OGD Timetable (Fare Not Provided in Open Timetable Feed)"
+      }
+    ]
+  }
+]

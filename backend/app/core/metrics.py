@@ -34,6 +34,8 @@ def normalize_endpoint(path: str) -> str:
         return "/api/v1/trips"
     if cleaned.startswith("/api/v1/locations"):
         return "/api/v1/locations"
+    if cleaned.startswith("/api/v1/transport"):
+        return "/api/v1/transport"
     if cleaned.startswith("/api/v1/admin"):
         return "/api/v1/admin"
 
@@ -101,6 +103,11 @@ class MetricsCollector:
 
             if status_code >= 400:
                 self._errors_total[status_code] = self._errors_total.get(status_code, 0) + 1
+
+    def record_error(self, status_code: int = 500):
+        """Records an HTTP error code directly."""
+        with self._lock:
+            self._errors_total[status_code] = self._errors_total.get(status_code, 0) + 1
 
     def increment_in_flight(self):
         """Increments active in-flight request gauge."""

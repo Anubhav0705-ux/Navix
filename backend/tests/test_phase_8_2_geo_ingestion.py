@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from alembic.config import Config
 from alembic import command
 
+from app.core.config import settings
 from app.geo_ingestion.manifest import load_source_manifest
 from app.geo_ingestion.normalizer import normalize_name, normalize_code, normalize_pincode, slugify_id
 from app.geo_ingestion.validator import validate_coordinates, validate_entity_hierarchy
@@ -114,16 +115,9 @@ def resolve_ingestion_test_db_url() -> str:
     if explicit:
         return explicit
 
-    base_url = os.getenv("DATABASE_URL")
-    if base_url:
-        parts = base_url.rsplit("/", 1)
-        return f"{parts[0]}/NavixGeoIngestionTest"
-
-    host = os.getenv("DB_HOST", "127.0.0.1")
-    port = os.getenv("DB_PORT", "5433")
-    user = os.getenv("DB_USER", "postgres")
-    password = os.getenv("DB_PASSWORD", "postgres")
-    return f"postgresql://{user}:{password}@{host}:{port}/NavixGeoIngestionTest"
+    base_url = os.getenv("DATABASE_URL") or settings.sync_database_url
+    parts = base_url.rsplit("/", 1)
+    return f"{parts[0]}/NavixGeoIngestionTest"
 
 
 def test_national_ingestion_end_to_end_on_disposable_postgis():

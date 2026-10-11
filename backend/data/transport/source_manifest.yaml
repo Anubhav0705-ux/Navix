@@ -1,0 +1,193 @@
+sources:
+  - source_id: "ind_railways_open_timetable"
+    mode: "RAIL"
+    transport_mode: "RAIL"
+    publisher: "Ministry of Railways, Government of India"
+    authority: "Ministry of Railways, Government of India"
+    operator: "Indian Railways"
+    operator_name: "Indian Railways"
+    source_name: "Indian Railways Train Time Table Dataset"
+    catalog_url: "https://www.data.gov.in/catalog/indian-railways-train-time-table"
+    exact_url: "https://www.data.gov.in/catalog/indian-railways-train-time-table"
+    source_url: "https://www.data.gov.in/catalog/indian-railways-train-time-table"
+    catalog_published_at: "2015-08-07"
+    catalog_updated_at: "2018-01-24"
+    resource_url: null
+    resource_id: null
+    resource_updated_at: null
+    license: "GODL-India"
+    license_evidence_url: "https://data.gov.in/government-open-data-license-india"
+    redistribution_allowed: true
+    authentication_required: false
+    access_method: "STATIC_FILE_INGESTION"
+    format: "JSON"
+    geographic_coverage: "NATIONAL_INDIA"
+    schedule_available: true
+    route_available: true
+    stop_available: true
+    fare_available: false
+    availability_available: false
+    data_state: "STATIC"
+    data_class: "REAL_SOURCE_DERIVED"
+    refresh_frequency: "MONTHLY"
+    last_verified_at: "2026-10-10T12:00:00Z"
+    source_last_updated_at: "2018-01-24"
+    fields_available:
+      - "train_number"
+      - "train_name"
+      - "station_code"
+      - "station_name"
+      - "arrival_time"
+      - "departure_time"
+      - "distance"
+      - "day_offset"
+    attribution: "Source: Ministry of Railways / Data.gov.in under Government Open Data License - India"
+    approval_status: "APPROVED"
+    ingestion_status: "APPROVED"
+    reason: "Official public open data timetable published under Government Open Data License - India (GODL-India). Historical/static schedule data; does not publish current class fares or seat availability."
+    rejection_reason: "Official public open data timetable published under Government Open Data License - India (GODL-India). Historical/static schedule data; does not publish current class fares or seat availability."
+
+  - source_id: "msrtc_intercity_schedules"
+    mode: "BUS"
+    transport_mode: "BUS"
+    publisher: "Maharashtra State Road Transport Corporation"
+    authority: "Maharashtra State Road Transport Corporation"
+    operator: "MSRTC"
+    operator_name: "MSRTC"
+    source_name: "Maharashtra State Road Transport Express Bus Schedules"
+    exact_url: "https://msrtc.maharashtra.gov.in/"
+    source_url: "https://msrtc.maharashtra.gov.in/"
+    license: "PROPRIETARY_UNVERIFIED"
+    license_evidence_url: "https://msrtc.maharashtra.gov.in/"
+    redistribution_allowed: false
+    authentication_required: false
+    access_method: "STATIC_FILE_INGESTION"
+    format: "JSON"
+    geographic_coverage: "MAHARASHTRA_INTERSTATE"
+    schedule_available: true
+    route_available: true
+    stop_available: true
+    fare_available: false
+    availability_available: false
+    data_state: "STATIC"
+    data_class: "SYNTHETIC_CONTRACT_FIXTURE"
+    refresh_frequency: "MONTHLY"
+    last_verified_at: "2026-10-10T12:00:00Z"
+    source_last_updated_at: "2024-01-01T00:00:00Z"
+    fields_available:
+      - "service_code"
+      - "origin_bus_station"
+      - "destination_bus_station"
+      - "departure_time"
+    attribution: "MSRTC Public Timetable Feed (License Unverified)"
+    approval_status: "REQUIRES_LICENSE_REVIEW"
+    ingestion_status: "REQUIRES_LICENSE_REVIEW"
+    reason: "Public state transport portal schedule without explicit GODL-India or open data license metadata. Downgraded to REQUIRES_LICENSE_REVIEW; fixtures restricted to SYNTHETIC_CONTRACT_FIXTURE."
+    rejection_reason: "Public state transport portal schedule without explicit GODL-India or open data license metadata. Downgraded to REQUIRES_LICENSE_REVIEW; fixtures restricted to SYNTHETIC_CONTRACT_FIXTURE."
+
+  - source_id: "dgca_domestic_flight_schedules"
+    mode: "FLIGHT"
+    transport_mode: "FLIGHT"
+    publisher: "Directorate General of Civil Aviation, India"
+    authority: "Directorate General of Civil Aviation, India"
+    operator: "Air India / IndiGo / DGCA"
+    operator_name: "Air India / IndiGo / DGCA"
+    source_name: "DGCA Domestic Air Schedule Directory"
+    exact_url: "https://www.dgca.gov.in/"
+    source_url: "https://www.dgca.gov.in/"
+    license: "PROPRIETARY_UNVERIFIED"
+    license_evidence_url: "https://www.dgca.gov.in/"
+    redistribution_allowed: false
+    authentication_required: false
+    access_method: "STATIC_FILE_INGESTION"
+    format: "JSON"
+    geographic_coverage: "NATIONAL_INDIA_AIRPORTS"
+    schedule_available: true
+    route_available: true
+    stop_available: true
+    fare_available: false
+    availability_available: false
+    data_state: "STATIC"
+    data_class: "SYNTHETIC_CONTRACT_FIXTURE"
+    refresh_frequency: "SEASONAL"
+    last_verified_at: "2026-10-10T12:00:00Z"
+    source_last_updated_at: "2024-01-01T00:00:00Z"
+    fields_available:
+      - "flight_number"
+      - "origin_airport"
+      - "destination_airport"
+      - "departure_time"
+      - "arrival_time"
+    attribution: "DGCA Public Aviation Directory (License Unverified)"
+    approval_status: "REQUIRES_LICENSE_REVIEW"
+    ingestion_status: "REQUIRES_LICENSE_REVIEW"
+    reason: "Public regulatory schedule directory without explicit CC-BY or open redistribution grant. Downgraded to REQUIRES_LICENSE_REVIEW; fixtures restricted to SYNTHETIC_CONTRACT_FIXTURE."
+    rejection_reason: "Public regulatory schedule directory without explicit CC-BY or open redistribution grant. Downgraded to REQUIRES_LICENSE_REVIEW; fixtures restricted to SYNTHETIC_CONTRACT_FIXTURE."
+
+  - source_id: "irctc_private_booking_api"
+    mode: "RAIL"
+    transport_mode: "RAIL"
+    publisher: "IRCTC"
+    authority: "IRCTC"
+    operator: "IRCTC"
+    operator_name: "IRCTC"
+    source_name: "IRCTC Private Booking Endpoint"
+    exact_url: "https://www.irctc.co.in/"
+    source_url: "https://www.irctc.co.in/"
+    license: "PROPRIETARY_RESTRICTED"
+    license_evidence_url: "https://www.irctc.co.in/eticketing/termsAndConditions.jsf"
+    redistribution_allowed: false
+    authentication_required: true
+    access_method: "RESTRICTED"
+    format: "NONE"
+    geographic_coverage: "NATIONAL"
+    schedule_available: false
+    route_available: false
+    stop_available: false
+    fare_available: false
+    availability_available: false
+    data_state: "UNAVAILABLE"
+    data_class: "LEGACY_DEMO"
+    refresh_frequency: "NONE"
+    last_verified_at: "2026-10-10T12:00:00Z"
+    source_last_updated_at: null
+    fields_available: []
+    attribution: "N/A - Unauthorized Private Endpoint"
+    approval_status: "REJECTED"
+    ingestion_status: "REJECTED"
+    reason: "Private authenticated API; scraping or automated access prohibited by Terms of Service and NAVIX data ethics policy."
+    rejection_reason: "Private authenticated API; scraping or automated access prohibited by Terms of Service and NAVIX data ethics policy."
+
+  - source_id: "redbus_private_api"
+    mode: "BUS"
+    transport_mode: "BUS"
+    publisher: "redBus / MakeMyTrip Group"
+    authority: "redBus / MakeMyTrip Group"
+    operator: "redBus"
+    operator_name: "redBus"
+    source_name: "redBus Private App Endpoint"
+    exact_url: "https://www.redbus.in/"
+    source_url: "https://www.redbus.in/"
+    license: "PROPRIETARY_RESTRICTED"
+    license_evidence_url: "https://www.redbus.in/info/termscondition"
+    redistribution_allowed: false
+    authentication_required: true
+    access_method: "RESTRICTED"
+    format: "NONE"
+    geographic_coverage: "NATIONAL"
+    schedule_available: false
+    route_available: false
+    stop_available: false
+    fare_available: false
+    availability_available: false
+    data_state: "UNAVAILABLE"
+    data_class: "LEGACY_DEMO"
+    refresh_frequency: "NONE"
+    last_verified_at: "2026-10-10T12:00:00Z"
+    source_last_updated_at: null
+    fields_available: []
+    attribution: "N/A - Unauthorized Private Endpoint"
+    approval_status: "REJECTED"
+    ingestion_status: "REJECTED"
+    reason: "Private commercial API; ingestion rejected per legal and licensing policy without commercial partnership contract."
+    rejection_reason: "Private commercial API; ingestion rejected per legal and licensing policy without commercial partnership contract."

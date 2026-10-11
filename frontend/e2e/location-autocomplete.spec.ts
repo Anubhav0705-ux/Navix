@@ -49,10 +49,10 @@ test.describe('NAVIX Location Autocomplete & Geographic UX E2E', () => {
 
   test('Flow F: Keyboard-only navigation (ArrowDown + Enter)', async ({ page }) => {
     const originInput = page.getByPlaceholder(/Search origin city/i);
-    await originInput.focus();
-    await originInput.fill('Miraj');
+    await originInput.fill('Miraj Junction');
     await page.waitForTimeout(400);
-    await expect(page.locator('[role="listbox"]')).toBeVisible({ timeout: 10000 });
+    const option = page.locator('[role="option"]').filter({ hasText: /Miraj/i }).first();
+    await expect(option).toBeVisible({ timeout: 10000 });
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     await expect(originInput).toHaveValue(/Miraj/i);

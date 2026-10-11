@@ -13,6 +13,17 @@ from app.models.geo_settlement import Settlement, Locality
 from app.models.geo_transit import TransitFacility, TransitStop
 from app.models.geo_poi import PointOfInterest, Accommodation
 from app.models.geo_mapping import LocationAlias, ProviderLocationMapping, GeoProvenance, LegacyGeoMapping
+from app.models.transport_platform import (
+    TransportProvider,
+    TransportService,
+    TransportServiceCalendar,
+    TransportTrip,
+    TransportCallingPoint,
+    TransportFare,
+    TransportAvailability,
+    TransportProvenance,
+    TransportIngestionRun
+)
 
 __all__ = [
     "Base",
@@ -35,5 +46,14 @@ __all__ = [
     "LocationAlias",
     "ProviderLocationMapping",
     "GeoProvenance",
-    "LegacyGeoMapping"
+    "LegacyGeoMapping",
+    "TransportProvider",
+    "TransportService",
+    "TransportServiceCalendar",
+    "TransportTrip",
+    "TransportCallingPoint",
+    "TransportFare",
+    "TransportAvailability",
+    "TransportProvenance",
+    "TransportIngestionRun"
 ]
