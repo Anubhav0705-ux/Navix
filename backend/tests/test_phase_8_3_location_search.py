@@ -7,6 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.core.config import settings
 from app.database.session import get_db
 from app.models.geo_administrative import Country, AdminDivision
 from app.models.geo_settlement import Settlement, Locality
@@ -26,14 +27,9 @@ from app.services.location_search import (
 
 def resolve_test_db_url() -> str:
     """Dynamically resolves test database URL."""
-    db_url = os.getenv("DATABASE_URL")
-    if db_url:
-        return db_url
-    host = os.getenv("DB_HOST", "127.0.0.1")
-    port = os.getenv("DB_PORT", "15437")
-    user = os.getenv("DB_USER", "postgres")
-    pwd = os.getenv("DB_PASSWORD", "postgres")
-    return f"postgresql://{user}:{pwd}@{host}:{port}/NavixTest"
+    base_url = os.getenv("DATABASE_URL") or settings.sync_database_url
+    parts = base_url.rsplit("/", 1)
+    return f"{parts[0]}/NavixTest"
 
 
 @pytest.fixture(scope="module")

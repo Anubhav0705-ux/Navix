@@ -42,8 +42,9 @@ COPY --from=builder /install /usr/local
 RUN groupadd -g 10001 navix && \
     useradd -u 10001 -g navix -s /bin/bash -m navix
 
-# Copy application source code
+# Copy application source code and data assets
 COPY app /app/app
+COPY data /app/data
 
 # Change ownership to non-root user
 RUN chown -R navix:navix /app

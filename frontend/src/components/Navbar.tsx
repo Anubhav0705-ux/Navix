@@ -8,7 +8,7 @@ import { getCurrentUser, logoutSession } from '@/services/auth';
 import { UserResponse } from '@/types';
 import {
   Menu, X, ArrowRight, User as UserIcon, LogOut,
-  LayoutDashboard, Shield, BookOpen, Compass
+  LayoutDashboard, Shield, BookOpen, Compass, Clock
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -59,6 +59,13 @@ export const Navbar: React.FC<NavbarProps> = ({ transparentOnTop = false }) => {
           >
             <Compass className="w-3.5 h-3.5 text-[#0FA77A]" />
             <span>Plan Trip</span>
+          </Link>
+          <Link
+            href="/transport"
+            className="hover:text-[#0FA77A] transition-smooth flex items-center gap-1.5"
+          >
+            <Clock className="w-3.5 h-3.5 text-teal-400" />
+            <span>Schedules</span>
           </Link>
           <Link
             href="/stories"
@@ -152,6 +159,13 @@ export const Navbar: React.FC<NavbarProps> = ({ transparentOnTop = false }) => {
             className="block text-white hover:text-[#0FA77A] py-2 text-sm font-bold uppercase tracking-wider"
           >
             Plan a Trip
+          </Link>
+          <Link
+            href="/transport"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-white hover:text-[#0FA77A] py-2 text-sm font-bold uppercase tracking-wider"
+          >
+            Schedules & Timetables
           </Link>
           <Link
             href="/stories"

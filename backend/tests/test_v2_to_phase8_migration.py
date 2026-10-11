@@ -6,6 +6,7 @@ from sqlalchemy import create_engine, text, inspect, Table, Column, String, Date
 from sqlalchemy.orm import declarative_base, Session, sessionmaker
 from alembic.config import Config
 from alembic import command
+from app.core.config import settings
 
 # V2 Baseline Metadata (Pure V2 schema without Phase 8 models)
 V2Base = declarative_base()
@@ -93,16 +94,9 @@ def resolve_migration_test_db_url() -> str:
     if explicit:
         return explicit
 
-    base_url = os.getenv("DATABASE_URL")
-    if base_url:
-        parts = base_url.rsplit("/", 1)
-        return f"{parts[0]}/NavixV2MigrationTest"
-
-    host = os.getenv("DB_HOST", "127.0.0.1")
-    port = os.getenv("DB_PORT", "5433")
-    user = os.getenv("DB_USER", "postgres")
-    password = os.getenv("DB_PASSWORD", "postgres")
-    return f"postgresql://{user}:{password}@{host}:{port}/NavixV2MigrationTest"
+    base_url = os.getenv("DATABASE_URL") or settings.sync_database_url
+    parts = base_url.rsplit("/", 1)
+    return f"{parts[0]}/NavixV2MigrationTest"
 
 
 def validate_migration_db_safety(db_url: str) -> None:
@@ -289,10 +283,10 @@ def test_v2_to_phase8_alembic_migration_gate():
     alembic_cfg.set_main_option("sqlalchemy.url", db_url)
     command.upgrade(alembic_cfg, "head")
 
-    # Verify alembic_version table records 001_national_geo revision
+    # Verify alembic_version table records head revision
     with engine.connect() as conn:
         rev = conn.execute(text("SELECT version_num FROM alembic_version;")).scalar()
-        assert rev in ("001_national_geo", "002_search_indexes", "003_railway_semantics")
+        assert rev in ("001_national_geo", "002_search_indexes", "003_railway_semantics", "004_transport_data_foundation", "005_gtfs_and_refresh_foundation")
 
     # Verify idempotent re-run of alembic upgrade head
     command.upgrade(alembic_cfg, "head")

@@ -1,0 +1,106 @@
+[
+  {
+    "service_code": "6E-204",
+    "service_name": "IndiGo Pune - Delhi Non-Stop",
+    "provider_id": "prv_indigo",
+    "provider_name": "IndiGo Airlines",
+    "operator_name": "InterGlobe Aviation",
+    "code_system": "IATA",
+    "transport_mode": "FLIGHT",
+    "data_state": "STATIC",
+    "data_class": "SYNTHETIC_CONTRACT_FIXTURE",
+    "calendar": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "calling_points": [
+      {
+        "provider_stop_code": "PNQ",
+        "stop_name": "Pune Airport",
+        "facility_id": "fac_pune_pnq",
+        "stop_sequence": 1,
+        "arrival_time": "07:10:00",
+        "departure_time": "07:10:00",
+        "day_offset": 0
+      },
+      {
+        "provider_stop_code": "DEL",
+        "stop_name": "Indira Gandhi International Airport Delhi",
+        "facility_id": "fac_new_delhi_del",
+        "stop_sequence": 2,
+        "arrival_time": "09:25:00",
+        "departure_time": "09:25:00",
+        "day_offset": 0
+      }
+    ],
+    "fares": [
+      {
+        "origin_facility_id": "fac_pune_pnq",
+        "destination_facility_id": "fac_new_delhi_del",
+        "fare_class": "ECONOMY",
+        "fare_status": "NOT_PROVIDED",
+        "amount": null,
+        "currency": "INR",
+        "is_estimated": false,
+        "data_source": "Contract Test Fixture (Fare Not Provided in Open Data Feed)"
+      }
+    ]
+  },
+  {
+    "service_code": "AI-804",
+    "service_name": "Air India Mumbai - Delhi Non-Stop",
+    "provider_id": "prv_airindia",
+    "provider_name": "Air India",
+    "operator_name": "Tata Air India",
+    "code_system": "IATA",
+    "transport_mode": "FLIGHT",
+    "data_state": "STATIC",
+    "data_class": "SYNTHETIC_CONTRACT_FIXTURE",
+    "calendar": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "calling_points": [
+      {
+        "provider_stop_code": "BOM",
+        "stop_name": "Chhatrapati Shivaji Maharaj International Airport Mumbai",
+        "facility_id": "fac_mumbai_bom",
+        "stop_sequence": 1,
+        "arrival_time": "18:00:00",
+        "departure_time": "18:00:00",
+        "day_offset": 0
+      },
+      {
+        "provider_stop_code": "DEL",
+        "stop_name": "Indira Gandhi International Airport Delhi",
+        "facility_id": "fac_new_delhi_del",
+        "stop_sequence": 2,
+        "arrival_time": "20:15:00",
+        "departure_time": "20:15:00",
+        "day_offset": 0
+      }
+    ],
+    "fares": [
+      {
+        "origin_facility_id": "fac_mumbai_bom",
+        "destination_facility_id": "fac_new_delhi_del",
+        "fare_class": "ECONOMY",
+        "fare_status": "NOT_PROVIDED",
+        "amount": null,
+        "currency": "INR",
+        "is_estimated": false,
+        "data_source": "Contract Test Fixture (Fare Not Provided in Open Data Feed)"
+      }
+    ]
+  }
+]

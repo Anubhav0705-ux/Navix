@@ -31,8 +31,14 @@ def parse_transit_facilities(raw_items: List[Dict[str, Any]]) -> List[Dict[str, 
 
         # Extract provider code mappings
         mappings = []
+        station_codes = []
         if item.get("station_code"):
-            st_code = normalize_code(item["station_code"])
+            station_codes.append(item["station_code"])
+        if item.get("alternate_station_codes"):
+            station_codes.extend(item["alternate_station_codes"])
+
+        for sc in station_codes:
+            st_code = normalize_code(sc)
             if st_code:
                 mappings.append({
                     "mapping_id": generate_provider_mapping_id("INDIAN_RAILWAYS", st_code),
@@ -55,8 +61,14 @@ def parse_transit_facilities(raw_items: List[Dict[str, Any]]) -> List[Dict[str, 
                     "mapping_status": "VERIFIED"
                 })
 
+        bus_codes = []
         if item.get("bus_code"):
-            bus_code = normalize_code(item["bus_code"])
+            bus_codes.append(item["bus_code"])
+        if item.get("alternate_bus_codes"):
+            bus_codes.extend(item["alternate_bus_codes"])
+
+        for bc in bus_codes:
+            bus_code = normalize_code(bc)
             if bus_code:
                 mappings.append({
                     "mapping_id": generate_provider_mapping_id("RED_BUS", bus_code),

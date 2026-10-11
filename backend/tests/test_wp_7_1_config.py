@@ -16,12 +16,12 @@ def test_valid_development_configuration(monkeypatch):
         DB_PORT=5433,
         DB_NAME="Navix",
         DB_USER="postgres",
-        DB_PASSWORD="root123"
+        DB_PASSWORD="test_dev_password_only"
     )
     assert settings.is_development is True
     assert settings.is_production is False
     assert settings.DEBUG is True
-    assert settings.sync_database_url == "postgresql://postgres:root123@127.0.0.1:5433/Navix"
+    assert settings.sync_database_url == "postgresql://postgres:test_dev_password_only@127.0.0.1:5433/Navix"
 
 
 def test_valid_testing_configuration(monkeypatch):
@@ -131,3 +131,52 @@ def test_app_env_case_insensitive_normalization():
     )
     assert settings.APP_ENV == "DEVELOPMENT"
     assert settings.is_development is True
+
+
+def test_database_credentials_and_host_port_resolution(monkeypatch):
+    """Verify DB_PASSWORD supplied, missing, ports, and no silent postgres fallback."""
+    # 1. DB_PASSWORD supplied correctly
+    s_valid = Settings(
+        APP_ENV="DEVELOPMENT",
+        SECRET_KEY=VALID_DEV_SECRET,
+        DB_HOST="127.0.0.1",
+        DB_PORT=5432,
+        DB_USER="postgres",
+        DB_PASSWORD="explicit_test_password"
+    )
+    assert s_valid.DB_PASSWORD == "explicit_test_password"
+    assert "explicit_test_password" in s_valid.sync_database_url
+
+    # 2. No default fallback to 'postgres' password in Settings
+    s_default = Settings(
+        APP_ENV="DEVELOPMENT",
+        SECRET_KEY=VALID_DEV_SECRET,
+        DB_PASSWORD=""
+    )
+    assert s_default.DB_PASSWORD == ""
+    assert "postgres:postgres@" not in s_default.sync_database_url
+
+    # 3. DB_PASSWORD missing in production must raise ValueError
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+    with pytest.raises(ValueError) as exc:
+        Settings(
+            APP_ENV="PRODUCTION",
+            SECRET_KEY=VALID_PROD_SECRET,
+            FRONTEND_ORIGIN="https://navix.travel",
+            DB_PASSWORD=""
+        )
+    assert "Database authentication password (DB_PASSWORD or DATABASE_URL) is required for PRODUCTION" in str(exc.value)
+
+    # 4. Correct port vs alternate port
+    s_port_5432 = Settings(SECRET_KEY=VALID_DEV_SECRET, DB_PORT=5432)
+    assert s_port_5432.DB_PORT == 5432
+    assert ":5432/" in s_port_5432.sync_database_url
+
+    s_port_5433 = Settings(SECRET_KEY=VALID_DEV_SECRET, DB_PORT=5433)
+    assert s_port_5433.DB_PORT == 5433
+    assert ":5433/" in s_port_5433.sync_database_url
+
+    # 5. Correct host vs custom host
+    s_host = Settings(SECRET_KEY=VALID_DEV_SECRET, DB_HOST="db.staging.internal")
+    assert s_host.DB_HOST == "db.staging.internal"
+    assert "@db.staging.internal:" in s_host.sync_database_url

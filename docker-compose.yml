@@ -30,10 +30,10 @@ services:
       - APP_ENV=DEVELOPMENT
       - SECRET_KEY=navix_dev_secret_key_32_characters_minimum_secure_phrase_2026
       - DB_HOST=host.docker.internal
-      - DB_PORT=5433
-      - DB_NAME=Navix
-      - DB_USER=postgres
-      - DB_PASSWORD=root123
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_NAME=${DB_NAME:-Navix}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:?DB_PASSWORD must be set}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - ALLOW_LOCALHOST_DB=true
