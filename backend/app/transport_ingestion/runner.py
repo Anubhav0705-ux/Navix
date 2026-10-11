@@ -25,7 +25,20 @@ class TransportIngestionRunner:
                 raise ValueError(f"Source {source_id} is not APPROVED for ingestion (Status: {src.ingestion_status})")
 
         # Pick adapter
-        if src.transport_mode == "RAIL":
+        if src.access_method == "GTFS_ZIP_INGESTION" or src.format == "GTFS":
+            import os
+            from app.transport_ingestion.gtfs.adapter import GtfsProviderAdapter
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            gtfs_path = os.path.join(base_dir, "data", "transport", "gtfs", "dtc_delhi_gtfs.zip")
+            adapter = GtfsProviderAdapter(
+                feed_path=gtfs_path,
+                provider_id="DTC_DELHI",
+                provider_name="Delhi Transport Corporation",
+                default_mode="BUS",
+                data_class=src.data_class,
+                resolver=self.loader.resolver
+            )
+        elif src.transport_mode == "RAIL":
             adapter = RailProviderAdapter()
         elif src.transport_mode == "BUS":
             adapter = BusProviderAdapter()

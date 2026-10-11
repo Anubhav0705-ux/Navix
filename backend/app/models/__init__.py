@@ -22,7 +22,12 @@ from app.models.transport_platform import (
     TransportFare,
     TransportAvailability,
     TransportProvenance,
-    TransportIngestionRun
+    TransportIngestionRun,
+    TransportFeed,
+    TransportCalendarDate,
+    TransportServiceAlert,
+    TransportRealtimeObservation,
+    TransportRefreshLock
 )
 
 __all__ = [
@@ -55,5 +60,10 @@ __all__ = [
     "TransportFare",
     "TransportAvailability",
     "TransportProvenance",
-    "TransportIngestionRun"
+    "TransportIngestionRun",
+    "TransportFeed",
+    "TransportCalendarDate",
+    "TransportServiceAlert",
+    "TransportRealtimeObservation",
+    "TransportRefreshLock"
 ]

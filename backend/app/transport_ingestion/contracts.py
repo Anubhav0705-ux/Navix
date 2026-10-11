@@ -47,6 +47,7 @@ class NormalizedService(BaseModel):
         "monday": True, "tuesday": True, "wednesday": True, "thursday": True,
         "friday": True, "saturday": True, "sunday": True
     })
+    calendar_dates: List[Dict[str, Any]] = Field(default_factory=list)
     calling_points: List[NormalizedCallingPoint] = Field(default_factory=list)
     fares: List[NormalizedFare] = Field(default_factory=list)
     availabilities: List[NormalizedAvailability] = Field(default_factory=list)

@@ -1,8 +1,8 @@
 # NAVIX — TRANSPORT DATA SOURCE REGISTRY
 ## Comprehensive Source Discovery, Provenance Audit, Licensing Matrix & Data Classification
-**Phase**: Phase 9 WP-9.1 (Data-Integrity & Provenance Repair Gate)  
-**Status**: DEFINITIVE VERIFIED AUDIT  
-**Audit Date**: October 2026  
+**Phase**: Phase 9 WP-9.2 + WP-9.3 Final Release Gate<br/>
+**Status**: DEFINITIVE VERIFIED AUDIT & MULTI-PROVIDER REGISTRY<br/>
+**Audit Date**: October 2026
 
 ---
 
@@ -19,8 +19,8 @@ NAVIX operates as an algorithmic, budget-first multi-modal travel platform acros
 
 | Data Class | Definition | Application | UI / System Handling |
 | :--- | :--- | :--- | :--- |
-| `REAL_SOURCE_DERIVED` | Ingested directly from official, permitted public open datasets with verified provenance and redistribution rights. | Indian Railways OGD Timetable Feed | Displayed with publisher attribution, `STATIC` freshness badge, and license tags. |
-| `SYNTHETIC_CONTRACT_FIXTURE` | Synthetically modeled or contract-derived records used strictly for parser verification, schema contracts, and CI testing. | Intercity bus & domestic flight multi-modal fixtures | Explicitly tagged with indigo `SYNTHETIC CONTRACT FIXTURE` badge. License review pending. |
+| `REAL_SOURCE_DERIVED` | Ingested directly from official, permitted public open datasets with verified provenance and redistribution rights. | Indian Railways OGD Timetable | Displayed with publisher attribution, freshness badge, and license tags. Default consumer queries query this class. |
+| `SYNTHETIC_CONTRACT_FIXTURE` | Synthetically modeled or contract-derived records used strictly for parser verification, schema contracts, and CI testing. | DTC GTFS bus fixtures, MSRTC intercity bus & domestic flight multi-modal fixtures | Explicitly tagged with indigo `SYNTHETIC CONTRACT FIXTURE` badge. Strictly excluded from consumer search. |
 | `LEGACY_DEMO` | Pre-Phase-9 demo examples used for algorithmic baseline testing. | Legacy demo routes & nodes | Completely segregated from verified transport platform models. |
 
 ---
@@ -30,6 +30,7 @@ NAVIX operates as an algorithmic, budget-first multi-modal travel platform acros
 | Source ID | Transport Mode | Publisher / Authority | Operator | Exact Source URL | License | Redistribution Allowed | Data State | Approval Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | `ind_railways_open_timetable` | `RAIL` | Ministry of Railways, Government of India | Indian Railways | [data.gov.in/catalog/indian-railways-train-time-table](https://www.data.gov.in/catalog/indian-railways-train-time-table) | `GODL-India` | **Yes** | `STATIC` | **APPROVED** |
+| `dtc_delhi_open_gtfs` | `BUS` | Delhi Transport Corporation / Open Transit Data Delhi | Delhi Transport Corporation | [otd.delhi.gov.in/data/static/](https://otd.delhi.gov.in/data/static/) | `Delhi-OTD-Terms` | **Yes (Fixture Only)** | `ESTIMATED` | **REQUIRES_LICENSE_REVIEW** |
 | `msrtc_intercity_schedules` | `BUS` | Maharashtra State Road Transport Corporation | MSRTC | [msrtc.maharashtra.gov.in](https://msrtc.maharashtra.gov.in/) | `PROPRIETARY_UNVERIFIED` | **No** | `STATIC` | **REQUIRES_LICENSE_REVIEW** |
 | `dgca_domestic_flight_schedules` | `FLIGHT` | Directorate General of Civil Aviation, India | Air India / IndiGo / DGCA | [www.dgca.gov.in](https://www.dgca.gov.in/) | `PROPRIETARY_UNVERIFIED` | **No** | `STATIC` | **REQUIRES_LICENSE_REVIEW** |
 | `irctc_private_booking_api` | `RAIL` | IRCTC | IRCTC | [www.irctc.co.in](https://www.irctc.co.in/) | `PROPRIETARY_RESTRICTED` | **No** | `UNAVAILABLE` | **REJECTED** |
@@ -91,7 +92,35 @@ NAVIX operates as an algorithmic, budget-first multi-modal travel platform acros
   - Availability: `available_seats = null`, `availability_status = "NOT_PROVIDED"`
   - Rendering: UI renders **"Fare unavailable"** and **"Availability not provided"** with zero fabricated numbers.
 
-### 4.2 MSRTC Intercity Bus Schedules (`msrtc_intercity_schedules`)
+### 4.2 Delhi Open Transit Data GTFS (`dtc_delhi_open_gtfs`)
+* **source_id**: `dtc_delhi_open_gtfs`
+* **mode**: `BUS`
+* **publisher**: Delhi Transport Corporation / Open Transit Data Delhi
+* **operator**: Delhi Transport Corporation (DTC)
+* **catalog_URL**: `https://otd.delhi.gov.in/`
+* **exact URL**: `https://otd.delhi.gov.in/data/static/`
+* **license**: `Delhi-OTD-Terms` (Terms of Use for Delhi Open Transit Data)
+* **license_evidence_url**: `https://otd.delhi.gov.in/terms/`
+* **redistribution_allowed**: `true` (Committed archive is a synthetic test fixture)
+* **authentication_required**: `false` (Static GTFS archive)
+* **data_state**: `ESTIMATED` (Timetable estimates for testing)
+* **data_class**: `SYNTHETIC_CONTRACT_FIXTURE`
+* **last_verified_at**: `2026-10-11T12:00:00Z`
+* **access_method**: `GTFS_ZIP_INGESTION`
+* **archive_path**: `backend/data/transport/gtfs/dtc_delhi_gtfs.zip`
+* **cryptographic_sha256**: `ba49b17326397b7d794392868075d13a5006cfb519104b05e66b154a42c08678`
+* **fields_available**: `[agency, routes, trips, stop_times, stops, calendar, calendar_dates, feed_info]`
+* **fare_available**: `false` (Fare provenance cannot be verified against raw open feed; amount = null, fare_status = "NOT_PROVIDED")
+* **availability_available**: `false` (Static GTFS timetable contains no real-time seat inventory)
+* **approval_status**: **`REQUIRES_LICENSE_REVIEW`**
+* **rejection/restriction reason**: Repository archive `backend/data/transport/gtfs/dtc_delhi_gtfs.zip` is generated via `build_dtc_gtfs_fixture.py` for GTFS parser and schema verification. It does not represent raw unverified official government feed rows. Routes (such as Delhi-Manali) are synthetic fixtures; they are strictly excluded from consumer search (`exclude_synthetic=true`) and restricted to dev/test environments. Realtime GTFS-RT requires explicit API credentials (`DISABLED` by default).
+* **stop_resolution_policy**:
+  - `ST_DELHI_ISBT` $\rightarrow$ `fac_new_delhi_bs_del_isbt` (Maharana Pratap ISBT Kashmere Gate Delhi, `BUS_STATION`)
+  - `ST_DELHI_IGI_T3` $\rightarrow$ `fac_new_delhi_del` (Indira Gandhi International Airport, `AIRPORT`)
+  - `ST_MANALI_BUS_STAND` $\rightarrow$ `fac_old_manali_bs_mnl` (Old Manali Bus Stand Hub, `BUS_STATION`)
+  - Unmatched stops (e.g. `ST_DELHI_CP`) $\rightarrow$ Quarantined with `quarantined_reason = "UNMATCHED_STOP"`.
+
+### 4.3 MSRTC Intercity Bus Schedules (`msrtc_intercity_schedules`)
 * **source_id**: `msrtc_intercity_schedules`
 * **mode**: `BUS`
 * **publisher**: Maharashtra State Road Transport Corporation

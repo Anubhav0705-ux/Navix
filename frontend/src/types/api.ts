@@ -261,3 +261,73 @@ export interface LocationCoverageResponse {
   details: string;
 }
 
+export interface TransportStopDetail {
+  stop_sequence: number;
+  facility_id?: string;
+  stop_name: string;
+  arrival_time: string;
+  departure_time: string;
+  day_offset: number;
+}
+
+export interface TransportFareDetail {
+  id: string;
+  fare_class: string;
+  fare_status: string;
+  amount?: number | null;
+  currency: string;
+  is_estimated: boolean;
+}
+
+export interface TransportSearchServiceCard {
+  service_id: string;
+  service_code: string;
+  service_name: string;
+  provider_id: string;
+  provider_name: string;
+  operator_name?: string;
+  transport_mode: string;
+  origin_facility_id: string;
+  origin_facility_name: string;
+  destination_facility_id: string;
+  destination_facility_name: string;
+  departure_time: string;
+  arrival_time: string;
+  duration_minutes: number;
+  day_offset: number;
+  intermediate_stops_count: number;
+  intermediate_stops: TransportStopDetail[];
+  fares: TransportFareDetail[];
+  fare_status: string;
+  availability_status: string;
+  data_state: string;
+  data_class: string;
+  is_expired: boolean;
+  operates_on_selected_date: boolean;
+  delay_seconds: number;
+  active_alerts_count: number;
+  license: string;
+  attribution: string;
+}
+
+export interface TransportSearchResult {
+  origin_facility_id: string;
+  destination_facility_id: string;
+  travel_date?: string;
+  total_services_found: number;
+  services: TransportSearchServiceCard[];
+}
+
+export interface SourceCoverageResponse {
+  total_services: number;
+  verified_services_count: number;
+  synthetic_fixtures_count: number;
+  modes_breakdown: Record<string, number>;
+  total_calling_points: number;
+  resolved_facilities_count: number;
+  quarantined_stops_count: number;
+  total_sources: number;
+  approved_sources_count: number;
+  active_providers_count: number;
+}
+

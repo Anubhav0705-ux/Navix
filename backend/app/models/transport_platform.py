@@ -39,9 +39,12 @@ class TransportService(Base):
 
     provider = relationship("TransportProvider", back_populates="services")
     calendar = relationship("TransportServiceCalendar", back_populates="service", uselist=False, cascade="all, delete-orphan")
+    calendar_dates = relationship("TransportCalendarDate", back_populates="service", cascade="all, delete-orphan")
     calling_points = relationship("TransportCallingPoint", back_populates="service", cascade="all, delete-orphan", order_by="TransportCallingPoint.stop_sequence")
     fares = relationship("TransportFare", back_populates="service", cascade="all, delete-orphan")
     availabilities = relationship("TransportAvailability", back_populates="service", cascade="all, delete-orphan")
+    alerts = relationship("TransportServiceAlert", back_populates="service", cascade="all, delete-orphan")
+    realtime_observations = relationship("TransportRealtimeObservation", back_populates="service", cascade="all, delete-orphan")
 
     __table_args__ = (
         UniqueConstraint("provider_id", "service_code", name="uq_transport_service_provider_code"),
@@ -96,6 +99,7 @@ class TransportCallingPoint(Base):
     day_offset = Column(Integer, default=0, nullable=False)
     pickup_type = Column(Integer, default=0, nullable=False)
     dropoff_type = Column(Integer, default=0, nullable=False)
+    quarantined_reason = Column(String(255), nullable=True)
 
     service = relationship("TransportService", back_populates="calling_points")
 
@@ -188,3 +192,88 @@ class TransportIngestionRun(Base):
     __table_args__ = (
         CheckConstraint("status IN ('RUNNING', 'SUCCESS', 'PARTIAL', 'FAILED')", name="chk_transport_ingest_status"),
     )
+
+
+class TransportFeed(Base):
+    __tablename__ = "transport_feeds"
+
+    id = Column(String(64), primary_key=True)
+    source_id = Column(String(64), nullable=False)
+    feed_publisher_name = Column(String(255), nullable=False)
+    feed_publisher_url = Column(String(512), nullable=True)
+    feed_lang = Column(String(16), nullable=True, default="en")
+    feed_version = Column(String(64), nullable=True)
+    feed_start_date = Column(Date, nullable=True)
+    feed_end_date = Column(Date, nullable=True)
+    sha256 = Column(String(64), nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    imported_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("idx_transport_feed_source", "source_id"),
+    )
+
+
+class TransportCalendarDate(Base):
+    __tablename__ = "transport_calendar_dates"
+
+    id = Column(String(64), primary_key=True)
+    service_id = Column(String(64), ForeignKey("transport_services.id", ondelete="CASCADE"), nullable=False)
+    exception_date = Column(Date, nullable=False)
+    exception_type = Column(Integer, nullable=False)  # 1 = Service Added, 2 = Service Removed
+
+    service = relationship("TransportService", back_populates="calendar_dates")
+
+    __table_args__ = (
+        Index("idx_transport_cal_date_service", "service_id", "exception_date"),
+        CheckConstraint("exception_type IN (1, 2)", name="chk_transport_cal_date_type"),
+    )
+
+
+class TransportServiceAlert(Base):
+    __tablename__ = "transport_service_alerts"
+
+    id = Column(String(64), primary_key=True)
+    service_id = Column(String(64), ForeignKey("transport_services.id", ondelete="CASCADE"), nullable=True)
+    header_text = Column(Text, nullable=False)
+    description_text = Column(Text, nullable=True)
+    cause = Column(String(64), default="UNKNOWN_CAUSE", nullable=False)
+    effect = Column(String(64), default="UNKNOWN_EFFECT", nullable=False)
+    active_from = Column(DateTime(timezone=True), nullable=True)
+    active_to = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    service = relationship("TransportService", back_populates="alerts")
+
+    __table_args__ = (
+        Index("idx_transport_alert_service", "service_id"),
+    )
+
+
+class TransportRealtimeObservation(Base):
+    __tablename__ = "transport_realtime_observations"
+
+    id = Column(String(64), primary_key=True)
+    service_id = Column(String(64), ForeignKey("transport_services.id", ondelete="CASCADE"), nullable=False)
+    trip_id = Column(String(64), nullable=True)
+    stop_sequence = Column(Integer, nullable=True)
+    delay_seconds = Column(Integer, default=0, nullable=False)
+    vehicle_lat = Column(Numeric(9, 6), nullable=True)
+    vehicle_lon = Column(Numeric(9, 6), nullable=True)
+    observed_at = Column(DateTime(timezone=True), nullable=False)
+    is_stale = Column(Boolean, default=False, nullable=False)
+
+    service = relationship("TransportService", back_populates="realtime_observations")
+
+    __table_args__ = (
+        Index("idx_transport_rt_service_observed", "service_id", "observed_at"),
+    )
+
+
+class TransportRefreshLock(Base):
+    __tablename__ = "transport_refresh_locks"
+
+    source_id = Column(String(64), primary_key=True)
+    locked_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    locked_by = Column(String(128), nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=False)

@@ -8,7 +8,7 @@ test.describe('NAVIX Real Transport Data Platform E2E (Phase 9 WP-9.1)', () => {
 
   test('Flow T1: Dev transport platform dashboard loads real ingested provider services with truthful metadata', async ({ page }) => {
     // Check source registry cards
-    await expect(page.getByText(/Indian Railways Open Timetable & Schedule Dataset/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/Indian Railways Train Time Table/i)).toBeVisible({ timeout: 10000 });
     await expect(page.getByText(/Maharashtra State Road Transport Express Bus Schedules/i)).toBeVisible({ timeout: 10000 });
     await expect(page.getByText(/DGCA Domestic Air Schedule Directory/i)).toBeVisible({ timeout: 10000 });
 

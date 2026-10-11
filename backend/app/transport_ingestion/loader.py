@@ -1,12 +1,13 @@
 import uuid
 from typing import List, Optional
-from datetime import datetime, timezone
+from datetime import datetime, date, timezone
 from sqlalchemy.orm import Session
 
 from app.models.transport_platform import (
     TransportProvider, TransportService, TransportServiceCalendar,
-    TransportTrip, TransportCallingPoint, TransportFare,
-    TransportAvailability, TransportProvenance, TransportIngestionRun
+    TransportCalendarDate, TransportTrip, TransportCallingPoint,
+    TransportFare, TransportAvailability, TransportProvenance,
+    TransportIngestionRun
 )
 from app.transport_ingestion.contracts import NormalizedService
 from app.transport_ingestion.resolver import LocationResolver
@@ -124,6 +125,28 @@ class TransportLoader:
                     cal.saturday = service_data.calendar.get("saturday", True)
                     cal.sunday = service_data.calendar.get("sunday", True)
 
+                # 3b. Upsert Calendar Date Exceptions
+                self.db.query(TransportCalendarDate).filter(TransportCalendarDate.service_id == service.id).delete()
+                for c_date in getattr(service_data, "calendar_dates", []):
+                    raw_dt = c_date.get("exception_date") or c_date.get("date")
+                    if not raw_dt:
+                        continue
+                    if isinstance(raw_dt, str):
+                        if len(raw_dt) == 8 and raw_dt.isdigit():
+                            d_obj = date(int(raw_dt[:4]), int(raw_dt[4:6]), int(raw_dt[6:]))
+                        else:
+                            d_obj = date.fromisoformat(raw_dt)
+                    else:
+                        d_obj = raw_dt
+
+                    cd_obj = TransportCalendarDate(
+                        id=f"cd_{service.id}_{d_obj.isoformat()}".replace("-", "_"),
+                        service_id=service.id,
+                        exception_date=d_obj,
+                        exception_type=int(c_date.get("exception_type", 1))
+                    )
+                    self.db.add(cd_obj)
+
                 # 4. Replace/Upsert Calling Points
                 self.db.query(TransportCallingPoint).filter(TransportCallingPoint.service_id == service.id).delete()
                 for cp in service_data.calling_points:
@@ -131,6 +154,7 @@ class TransportLoader:
                     fac_id = res.facility_id
                     if not fac_id and cp.facility_id and self.resolver.is_facility_mode_compatible(cp.facility_id, service_data.transport_mode):
                         fac_id = cp.facility_id
+                    quarantined = None if fac_id else "UNMATCHED_STOP"
                     cp_id = f"cp_{service.id}_{cp.stop_sequence}"
                     new_cp = TransportCallingPoint(
                         id=cp_id,
@@ -143,7 +167,8 @@ class TransportLoader:
                         departure_time=cp.departure_time,
                         day_offset=cp.day_offset,
                         pickup_type=cp.pickup_type,
-                        dropoff_type=cp.dropoff_type
+                        dropoff_type=cp.dropoff_type,
+                        quarantined_reason=quarantined
                     )
                     self.db.add(new_cp)
 

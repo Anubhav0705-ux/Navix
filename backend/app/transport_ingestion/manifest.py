@@ -84,3 +84,6 @@ class TransportSourceManifest:
 
     def list_approved_sources(self) -> List[TransportSourceRecord]:
         return [s for s in self.sources.values() if s.ingestion_status == "APPROVED"]
+
+
+TransportSourceSpec = TransportSourceRecord

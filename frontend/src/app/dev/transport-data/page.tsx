@@ -57,9 +57,20 @@ interface SourceStatus {
   attribution: string;
 }
 
+interface SourceCoverage {
+  total_providers: number;
+  total_services: number;
+  services_by_data_class: Record<string, number>;
+  services_by_mode: Record<string, number>;
+  total_calling_points: number;
+  resolved_facility_count: number;
+  quarantined_stops_count: number;
+}
+
 export default function DevTransportDataPage() {
   const [services, setServices] = useState<TransportService[]>([]);
   const [sources, setSources] = useState<SourceStatus[]>([]);
+  const [coverage, setCoverage] = useState<SourceCoverage | null>(null);
   const [selectedMode, setSelectedMode] = useState<string>('ALL');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -73,9 +84,10 @@ export default function DevTransportDataPage() {
     async function fetchData() {
       try {
         setLoading(true);
-        const [servRes, srcRes] = await Promise.all([
+        const [servRes, srcRes, covRes] = await Promise.all([
           fetch(`${API_BASE}/api/v1/transport/services`),
-          fetch(`${API_BASE}/api/v1/transport/source-status`)
+          fetch(`${API_BASE}/api/v1/transport/source-status`),
+          fetch(`${API_BASE}/api/v1/transport/coverage`)
         ]);
 
         if (!servRes.ok || !srcRes.ok) {
@@ -84,9 +96,11 @@ export default function DevTransportDataPage() {
 
         const servData = await servRes.json();
         const srcData = await srcRes.json();
+        const covData = covRes.ok ? await covRes.json() : null;
 
         setServices(servData);
         setSources(srcData);
+        setCoverage(covData);
         setError(null);
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : 'Error connecting to transport platform backend');
@@ -110,7 +124,7 @@ export default function DevTransportDataPage() {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-[#0FA77A] font-bold uppercase tracking-wider mb-1">
               <Database className="w-4 h-4" />
-              <span>Phase 9 WP-9.1 Platform Verification</span>
+              <span>Phase 9 Platform Verification &amp; Audit</span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
               Real Transport Provider Platform &amp; Schedules
@@ -119,14 +133,56 @@ export default function DevTransportDataPage() {
               Deterministic timetable and route platform with rigorous data provenance, truthful classifications, and canonical geographic linking.
             </p>
           </div>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-bold text-white rounded-xl transition-all self-start sm:self-center"
-          >
-            <span>Back to Planner</span>
-            <ArrowRight className="w-4 h-4 text-[#0FA77A]" />
-          </Link>
+          <div className="flex items-center gap-2 self-start sm:self-center">
+            <Link
+              href="/transport"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0FA77A] hover:bg-[#0B8465] text-xs font-bold text-white rounded-xl transition-all shadow-md"
+            >
+              <span>User Timetable Search</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-bold text-white rounded-xl transition-all"
+            >
+              <span>Back to Planner</span>
+            </Link>
+          </div>
         </div>
+
+        {/* Coverage Statistics Bar */}
+        {coverage && (
+          <div id="coverage-stats-bar" className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="bg-slate-900/60 border border-white/10 rounded-xl p-3 text-center">
+              <div className="text-[11px] font-mono text-slate-400">Total Services</div>
+              <div className="text-xl font-extrabold text-white mt-0.5">{coverage.total_services}</div>
+            </div>
+            <div className="bg-slate-900/60 border border-white/10 rounded-xl p-3 text-center">
+              <div className="text-[11px] font-mono text-emerald-400">Verified Real</div>
+              <div className="text-xl font-extrabold text-emerald-400 mt-0.5">
+                {coverage.services_by_data_class?.REAL_SOURCE_DERIVED || 0}
+              </div>
+            </div>
+            <div className="bg-slate-900/60 border border-white/10 rounded-xl p-3 text-center">
+              <div className="text-[11px] font-mono text-indigo-400">Synthetic Fixtures</div>
+              <div className="text-xl font-extrabold text-indigo-400 mt-0.5">
+                {coverage.services_by_data_class?.SYNTHETIC_CONTRACT_FIXTURE || 0}
+              </div>
+            </div>
+            <div className="bg-slate-900/60 border border-white/10 rounded-xl p-3 text-center">
+              <div className="text-[11px] font-mono text-slate-400">Calling Points</div>
+              <div className="text-xl font-extrabold text-white mt-0.5">{coverage.total_calling_points}</div>
+            </div>
+            <div className="bg-slate-900/60 border border-white/10 rounded-xl p-3 text-center">
+              <div className="text-[11px] font-mono text-teal-400">Resolved Facilities</div>
+              <div className="text-xl font-extrabold text-teal-400 mt-0.5">{coverage.resolved_facility_count}</div>
+            </div>
+            <div className="bg-slate-900/60 border border-white/10 rounded-xl p-3 text-center">
+              <div className="text-[11px] font-mono text-amber-400">Quarantined Stops</div>
+              <div className="text-xl font-extrabold text-amber-400 mt-0.5">{coverage.quarantined_stops_count}</div>
+            </div>
+          </div>
+        )}
 
         {/* Data Classification Banner */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -146,6 +146,26 @@ def setup_test_database():
         logger.error(f"Failed to seed demo transit data in test database: {seed_err}")
         raise RuntimeError(f"Authorized demo transit seeding failed: {seed_err}") from seed_err
 
+    # 10b. Seed National PostGIS Geography & Approved Transport Platform for integration tests
+    try:
+        from app.geo_ingestion.runner import run_national_ingestion
+        from app.transport_ingestion.runner import TransportIngestionRunner
+        from app.models.geo_settlement import Settlement
+        with SessionLocal() as db:
+            if db.query(Settlement).count() == 0:
+                run_national_ingestion(db)
+                runner = TransportIngestionRunner(db)
+                # Ingest approved real sources
+                runner.run_source("ind_railways_open_timetable")
+                # Ingest synthetic contract fixtures for parser & schema test suites
+                try:
+                    runner.run_source("dtc_delhi_open_gtfs", allow_contract_fixtures=True)
+                except Exception as s_err:
+                    logger.warning(f"Test bootstrap contract fixture ingestion warning: {s_err}")
+                db.commit()
+    except Exception as geo_seed_err:
+        logger.warning(f"National geo / transport seed warning in test bootstrap: {geo_seed_err}")
+
     # 11. Seed test trip, segment, and budget allocation in disposable test database
     try:
         with SessionLocal() as db:
