@@ -89,6 +89,12 @@ POLICIES: Dict[str, RateLimitPolicy] = {
         window_seconds=60,
         fail_open=True
     ),
+    "places": RateLimitPolicy(
+        name="places",
+        max_requests=60,
+        window_seconds=60,
+        fail_open=True
+    ),
     "default": RateLimitPolicy(
         name="default",
         max_requests=100,
@@ -244,3 +250,30 @@ async def acquire_concurrency_guard(policy_name: str = "routes", timeout: float 
         yield
     finally:
         sem.release()
+
+
+async def enforce_rate_limit(request: Request, policy_name: str = "default", user_id: Optional[str] = None):
+    """
+    Enforces endpoint rate limit, raising HTTP 429 when quota is exceeded.
+    """
+    allowed, remaining, retry_after, limit = await rate_limiter.check_rate_limit(
+        request=request,
+        policy_name=policy_name,
+        user_id=user_id
+    )
+    if not allowed:
+        from app.core.metrics import metrics
+        metrics.record_rate_limit_rejection(policy_name)
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail={
+                "error": "RATE_LIMIT_EXCEEDED",
+                "message": f"Rate limit exceeded for category '{policy_name}'. Retry in {retry_after} seconds.",
+                "retry_after": retry_after
+            },
+            headers={
+                "Retry-After": str(retry_after),
+                "X-RateLimit-Limit": str(limit),
+                "X-RateLimit-Remaining": "0"
+            }
+        )

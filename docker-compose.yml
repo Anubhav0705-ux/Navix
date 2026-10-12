@@ -37,6 +37,12 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - ALLOW_LOCALHOST_DB=true
+      - FOURSQUARE_API_KEY=${FOURSQUARE_API_KEY:-}
+      - TRANSITLAND_API_KEY=${TRANSITLAND_API_KEY:-}
+      - DUFFEL_ACCESS_TOKEN=${DUFFEL_ACCESS_TOKEN:-}
+      - HOTELBEDS_API_KEY=${HOTELBEDS_API_KEY:-}
+      - HOTELBEDS_SECRET=${HOTELBEDS_SECRET:-}
+      - HOTELBEDS_BASE_URL=${HOTELBEDS_BASE_URL:-https://api.test.hotelbeds.com}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:

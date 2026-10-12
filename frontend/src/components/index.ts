@@ -7,6 +7,4 @@ export * from './PlannerComponents';
 export * from './AutoPlanStage';
 export * from './ReviewStage';
 export * from './LocationAutocomplete';
-
-
-
+export * from './PlaceAutocomplete';
