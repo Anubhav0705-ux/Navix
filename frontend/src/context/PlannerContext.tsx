@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import {
   OptimizationProfile, StayPreference, FoodPreference,
-  ActivityPreference, TripPlanRequest
+  ActivityPreference, TripPlanRequest, ExternalPlaceRef
 } from '@/types';
 import { getCurrentUser } from '@/services/auth';
 
@@ -22,6 +22,8 @@ export interface PlannerState {
   stage: PlannerStage;
   origin: string;
   destination: string;
+  originPlace?: ExternalPlaceRef;
+  destinationPlace?: ExternalPlaceRef;
   originLocationId?: string;
   destinationLocationId?: string;
   originEntityType?: string;
@@ -62,6 +64,10 @@ export type PlannerAction =
   | { type: 'SET_STAGE'; payload: PlannerStage }
   | { type: 'SET_ORIGIN'; payload: string }
   | { type: 'SET_DESTINATION'; payload: string }
+  | { type: 'SET_ORIGIN_PLACE'; payload: ExternalPlaceRef }
+  | { type: 'SET_DESTINATION_PLACE'; payload: ExternalPlaceRef }
+  | { type: 'CLEAR_ORIGIN_PLACE' }
+  | { type: 'CLEAR_DESTINATION_PLACE' }
   | { type: 'SET_ORIGIN_LOCATION'; payload: { name: string; locationId?: string; entityType?: string } }
   | { type: 'SET_DESTINATION_LOCATION'; payload: { name: string; locationId?: string; entityType?: string } }
   | { type: 'CLEAR_ORIGIN_LOCATION' }
@@ -93,25 +99,33 @@ export type PlannerAction =
   | { type: 'SET_ROUTE_OPTION'; payload: 'BALANCED' | 'CHEAPEST' | 'FASTER' }
   | { type: 'PREFILL_FROM_QUERY'; payload: Partial<PlannerState> };
 
+// Clean default dates (departure 14 days ahead, return 20 days ahead)
+const getFutureDate = (daysAhead: number) => {
+  const d = new Date(Date.now() + daysAhead * 86400000);
+  return d.toISOString().split('T')[0];
+};
+
 const INITIAL_STATE: PlannerState = {
   stage: 1,
-  origin: 'Sangli',
-  destination: 'Old Manali',
-  originLocationId: 'stl_sangli',
-  destinationLocationId: 'stl_manali',
-  originEntityType: 'SETTLEMENT',
-  destinationEntityType: 'SETTLEMENT',
-  departureDate: '2026-12-12',
-  returnDate: '2026-12-18',
-  maximumBudget: 20000,
+  origin: '',
+  destination: '',
+  originPlace: undefined,
+  destinationPlace: undefined,
+  originLocationId: undefined,
+  destinationLocationId: undefined,
+  originEntityType: undefined,
+  destinationEntityType: undefined,
+  departureDate: getFutureDate(14),
+  returnDate: getFutureDate(20),
+  maximumBudget: 25000,
   travellers: 1,
   travellerProfiles: [
     { id: 'trv-1', name: 'Explorer 1', ageGroup: '25-34', pace: 'Balanced' }
   ],
   personalities: ['Adventure', 'Nature'],
   travelPace: 'Balanced',
-  mustInclude: ['scenic places', 'local food'],
-  avoid: ['too many transfers'],
+  mustInclude: [],
+  avoid: [],
 
   profile: 'BALANCED',
   stayPreference: 'STANDARD',
@@ -122,9 +136,9 @@ const INITIAL_STATE: PlannerState = {
   maxTransfers: 'Any',
   allowOvernight: true,
 
-  selectedPlaces: ['act_01', 'act_02', 'act_03'],
-  selectedDiscoveryPlaces: ['disc_05'],
-  foodPreferences: ['Local Cuisine', 'Café Hopping'],
+  selectedPlaces: [],
+  selectedDiscoveryPlaces: [],
+  foodPreferences: ['Local Cuisine'],
   dietPreference: 'No Preference',
   departurePreference: 'Morning',
   travelComfort: 'Standard',
@@ -137,6 +151,41 @@ function plannerReducer(state: PlannerState, action: PlannerAction): PlannerStat
   switch (action.type) {
     case 'SET_STAGE':
       return { ...state, stage: action.payload };
+    case 'SET_ORIGIN':
+      return { ...state, origin: action.payload };
+    case 'SET_DESTINATION':
+      return { ...state, destination: action.payload };
+    case 'SET_ORIGIN_PLACE':
+      return {
+        ...state,
+        origin: action.payload.display_name,
+        originPlace: action.payload,
+        originLocationId: action.payload.provider_place_id,
+        originEntityType: 'EXTERNAL_PLACE'
+      };
+    case 'SET_DESTINATION_PLACE':
+      return {
+        ...state,
+        destination: action.payload.display_name,
+        destinationPlace: action.payload,
+        destinationLocationId: action.payload.provider_place_id,
+        destinationEntityType: 'EXTERNAL_PLACE'
+      };
+    case 'CLEAR_ORIGIN_PLACE':
+      return {
+        ...state,
+        originPlace: undefined,
+        originLocationId: undefined,
+        originEntityType: undefined
+      };
+    case 'CLEAR_DESTINATION_PLACE':
+      return {
+        ...state,
+        destinationPlace: undefined,
+        destinationLocationId: undefined,
+        destinationEntityType: undefined
+      };
+
     case 'SET_ORIGIN':
       return { ...state, origin: action.payload };
     case 'SET_DESTINATION':

@@ -34,6 +34,8 @@ def normalize_endpoint(path: str) -> str:
         return "/api/v1/trips"
     if cleaned.startswith("/api/v1/locations"):
         return "/api/v1/locations"
+    if cleaned.startswith("/api/v1/places"):
+        return "/api/v1/places"
     if cleaned.startswith("/api/v1/transport"):
         return "/api/v1/transport"
     if cleaned.startswith("/api/v1/admin"):
@@ -69,6 +71,21 @@ class MetricsCollector:
         self._location_search_no_results: int = 0
         self._location_resolutions: int = 0
         self._nearby_searches: int = 0
+
+        # Phase 10 External Provider Observability
+        self._provider_requests_total: Dict[Tuple[str, str, str], int] = {}
+        self._place_search_cache_hits: int = 0
+
+    def record_provider_request(self, provider: str, operation: str, status: str):
+        """Records an external provider API call."""
+        with self._lock:
+            key = (provider.upper(), operation.lower(), status.upper())
+            self._provider_requests_total[key] = self._provider_requests_total.get(key, 0) + 1
+
+    def record_place_search_cache_hit(self):
+        """Records place search cache hit."""
+        with self._lock:
+            self._place_search_cache_hits += 1
 
     def record_search_request(self):
         """Records location search execution."""

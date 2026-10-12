@@ -65,6 +65,14 @@ class Settings(BaseSettings):
     RATE_LIMIT_ENABLED: bool = True
     LOG_LEVEL: str = "INFO"
 
+    # External Providers Configuration (Phase 10)
+    FOURSQUARE_API_KEY: Optional[str] = Field(default=None, description="Foursquare Places API Key")
+    TRANSITLAND_API_KEY: Optional[str] = Field(default=None, description="Transitland REST API Key")
+    DUFFEL_ACCESS_TOKEN: Optional[str] = Field(default=None, description="Duffel Flights Access Token (Test mode)")
+    HOTELBEDS_API_KEY: Optional[str] = Field(default=None, description="Hotelbeds Evaluation API Key")
+    HOTELBEDS_SECRET: Optional[str] = Field(default=None, description="Hotelbeds Evaluation Shared Secret")
+    HOTELBEDS_BASE_URL: str = Field(default="https://api.test.hotelbeds.com", description="Hotelbeds Base URL")
+
     @model_validator(mode="after")
     def validate_and_normalize_configuration(self) -> "Settings":
         """

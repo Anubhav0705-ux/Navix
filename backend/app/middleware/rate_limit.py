@@ -28,6 +28,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             policy_name = "trips"
         elif path.startswith("/api/v1/locations"):
             policy_name = "locations"
+        elif path.startswith("/api/v1/places"):
+            policy_name = "places"
         elif not path.startswith("/api/"):
             # Exclude docs, health, static files from rate limiting
             return await call_next(request)

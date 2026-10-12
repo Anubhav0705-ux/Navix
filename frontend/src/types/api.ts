@@ -331,3 +331,71 @@ export interface SourceCoverageResponse {
   active_providers_count: number;
 }
 
+// Phase 10: Real Data Foundation & Trip Setup Types
+export interface ExternalPlaceRef {
+  provider: 'FOURSQUARE' | string;
+  provider_place_id: string;
+  display_name: string;
+  formatted_address?: string;
+  locality?: string;
+  region?: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+  categories?: string[];
+  data_state?: string;
+}
+
+export interface PlaceSearchResponse {
+  query: string;
+  total_matches: number;
+  results: ExternalPlaceRef[];
+  provider: string;
+  cached?: boolean;
+}
+
+export interface TripSetupPayload {
+  origin: ExternalPlaceRef;
+  destination: ExternalPlaceRef;
+  departure_date: string;
+  return_date: string;
+  travellers: number;
+  maximum_budget: number;
+  currency?: string;
+  travel_style?: string;
+  personalities?: string[];
+  must_include?: string[];
+  avoid?: string[];
+}
+
+export interface TripSetupDraftResponse {
+  trip_id: string;
+  origin: ExternalPlaceRef;
+  destination: ExternalPlaceRef;
+  departure_date: string;
+  return_date: string;
+  duration_days: number;
+  duration_nights: number;
+  travellers: number;
+  maximum_budget: number;
+  currency: string;
+  travel_style: string;
+  status: string;
+  next_step: string;
+  message: string;
+  created_at: string;
+}
+
+export interface ProviderHealthItem {
+  provider: string;
+  status: 'READY' | 'MISSING_CREDENTIALS' | 'UNAUTHORIZED' | 'RATE_LIMITED' | 'UNAVAILABLE' | 'SANDBOX_ONLY' | 'EVALUATION';
+  environment: string;
+  public_consumer_enabled: boolean;
+  message: string;
+  last_checked_at: string;
+}
+
+export interface ProviderHealthResponse {
+  timestamp: string;
+  providers: Record<string, ProviderHealthItem>;
+}

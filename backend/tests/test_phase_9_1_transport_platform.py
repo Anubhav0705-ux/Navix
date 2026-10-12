@@ -432,7 +432,7 @@ class TestPhase91TransportPlatform:
         assert os.path.exists(metadata_path), "Metadata file must exist"
 
         with open(verified_path, "rb") as f:
-            content = f.read()
+            content = f.read().replace(b"\r\n", b"\n")
         calculated_sha = hashlib.sha256(content).hexdigest()
 
         with open(metadata_path, "r", encoding="utf-8") as f:

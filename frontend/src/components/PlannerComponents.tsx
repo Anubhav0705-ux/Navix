@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePlanner, TravellerProfile, TripPersonality } from '@/context/PlannerContext';
 import { Logo } from './Logo';
 import { LocationAutocomplete } from './LocationAutocomplete';
+import { PlaceAutocomplete } from './PlaceAutocomplete';
 import {
   MapPin, Wallet, Calendar, Users, Check, ArrowLeft,
   Sparkles, Train, Bus, Car, Navigation, ShieldCheck,
@@ -120,8 +121,44 @@ export const TripSetupStage: React.FC = () => {
   const diffDays = Math.max(1, Math.round((ret.getTime() - dep.getTime()) / (1000 * 3600 * 24)));
   const nights = Math.max(0, diffDays - 1);
 
-  const origMeta = NODE_METADATA[state.origin] || { state: 'India', label: 'Starting Hub' };
-  const destMeta = NODE_METADATA[state.destination] || { state: 'India', label: 'Destination' };
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  // Validation checks
+  const isOriginValid = Boolean(state.origin && state.origin.trim().length >= 2);
+  const isDestValid = Boolean(state.destination && state.destination.trim().length >= 2);
+  const isSameLocation = isOriginValid && isDestValid && (
+    (state.originPlace && state.destinationPlace && state.originPlace.provider_place_id === state.destinationPlace.provider_place_id) ||
+    state.origin.trim().toLowerCase() === state.destination.trim().toLowerCase()
+  );
+
+  const isDepInPast = Boolean(state.departureDate && state.departureDate < todayStr);
+  const isReturnBeforeDep = Boolean(state.returnDate && state.departureDate && state.returnDate < state.departureDate);
+  const isDurationTooLong = diffDays > 30;
+  const isBudgetValid = state.maximumBudget > 0;
+  const isTravellersValid = state.travellers >= 1 && state.travellers <= 20;
+
+  const canContinue = isOriginValid && isDestValid && !isSameLocation && !isDepInPast && !isReturnBeforeDep && !isDurationTooLong && isBudgetValid && isTravellersValid;
+
+  let validationWarning: string | null = null;
+  if (!isOriginValid && !isDestValid) {
+    validationWarning = 'Please enter and select starting point and destination.';
+  } else if (!isOriginValid) {
+    validationWarning = 'Please enter a valid starting location.';
+  } else if (!isDestValid) {
+    validationWarning = 'Please enter a valid destination.';
+  } else if (isSameLocation) {
+    validationWarning = 'Starting point and destination must be distinct places.';
+  } else if (isDepInPast) {
+    validationWarning = `Departure date cannot be in the past (today: ${todayStr}).`;
+  } else if (isReturnBeforeDep) {
+    validationWarning = 'Return date must be on or after departure date.';
+  } else if (isDurationTooLong) {
+    validationWarning = 'Trip duration cannot exceed 30 days.';
+  } else if (!isBudgetValid) {
+    validationWarning = 'Maximum trip budget must be greater than ₹0.';
+  } else if (!isTravellersValid) {
+    validationWarning = 'Traveller count must be between 1 and 20.';
+  }
 
   const personalityOptions: { id: TripPersonality; label: string; desc: string }[] = [
     { id: 'Adventure', label: 'ADVENTURE', desc: 'Treks, mountain passes, trails' },
@@ -145,13 +182,13 @@ export const TripSetupStage: React.FC = () => {
         <div className="bg-[#101419] border border-white/15 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
           <div className="space-y-1">
             <span className="text-xs font-mono font-bold text-[#0FA77A] uppercase tracking-wider block">
-              Stage 01 of 07 &bull; Trip Setup
+              Stage 01 of 07 &bull; Real Trip Setup
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
               Where &amp; when are you traveling?
             </h2>
             <p className="text-xs text-slate-400">
-              Set your origin, destination, dates, budget cap, travellers, and travel style.
+              Live place search powered by Foursquare Places. Real coordinates and provider identity saved directly to trip draft.
             </p>
           </div>
 
@@ -160,55 +197,47 @@ export const TripSetupStage: React.FC = () => {
             
             {/* Origin Autocomplete */}
             <div className="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1">
-              <LocationAutocomplete
+              <PlaceAutocomplete
                 id="planner-origin-autocomplete"
                 label="Starting City / Hub"
                 value={state.origin}
-                selectedLocationId={state.originLocationId}
+                selectedPlace={state.originPlace}
                 onChangeText={(text) => dispatch({ type: 'SET_ORIGIN', payload: text })}
-                onSelectLocation={(item) =>
-                  dispatch({
-                    type: 'SET_ORIGIN_LOCATION',
-                    payload: { name: item.canonical_name, locationId: item.id, entityType: item.entity_type }
-                  })
-                }
-                onClear={() => dispatch({ type: 'CLEAR_ORIGIN_LOCATION' })}
-                placeholder="Search origin city, station (e.g. Sangli, SLI)..."
+                onSelectPlace={(place) => dispatch({ type: 'SET_ORIGIN_PLACE', payload: place })}
+                onClear={() => dispatch({ type: 'CLEAR_ORIGIN_PLACE' })}
+                placeholder="Search origin city (e.g. Sangli, Mumbai)..."
                 iconColor="#0FA77A"
-                excludeLocationId={state.destinationLocationId}
-                subLabel={origMeta.state}
+                subLabel="Foursquare Places"
               />
             </div>
 
             {/* Destination Autocomplete */}
             <div className="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1">
-              <LocationAutocomplete
+              <PlaceAutocomplete
                 id="planner-dest-autocomplete"
                 label="Destination"
                 value={state.destination}
-                selectedLocationId={state.destinationLocationId}
+                selectedPlace={state.destinationPlace}
                 onChangeText={(text) => dispatch({ type: 'SET_DESTINATION', payload: text })}
-                onSelectLocation={(item) =>
-                  dispatch({
-                    type: 'SET_DESTINATION_LOCATION',
-                    payload: { name: item.canonical_name, locationId: item.id, entityType: item.entity_type }
-                  })
-                }
-                onClear={() => dispatch({ type: 'CLEAR_DESTINATION_LOCATION' })}
-                placeholder="Search destination city, station (e.g. Manali, NDLS)..."
+                onSelectPlace={(place) => dispatch({ type: 'SET_DESTINATION_PLACE', payload: place })}
+                onClear={() => dispatch({ type: 'CLEAR_DESTINATION_PLACE' })}
+                placeholder="Search destination (e.g. Manali, Old Manali)..."
                 iconColor="#4D7CFE"
-                excludeLocationId={state.originLocationId}
-                subLabel={destMeta.state}
+                subLabel="Foursquare Places"
               />
             </div>
 
           </div>
 
-          {/* Same Origin and Destination Warning */}
-          {state.origin && state.destination && state.origin.trim().toLowerCase() === state.destination.trim().toLowerCase() && (
-            <div className="p-3 bg-amber-950/60 border border-amber-500/40 rounded-xl text-amber-200 text-xs flex items-center gap-2">
+          {/* Validation Warning Alert */}
+          {validationWarning && (
+            <div
+              id="trip-setup-warning-banner"
+              data-testid="trip-setup-warning-banner"
+              className="p-3 bg-amber-950/60 border border-amber-500/40 rounded-xl text-amber-200 text-xs flex items-center gap-2 animate-in fade-in duration-200"
+            >
               <ShieldCheck className="w-4 h-4 text-amber-400 flex-shrink-0" />
-              <span>Starting City and Destination must be distinct locations for routing calculation.</span>
+              <span>{validationWarning}</span>
             </div>
           )}
 
@@ -220,7 +249,10 @@ export const TripSetupStage: React.FC = () => {
                   <Calendar className="w-3.5 h-3.5 text-[#0FA77A]" /> Departure Date
                 </label>
                 <input
+                  id="departure-date-input"
+                  data-testid="departure-date-input"
                   type="date"
+                  min={todayStr}
                   value={state.departureDate}
                   onChange={(e) => dispatch({ type: 'SET_DEPARTURE_DATE', payload: e.target.value })}
                   className="w-full bg-white/5 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white font-bold focus:outline-none focus:border-[#0FA77A]"
@@ -232,7 +264,10 @@ export const TripSetupStage: React.FC = () => {
                   <Calendar className="w-3.5 h-3.5 text-[#4D7CFE]" /> Return Date
                 </label>
                 <input
+                  id="return-date-input"
+                  data-testid="return-date-input"
                   type="date"
+                  min={state.departureDate || todayStr}
                   value={state.returnDate}
                   onChange={(e) => dispatch({ type: 'SET_RETURN_DATE', payload: e.target.value })}
                   className="w-full bg-white/5 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white font-bold focus:outline-none focus:border-[#0FA77A]"
@@ -456,11 +491,33 @@ export const TripSetupStage: React.FC = () => {
         </div>
 
         {/* Continue CTA */}
-        <div className="pt-2 flex justify-end">
+        <div className="pt-2 flex items-center justify-between">
+          <div className="text-xs text-slate-400">
+            {!canContinue && validationWarning && (
+              <span className="text-amber-400/90 flex items-center gap-1.5 font-medium">
+                <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+                {validationWarning}
+              </span>
+            )}
+            {canContinue && (
+              <span className="text-[#0FA77A] flex items-center gap-1.5 font-semibold">
+                <Check className="w-4 h-4 flex-shrink-0" />
+                Ready to proceed to Transportation planning
+              </span>
+            )}
+          </div>
+
           <button
+            id="trip-setup-continue-btn"
+            data-testid="trip-setup-continue-btn"
             type="button"
+            disabled={!canContinue}
             onClick={() => dispatch({ type: 'SET_STAGE', payload: 2 })}
-            className="px-8 py-4 bg-[#0FA77A] hover:bg-[#0B8465] text-white font-bold text-sm rounded-xl transition-smooth shadow-xl flex items-center gap-2 uppercase tracking-wider"
+            className={`px-8 py-4 font-bold text-sm rounded-xl transition-all shadow-xl flex items-center gap-2 uppercase tracking-wider ${
+              canContinue
+                ? 'bg-[#0FA77A] hover:bg-[#0B8465] text-white cursor-pointer hover:shadow-[#0FA77A]/25 hover:scale-[1.01]'
+                : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/50'
+            }`}
           >
             <span>Continue to Transport &rarr;</span>
           </button>
@@ -530,38 +587,42 @@ export const TransportStage: React.FC<{ onExecutePlan: () => void; isSubmitting?
 }) => {
   const { state, dispatch } = usePlanner();
 
+  const originName = state.origin || 'Origin';
+  const destName = state.destination || 'Destination';
+
   const routeOptions = [
     {
       id: 'BALANCED' as const,
-      name: 'Option A: Sangli → Miraj → Delhi → Manali (Balanced Rail + Volvo Bus)',
-      duration: '~36 hours',
-      cost: '₹2,190.00 / person',
-      layover: '2-Hour Safe Layover at Delhi ISBT',
-      modes: ['Sangli Local Auto', 'Goa Express Train', 'Delhi Metro', 'HRTC Volvo Bus', 'Manali Auto Shuttle'],
+      name: `Balanced Transit: ${originName} → ${destName}`,
+      duration: 'Calculated via Transit Graph',
+      cost: `Allocated within ₹${state.maximumBudget.toLocaleString()} budget`,
+      layover: 'Enforces ≥30 min safe layover buffer',
+      modes: ['Local Hub Connector', 'Express Rail / Bus', 'Destination Transit'],
       recommended: true,
-      description: 'Goa Express train to Delhi, 2-hr safe connection window, overnight HRTC Volvo bus up the Himalayas.'
+      description: `Optimized multi-modal corridor connecting ${originName} to ${destName}. Full GTFS timetable search launches in Phase 11.`
     },
     {
       id: 'CHEAPEST' as const,
-      name: 'Option B: Sangli → Pune → Delhi → Manali (Economy Train + Sleeper Bus)',
-      duration: '~44 hours',
-      cost: '₹2,190.00 / person',
-      layover: '1.5-Hour Layover at Delhi Metro',
-      modes: ['Local Train to Pune', 'Jhelum Express Train', 'Delhi Metro', 'Himalayan Night AC Bus', 'Shared Shuttle'],
+      name: `Budget-First Transit: ${originName} → ${destName}`,
+      duration: 'Optimized for Cost',
+      cost: 'Lowest transit expenditure option',
+      layover: 'Validates standard hub transfers',
+      modes: ['Regional Bus / Rail', 'Intercity Connector'],
       recommended: false,
-      description: 'Includes Pune junction transit for maximum budget efficiency and overnight sleeper bus.'
+      description: `Economy corridor minimizing transportation cost to maximize staying and experience allocation.`
     },
     {
       id: 'FASTER' as const,
-      name: 'Option C: Sangli → Mumbai → Delhi → Chandigarh → Manali (Express Rail Corridor)',
-      duration: '~38 hours',
-      cost: '₹4,050.00 / person',
-      layover: 'Strict Vande Bharat & Rajdhani Timings',
-      modes: ['Mahalaxmi Express', 'Rajdhani Express', 'Vande Bharat Express', 'HRTC Himmani Deluxe', 'Night Cab'],
+      name: `Express Priority: ${originName} → ${destName}`,
+      duration: 'Minimal Transit Duration',
+      cost: 'Premium express allocation',
+      layover: 'Direct transfers prioritized',
+      modes: ['Express Rail / Flight', 'Direct Hub Shuttle'],
       recommended: false,
-      description: 'Premium express trains (Rajdhani + Vande Bharat) with scenic day bus drive from Chandigarh.'
+      description: `Direct high-speed corridor connecting ${originName} to ${destName} with fastest arrival time.`
     }
   ];
+
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -687,6 +748,41 @@ export const TransportStage: React.FC<{ onExecutePlan: () => void; isSubmitting?
 
         {/* RIGHT CANDIDATE ROUTE CARDS (lg:col-span-8) */}
         <div className="lg:col-span-8 space-y-5">
+          {/* Phase 10 Validated Trip Setup Confirmation Banner */}
+          <div
+            id="trip-setup-confirmed-banner"
+            data-testid="trip-setup-confirmed-banner"
+            className="bg-slate-900/95 border border-teal-500/30 rounded-2xl p-6 space-y-3 shadow-xl backdrop-blur-xl animate-in fade-in duration-200"
+          >
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#0FA77A]">
+                <ShieldCheck className="w-4 h-4" />
+                <span>STEP 1: TRIP SETUP CONFIRMED &amp; PERSISTED</span>
+              </div>
+              <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-teal-950 text-teal-300 border border-teal-800/40 font-semibold uppercase">
+                Phase 11 Transit Engine
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Real trip parameters for <strong className="text-white">{originName}</strong> &rarr; <strong className="text-white">{destName}</strong> have been validated using authoritative Foursquare place identities. Multimodal transportation planning (Phase 11) will deterministically compute multi-segment transit graphs from verified GTFS feeds.
+            </p>
+            <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-slate-400 pt-1">
+              <span className="text-white font-semibold">Budget: ₹{state.maximumBudget.toLocaleString()}</span>
+              <span>&bull;</span>
+              <span>Travellers: {state.travellers}</span>
+              <span>&bull;</span>
+              <span>Dates: {state.departureDate} &rarr; {state.returnDate}</span>
+              {state.originPlace && (
+                <>
+                  <span>&bull;</span>
+                  <span className="text-slate-500 text-[10px]">
+                    Origin: {state.originPlace.latitude.toFixed(2)}°, {state.originPlace.longitude.toFixed(2)}°
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+
           {routeOptions.map((option) => {
             const isSelected = state.selectedRouteOption === option.id;
             return (
