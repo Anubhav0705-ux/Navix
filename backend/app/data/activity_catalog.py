@@ -113,12 +113,39 @@ SCHEDULABLE_ACTIVITIES: Dict[str, Dict[str, Any]] = {
 def get_activity_by_id(act_id: str) -> Dict[str, Any]:
     """Retrieves activity definition from catalog by ID or returns fallback."""
     if act_id in SCHEDULABLE_ACTIVITIES:
-        return SCHEDULABLE_ACTIVITIES[act_id]
+        return dict(SCHEDULABLE_ACTIVITIES[act_id])
+
+    # Check database DemoAttraction
+    if act_id.startswith("att_"):
+        try:
+            from app.database.session import SessionLocal
+            from app.models.demo_catalog import DemoAttraction
+            s = SessionLocal()
+            db_attr = s.get(DemoAttraction, act_id)
+            if db_attr:
+                res = {
+                    "id": db_attr.id,
+                    "name": db_attr.name,
+                    "category": db_attr.category,
+                    "cost": Decimal(str(db_attr.entry_fee)),
+                    "duration_minutes": db_attr.visit_duration_minutes,
+                    "latitude": db_attr.latitude,
+                    "longitude": db_attr.longitude,
+                    "preferred_window": "MORNING" if "temple" in db_attr.name.lower() or "fort" in db_attr.name.lower() else "DAYTIME",
+                    "minimum_visit_minutes": max(45, db_attr.visit_duration_minutes // 2),
+                    "location": db_attr.name,
+                    "description": db_attr.description
+                }
+                s.close()
+                return res
+            s.close()
+        except Exception:
+            pass
     
     # Check for name/partial match or return default
     for act in SCHEDULABLE_ACTIVITIES.values():
         if act["id"].lower() == act_id.lower() or act["name"].lower() in act_id.lower():
-            return act
+            return dict(act)
             
     return {
         "id": act_id,

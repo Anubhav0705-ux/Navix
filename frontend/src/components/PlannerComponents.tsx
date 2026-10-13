@@ -1,38 +1,54 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePlanner, TravellerProfile, TripPersonality } from '@/context/PlannerContext';
+import { usePlanner, PlannerStage } from '@/context/PlannerContext';
 import { Logo } from './Logo';
-import { LocationAutocomplete } from './LocationAutocomplete';
-import { PlaceAutocomplete } from './PlaceAutocomplete';
+import { SafeImage } from './SafeImage';
+
+import {
+  getTransportAlternatives,
+  getDestinationAttractions,
+  getDestinationFood,
+  getDestinationHotels,
+  TransportAlternative,
+  AttractionItem,
+  FoodPlaceItem,
+  HotelItem
+} from '@/services/destinations';
 import {
   MapPin, Wallet, Calendar, Users, Check, ArrowLeft,
-  Sparkles, Train, Bus, Car, Navigation, ShieldCheck,
-  Plus, Utensils, Coffee, Filter, Clock
+  Sparkles, Navigation, Plus, Utensils, Coffee,
+  Clock, Star, AlertCircle, RefreshCw
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
 const InteractiveMap = dynamic(() => import('@/components/InteractiveMap'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[380px] bg-[#101419] border border-white/10 rounded-2xl flex items-center justify-center text-xs text-slate-400">
-      Loading Interactive Map...
+    <div className="w-full h-[360px] bg-stone-100 border border-stone-200 rounded-2xl flex items-center justify-center text-xs text-stone-500">
+      Loading OpenStreetMap...
     </div>
   )
 });
 
+// Seeded Indian Hubs for Instant Autocomplete
+const SEEDED_INDIAN_HUBS = [
+  'Sangli', 'Pune', 'Mumbai', 'Delhi', 'Manali', 'Old Manali', 'Goa',
+  'Jaipur', 'Bengaluru', 'Mysuru', 'Chennai', 'Pondicherry', 'Kochi',
+  'Munnar', 'Kolkata', 'Darjeeling', 'Varanasi', 'Agra', 'Udaipur',
+  'Amritsar', 'Shimla', 'Rishikesh', 'Haridwar', 'Hyderabad', 'Ahmedabad',
+  'Chandigarh', 'Miraj'
+];
 
-const NODE_METADATA: Record<string, { state: string; label: string }> = {
-  'Sangli': { state: 'Maharashtra', label: 'Starting City Hub' },
-  'Miraj': { state: 'Maharashtra', label: 'Major Junction Hub' },
-  'Pune': { state: 'Maharashtra', label: 'Cultural & Heritage Hub' },
-  'Mumbai': { state: 'Maharashtra', label: 'Commercial Gateway' },
-  'Delhi': { state: 'Delhi NCR', label: 'ISBT & Capital Transit Hub' },
-  'Chandigarh': { state: 'Punjab/Haryana', label: 'Northern Gateway Hub' },
-  'Manali': { state: 'Himachal Pradesh', label: 'Alpine Valley Hub' },
-  'Old Manali': { state: 'Himachal Pradesh', label: 'Mountain Destination' }
-};
+// Guaranteed Presentation Corridors
+const POPULAR_CORRIDORS = [
+  { origin: 'Sangli', dest: 'Old Manali', budget: 40000, label: 'Sangli → Manali' },
+  { origin: 'Pune', dest: 'Goa', budget: 25000, label: 'Pune → Goa' },
+  { origin: 'Mumbai', dest: 'Jaipur', budget: 28000, label: 'Mumbai → Jaipur' },
+  { origin: 'Delhi', dest: 'Manali', budget: 20000, label: 'Delhi → Manali' },
+  { origin: 'Bengaluru', dest: 'Mysuru', budget: 12000, label: 'Bengaluru → Mysuru' }
+];
 
 /* ========================================================
    1. PLANNER TOP NAVIGATION BAR
@@ -41,28 +57,40 @@ export const PlannerTopNav: React.FC = () => {
   const { state, dispatch } = usePlanner();
 
   const stages = [
-    { id: 1, label: '01 TRIP SETUP', active: state.stage === 1 },
-    { id: 2, label: '02 TRANSPORT', active: state.stage === 2 },
-    { id: 3, label: '03 PLACES', active: state.stage === 3 },
-    { id: 4, label: '04 FOOD', active: state.stage === 4 },
-    { id: 5, label: '05 STAY', active: state.stage === 5 },
-    { id: 6, label: '06 AUTO PLAN', active: state.stage === 6 },
-    { id: 7, label: '07 REVIEW', active: state.stage === 7 }
+    { id: 1, label: '01 SETUP', full: '01 TRIP SETUP', active: state.stage === 1 },
+    { id: 2, label: '02 TRANSIT', full: '02 TRANSPORTATION', active: state.stage === 2 },
+    { id: 3, label: '03 PLACES', full: '03 EXPERIENCES', active: state.stage === 3 },
+    { id: 4, label: '04 FOOD', full: '04 REGIONAL DINING', active: state.stage === 4 },
+    { id: 5, label: '05 STAYS', full: '05 HOTELS & LODGING', active: state.stage === 5 },
+    { id: 6, label: '06 REVIEW', full: '06 BUDGET REVIEW', active: state.stage === 6 },
+    { id: 7, label: '07 ITINERARY', full: '07 FINAL ITINERARY', active: state.stage === 7 }
   ];
 
+  // Calculate estimated total expenditure so far
+  const transportCost = (state.selectedTransportAlternative?.total_cost || 0) * state.travellers;
+  const placesCost = state.selectedAttractionItems.reduce((acc, a) => acc + (a.entry_fee || 0), 0) * state.travellers;
+  const dep = new Date(state.departureDate);
+  const ret = new Date(state.returnDate);
+  const nights = Math.max(1, Math.round((ret.getTime() - dep.getTime()) / (1000 * 3600 * 24)) - 1);
+  const hotelCost = (state.selectedHotelItem?.price_per_night || 1200) * nights;
+  const foodRatePerDay = state.foodPreference === 'BASIC' ? 300 : state.foodPreference === 'FLEXIBLE' ? 1200 : 700;
+  const foodCost = foodRatePerDay * (nights + 1) * state.travellers;
+  const estimatedSpent = transportCost + placesCost + hotelCost + foodCost;
+  const remainingBudget = state.maximumBudget - estimatedSpent;
+
   return (
-    <header className="sticky top-0 z-50 bg-[#101419]/95 backdrop-blur-md border-b border-white/10 text-white">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 text-[#0B192C]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        {/* Logo */}
-        <div className="flex items-center gap-4">
-          <Logo light={true} />
-          <span className="hidden lg:inline-block text-[11px] font-mono text-[#0FA77A] bg-[#0FA77A]/10 px-2.5 py-0.5 rounded border border-[#0FA77A]/30">
-            Workspace V2
+        {/* Brand */}
+        <div className="flex items-center gap-3">
+          <Logo light={false} />
+          <span className="hidden xl:inline-block text-[11px] font-mono text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+            Multi-Modal Planner
           </span>
         </div>
 
-        {/* Stage Progress Pills (Desktop) */}
-        <nav className="hidden md:flex items-center gap-1.5 overflow-x-auto py-1">
+        {/* 7-Stage Progress Stepper (Desktop) */}
+        <nav className="hidden md:flex items-center gap-1 overflow-x-auto py-1 scrollbar-none">
           {stages.map((s) => {
             const isDone = s.id < state.stage;
             const isActive = state.stage === s.id;
@@ -70,36 +98,41 @@ export const PlannerTopNav: React.FC = () => {
               <button
                 key={s.id}
                 onClick={() => {
-                  if (s.id <= 5 || s.id === 7) {
-                    dispatch({ type: 'SET_STAGE', payload: s.id as 1 | 2 | 3 | 4 | 5 | 6 | 7 });
+                  if (s.id <= state.stage || s.id <= 6) {
+                    dispatch({ type: 'SET_STAGE', payload: s.id as PlannerStage });
                   }
                 }}
-                className={`px-3 py-1.5 rounded-lg text-[11px] font-mono font-bold transition-all duration-200 flex items-center gap-1 whitespace-nowrap ${
+
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-mono font-bold transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
                   isActive
-                    ? 'bg-[#0FA77A] text-white shadow-md ring-2 ring-[#0FA77A]/40'
+                    ? 'bg-[#0B192C] text-white shadow-sm ring-2 ring-[#0B192C]/20'
                     : isDone
-                    ? 'bg-white/10 text-slate-200 hover:bg-white/20'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200'
+                    : 'text-stone-400 hover:text-stone-600'
                 }`}
               >
-                {isDone && <Check className="w-3 h-3 text-[#0FA77A]" />}
+                {isDone && <Check className="w-3 h-3 text-emerald-600" />}
                 <span>{s.label}</span>
               </button>
             );
           })}
         </nav>
 
-        {/* Right Info & Exit */}
+        {/* Right Budget Pill & Exit */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-xl border border-white/15 text-xs font-mono">
-            <Wallet className="w-3.5 h-3.5 text-[#0FA77A]" />
-            <span className="text-slate-400 hidden sm:inline">CAP:</span>
-            <span className="font-bold text-[#0FA77A]">₹{state.maximumBudget.toLocaleString()}</span>
+          <div className="flex items-center gap-2 bg-stone-50 px-3 py-1.5 rounded-xl border border-stone-200 text-xs font-mono">
+            <Wallet className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="text-stone-500 hidden sm:inline">CAP:</span>
+            <span className="font-bold text-[#0B192C]">₹{state.maximumBudget.toLocaleString()}</span>
+            <span className="text-stone-300 hidden sm:inline">&bull;</span>
+            <span className={`text-[11px] font-bold hidden sm:inline ${remainingBudget >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
+              REM: ₹{remainingBudget.toLocaleString()}
+            </span>
           </div>
 
           <Link
             href="/"
-            className="text-xs font-bold text-slate-400 hover:text-white px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl transition-smooth"
+            className="text-xs font-bold text-stone-600 hover:text-[#0B192C] px-3 py-1.5 bg-stone-100 hover:bg-stone-200 rounded-xl transition-colors"
           >
             Exit
           </Link>
@@ -110,133 +143,192 @@ export const PlannerTopNav: React.FC = () => {
 };
 
 /* ========================================================
-   2. STAGE 01 — TRIP SETUP COMPONENT
+   2. STAGE 01 — TRIP SETUP
    ======================================================== */
 export const TripSetupStage: React.FC = () => {
   const { state, dispatch } = usePlanner();
 
-  // Duration calculation
+  const [originSuggestions, setOriginSuggestions] = useState<string[]>([]);
+  const [destSuggestions, setDestSuggestions] = useState<string[]>([]);
+  const [showOriginDropdown, setShowOriginDropdown] = useState(false);
+  const [showDestDropdown, setShowDestDropdown] = useState(false);
+
   const dep = new Date(state.departureDate);
   const ret = new Date(state.returnDate);
   const diffDays = Math.max(1, Math.round((ret.getTime() - dep.getTime()) / (1000 * 3600 * 24)));
   const nights = Math.max(0, diffDays - 1);
-
   const todayStr = new Date().toISOString().split('T')[0];
 
-  // Validation checks
   const isOriginValid = Boolean(state.origin && state.origin.trim().length >= 2);
   const isDestValid = Boolean(state.destination && state.destination.trim().length >= 2);
-  const isSameLocation = isOriginValid && isDestValid && (
-    (state.originPlace && state.destinationPlace && state.originPlace.provider_place_id === state.destinationPlace.provider_place_id) ||
-    state.origin.trim().toLowerCase() === state.destination.trim().toLowerCase()
-  );
-
+  const isSameLocation = isOriginValid && isDestValid && state.origin.trim().toLowerCase() === state.destination.trim().toLowerCase();
   const isDepInPast = Boolean(state.departureDate && state.departureDate < todayStr);
   const isReturnBeforeDep = Boolean(state.returnDate && state.departureDate && state.returnDate < state.departureDate);
-  const isDurationTooLong = diffDays > 30;
   const isBudgetValid = state.maximumBudget > 0;
   const isTravellersValid = state.travellers >= 1 && state.travellers <= 20;
 
-  const canContinue = isOriginValid && isDestValid && !isSameLocation && !isDepInPast && !isReturnBeforeDep && !isDurationTooLong && isBudgetValid && isTravellersValid;
+  const canContinue = isOriginValid && isDestValid && !isSameLocation && !isDepInPast && !isReturnBeforeDep && isBudgetValid && isTravellersValid;
 
   let validationWarning: string | null = null;
   if (!isOriginValid && !isDestValid) {
-    validationWarning = 'Please enter and select starting point and destination.';
+    validationWarning = 'Please enter starting city and destination.';
   } else if (!isOriginValid) {
-    validationWarning = 'Please enter a valid starting location.';
+    validationWarning = 'Please specify a starting location.';
   } else if (!isDestValid) {
-    validationWarning = 'Please enter a valid destination.';
+    validationWarning = 'Please specify a destination.';
   } else if (isSameLocation) {
-    validationWarning = 'Starting point and destination must be distinct places.';
+    validationWarning = 'Starting point and destination must be distinct cities.';
   } else if (isDepInPast) {
-    validationWarning = `Departure date cannot be in the past (today: ${todayStr}).`;
+    validationWarning = 'Departure date cannot be in the past.';
   } else if (isReturnBeforeDep) {
     validationWarning = 'Return date must be on or after departure date.';
-  } else if (isDurationTooLong) {
-    validationWarning = 'Trip duration cannot exceed 30 days.';
-  } else if (!isBudgetValid) {
-    validationWarning = 'Maximum trip budget must be greater than ₹0.';
-  } else if (!isTravellersValid) {
-    validationWarning = 'Traveller count must be between 1 and 20.';
   }
 
-  const personalityOptions: { id: TripPersonality; label: string; desc: string }[] = [
-    { id: 'Adventure', label: 'ADVENTURE', desc: 'Treks, mountain passes, trails' },
-    { id: 'Relaxed', label: 'RELAXED', desc: 'Cafes, slow scenic walks, rest' },
-    { id: 'Culture', label: 'CULTURE', desc: 'Heritage, temples, old streets' },
-    { id: 'Food', label: 'FOOD', desc: 'Regional dishes, street eats, cafes' },
-    { id: 'Nature', label: 'NATURE', desc: 'Valleys, rivers, forest views' },
-    { id: 'Mixed', label: 'MIXED', desc: 'A balanced blend of everything' }
-  ];
+  const handleOriginSearch = (val: string) => {
+    dispatch({ type: 'SET_ORIGIN', payload: val });
+    if (val.trim().length > 0) {
+      const filtered = SEEDED_INDIAN_HUBS.filter((h) => h.toLowerCase().includes(val.toLowerCase()));
+      setOriginSuggestions(filtered);
+      setShowOriginDropdown(true);
+    } else {
+      setShowOriginDropdown(false);
+    }
+  };
 
-  const mustIncludeTags = ['scenic places', 'local food', 'heritage', 'nightlife', 'shopping', 'trekking'];
-  const avoidTags = ['overnight travel', 'too many transfers', 'early mornings', 'long walks'];
+  const handleDestSearch = (val: string) => {
+    dispatch({ type: 'SET_DESTINATION', payload: val });
+    if (val.trim().length > 0) {
+      const filtered = SEEDED_INDIAN_HUBS.filter((h) => h.toLowerCase().includes(val.toLowerCase()));
+      setDestSuggestions(filtered);
+      setShowDestDropdown(true);
+    } else {
+      setShowDestDropdown(false);
+    }
+  };
+
+  const travelStyles = [
+    { id: 'Budget' as const, label: 'BUDGET', desc: 'Dorm / standard rail, dhabas, value sightseeing' },
+    { id: 'Balanced' as const, label: 'BALANCED', desc: 'Comfort trains/buses, guest houses, local cafes' },
+    { id: 'Comfort' as const, label: 'COMFORT', desc: 'AC express, boutique hotels, curated food' },
+    { id: 'Adventure' as const, label: 'ADVENTURE', desc: 'Treks, mountain trails, scenic passes' },
+    { id: 'Relaxed' as const, label: 'RELAXED', desc: 'Slow strolls, mountain views, riverside resting' }
+  ];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      
-      {/* LEFT 55%: FORM & PREFERENCES */}
+      {/* LEFT 55%: FORM */}
       <div className="lg:col-span-7 space-y-8">
-        
-        {/* Stage Header */}
-        <div className="bg-[#101419] border border-white/15 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+        <div className="bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
           <div className="space-y-1">
-            <span className="text-xs font-mono font-bold text-[#0FA77A] uppercase tracking-wider block">
-              Stage 01 of 07 &bull; Real Trip Setup
+            <span className="text-xs font-mono font-bold text-emerald-700 uppercase tracking-wider block">
+              Stage 01 of 07 &bull; Trip Setup
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+            <h2 className="text-2xl sm:text-3xl font-black text-[#0B192C]">
               Where &amp; when are you traveling?
             </h2>
-            <p className="text-xs text-slate-400">
-              Live place search powered by Foursquare Places. Real coordinates and provider identity saved directly to trip draft.
+            <p className="text-xs text-stone-500">
+              Select any Indian starting city and destination. We calculate multi-modal routes strictly within your trip budget.
             </p>
           </div>
 
-          {/* Location Autocomplete Selectors */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-            
-            {/* Origin Autocomplete */}
-            <div className="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1">
-              <PlaceAutocomplete
-                id="planner-origin-autocomplete"
-                label="Starting City / Hub"
-                value={state.origin}
-                selectedPlace={state.originPlace}
-                onChangeText={(text) => dispatch({ type: 'SET_ORIGIN', payload: text })}
-                onSelectPlace={(place) => dispatch({ type: 'SET_ORIGIN_PLACE', payload: place })}
-                onClear={() => dispatch({ type: 'CLEAR_ORIGIN_PLACE' })}
-                placeholder="Search origin city (e.g. Sangli, Mumbai)..."
-                iconColor="#0FA77A"
-                subLabel="Foursquare Places"
-              />
+          {/* Quick Corridor Chips */}
+          <div className="space-y-2">
+            <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider block">
+              Popular Guaranteed Corridors:
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {POPULAR_CORRIDORS.map((c) => (
+                <button
+                  key={c.label}
+                  type="button"
+                  onClick={() => {
+                    dispatch({ type: 'SET_ORIGIN', payload: c.origin });
+                    dispatch({ type: 'SET_DESTINATION', payload: c.dest });
+                    dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: c.budget });
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-xs font-semibold text-[#0B192C] transition-colors"
+                >
+                  {c.label} (₹{c.budget.toLocaleString()})
+                </button>
+              ))}
             </div>
-
-            {/* Destination Autocomplete */}
-            <div className="bg-white/5 p-4 rounded-xl border border-white/10 space-y-1">
-              <PlaceAutocomplete
-                id="planner-dest-autocomplete"
-                label="Destination"
-                value={state.destination}
-                selectedPlace={state.destinationPlace}
-                onChangeText={(text) => dispatch({ type: 'SET_DESTINATION', payload: text })}
-                onSelectPlace={(place) => dispatch({ type: 'SET_DESTINATION_PLACE', payload: place })}
-                onClear={() => dispatch({ type: 'CLEAR_DESTINATION_PLACE' })}
-                placeholder="Search destination (e.g. Manali, Old Manali)..."
-                iconColor="#4D7CFE"
-                subLabel="Foursquare Places"
-              />
-            </div>
-
           </div>
 
-          {/* Validation Warning Alert */}
+          {/* Origin & Destination */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            {/* Origin */}
+            <div className="relative space-y-1.5">
+              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-emerald-600" /> Starting City
+              </label>
+              <input
+                id="planner-origin-input"
+                type="text"
+                placeholder="e.g. Sangli, Pune, Mumbai..."
+                value={state.origin}
+                onChange={(e) => handleOriginSearch(e.target.value)}
+                onFocus={() => setShowOriginDropdown(true)}
+                className="w-full bg-stone-50 border border-stone-200 rounded-2xl px-4 py-3 text-sm text-[#0B192C] font-bold focus:outline-none focus:ring-2 focus:ring-emerald-600"
+              />
+              {showOriginDropdown && originSuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-stone-200 rounded-2xl shadow-xl z-30 max-h-48 overflow-y-auto">
+                  {originSuggestions.map((sug) => (
+                    <button
+                      key={sug}
+                      type="button"
+                      onClick={() => {
+                        dispatch({ type: 'SET_ORIGIN', payload: sug });
+                        setShowOriginDropdown(false);
+                      }}
+                      className="w-full text-left px-4 py-2.5 text-xs hover:bg-stone-50 text-[#0B192C] font-semibold flex items-center justify-between"
+                    >
+                      <span>{sug}</span>
+                      <span className="text-[10px] text-stone-400 font-mono">Transit Node</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Destination */}
+            <div className="relative space-y-1.5">
+              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1.5">
+                <Navigation className="w-3.5 h-3.5 text-sky-600" /> Destination
+              </label>
+              <input
+                id="planner-dest-input"
+                type="text"
+                placeholder="e.g. Old Manali, Goa, Jaipur..."
+                value={state.destination}
+                onChange={(e) => handleDestSearch(e.target.value)}
+                onFocus={() => setShowDestDropdown(true)}
+                className="w-full bg-stone-50 border border-stone-200 rounded-2xl px-4 py-3 text-sm text-[#0B192C] font-bold focus:outline-none focus:ring-2 focus:ring-emerald-600"
+              />
+              {showDestDropdown && destSuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-stone-200 rounded-2xl shadow-xl z-30 max-h-48 overflow-y-auto">
+                  {destSuggestions.map((sug) => (
+                    <button
+                      key={sug}
+                      type="button"
+                      onClick={() => {
+                        dispatch({ type: 'SET_DESTINATION', payload: sug });
+                        setShowDestDropdown(false);
+                      }}
+                      className="w-full text-left px-4 py-2.5 text-xs hover:bg-stone-50 text-[#0B192C] font-semibold flex items-center justify-between"
+                    >
+                      <span>{sug}</span>
+                      <span className="text-[10px] text-stone-400 font-mono">Destination</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Validation Warning */}
           {validationWarning && (
-            <div
-              id="trip-setup-warning-banner"
-              data-testid="trip-setup-warning-banner"
-              className="p-3 bg-amber-950/60 border border-amber-500/40 rounded-xl text-amber-200 text-xs flex items-center gap-2 animate-in fade-in duration-200"
-            >
-              <ShieldCheck className="w-4 h-4 text-amber-400 flex-shrink-0" />
+            <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
               <span>{validationWarning}</span>
             </div>
           )}
@@ -245,50 +337,49 @@ export const TripSetupStage: React.FC = () => {
           <div className="space-y-3 pt-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 text-[#0FA77A]" /> Departure Date
+                <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                  <Calendar className="w-3.5 h-3.5 text-emerald-600" /> Departure Date
                 </label>
                 <input
                   id="departure-date-input"
-                  data-testid="departure-date-input"
                   type="date"
                   min={todayStr}
                   value={state.departureDate}
                   onChange={(e) => dispatch({ type: 'SET_DEPARTURE_DATE', payload: e.target.value })}
-                  className="w-full bg-white/5 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white font-bold focus:outline-none focus:border-[#0FA77A]"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-2xl px-4 py-3 text-sm text-[#0B192C] font-bold focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 text-[#4D7CFE]" /> Return Date
+                <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                  <Calendar className="w-3.5 h-3.5 text-sky-600" /> Return Date
                 </label>
                 <input
                   id="return-date-input"
-                  data-testid="return-date-input"
                   type="date"
                   min={state.departureDate || todayStr}
                   value={state.returnDate}
                   onChange={(e) => dispatch({ type: 'SET_RETURN_DATE', payload: e.target.value })}
-                  className="w-full bg-white/5 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white font-bold focus:outline-none focus:border-[#0FA77A]"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-2xl px-4 py-3 text-sm text-[#0B192C] font-bold focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 />
               </div>
             </div>
 
-            {/* Calculated Duration Stamp */}
-            <div className="bg-[#0FA77A]/10 border border-[#0FA77A]/30 rounded-xl p-3 flex items-center justify-between text-xs font-mono font-bold text-[#0FA77A]">
-              <span>DURATION CALCULATOR:</span>
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 flex items-center justify-between text-xs font-mono font-bold text-emerald-900">
+              <span>TRIP DURATION:</span>
               <span>{diffDays} DAYS &bull; {nights} NIGHTS</span>
             </div>
           </div>
 
           {/* Budget Input & Presets */}
           <div className="space-y-3 pt-2">
-            <label className="block text-xs font-bold text-[#D8CBB8] uppercase tracking-wider flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-white">
-                <Wallet className="w-4 h-4 text-[#0FA77A]" /> Maximum Trip Budget Cap (₹)
+            <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <Wallet className="w-4 h-4 text-emerald-600" /> Total Trip Budget Cap (₹)
               </span>
-              <span className="font-mono text-sm text-[#0FA77A] font-bold">₹{state.maximumBudget.toLocaleString()}</span>
+              <span className="font-mono text-sm text-emerald-700 font-bold">
+                ₹{state.maximumBudget.toLocaleString()}
+              </span>
             </label>
 
             <input
@@ -297,747 +388,437 @@ export const TripSetupStage: React.FC = () => {
               min="1000"
               value={state.maximumBudget}
               onChange={(e) => dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: Number(e.target.value) })}
-              className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-lg font-mono font-bold text-white focus:outline-none focus:border-[#0FA77A]"
+              className="w-full bg-stone-50 border border-stone-200 rounded-2xl px-4 py-3 text-lg font-mono font-bold text-[#0B192C] focus:outline-none focus:ring-2 focus:ring-emerald-600"
             />
 
-            {/* Budget Guidance Presets */}
             <div className="grid grid-cols-3 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: 8000 })}
-                className={`p-2.5 rounded-xl border text-center font-mono transition-smooth ${
-                  state.maximumBudget === 8000 ? 'bg-[#0FA77A] text-white border-[#0FA77A]' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'
-                }`}
-              >
-                <span className="block font-bold">₹8,000</span>
-                <span className="text-[10px] opacity-80">Lean Backpacker</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: 20000 })}
-                className={`p-2.5 rounded-xl border text-center font-mono transition-smooth ${
-                  state.maximumBudget === 20000 ? 'bg-[#0FA77A] text-white border-[#0FA77A]' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'
-                }`}
-              >
-                <span className="block font-bold">₹20,000</span>
-                <span className="text-[10px] opacity-80">Balanced Standard</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: 40000 })}
-                className={`p-2.5 rounded-xl border text-center font-mono transition-smooth ${
-                  state.maximumBudget === 40000 ? 'bg-[#0FA77A] text-white border-[#0FA77A]' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'
-                }`}
-              >
-                <span className="block font-bold">₹40,000</span>
-                <span className="text-[10px] opacity-80">Comfort Plus</span>
-              </button>
-            </div>
-          </div>
-
-        </div>
-
-        {/* Travellers & Profiles Editor */}
-        <div className="bg-[#101419] border border-white/15 rounded-2xl p-6 space-y-6 shadow-xl text-xs">
-          <div className="flex items-center justify-between pb-3 border-b border-white/10">
-            <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Users className="w-4 h-4 text-[#4D7CFE]" />
-                Traveller Profiles ({state.travellers})
-              </h3>
-              <p className="text-slate-400 text-[11px]">Specify names and lightweight travel paces.</p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => dispatch({ type: 'SET_TRAVELLERS_COUNT', payload: state.travellers - 1 })}
-                disabled={state.travellers <= 1}
-                className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold disabled:opacity-30"
-              >
-                -
-              </button>
-              <span className="font-mono font-bold text-sm text-white px-2">{state.travellers}</span>
-              <button
-                type="button"
-                onClick={() => dispatch({ type: 'SET_TRAVELLERS_COUNT', payload: state.travellers + 1 })}
-                disabled={state.travellers >= 5}
-                className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold disabled:opacity-30"
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          {/* Lightweight Profiles list */}
-          <div className="space-y-3">
-            {state.travellerProfiles.map((p, idx) => (
-              <div key={p.id} className="bg-white/5 border border-white/10 rounded-xl p-3.5 space-y-2">
-                <div className="flex items-center justify-between font-mono font-bold text-[#0FA77A] text-[11px]">
-                  <span>TRAVELLER 0{idx + 1}</span>
-                  <span>{p.ageGroup}</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <input
-                    type="text"
-                    value={p.name}
-                    onChange={(e) => dispatch({
-                      type: 'UPDATE_TRAVELLER_PROFILE',
-                      payload: { id: p.id, profile: { name: e.target.value } }
-                    })}
-                    placeholder="Name / Nickname"
-                    className="bg-[#101419] border border-white/15 rounded-lg px-3 py-2 text-white font-semibold focus:outline-none focus:border-[#0FA77A]"
-                  />
-
-                  <select
-                    value={p.ageGroup}
-                    onChange={(e) => dispatch({
-                      type: 'UPDATE_TRAVELLER_PROFILE',
-                      payload: { id: p.id, profile: { ageGroup: e.target.value as TravellerProfile['ageGroup'] } }
-                    })}
-                    className="bg-[#101419] border border-white/15 rounded-lg px-3 py-2 text-white font-semibold focus:outline-none"
-                  >
-                    <option value="18-24">Age: 18–24</option>
-                    <option value="25-34">Age: 25–34</option>
-                    <option value="35-49">Age: 35–49</option>
-                    <option value="50+">Age: 50+</option>
-                  </select>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Trip Personality Chips */}
-        <div className="bg-[#101419] border border-white/15 rounded-2xl p-6 space-y-4 shadow-xl text-xs">
-          <div className="space-y-1">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#FF6B5D]" />
-              What kind of trip is this?
-            </h3>
-            <p className="text-slate-400">Select 1 to 3 personalities to guide activity ranking.</p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {personalityOptions.map((opt) => {
-              const selected = state.personalities.includes(opt.id);
-              return (
+              {[
+                { amount: 8000, label: 'Backpacker' },
+                { amount: 20000, label: 'Standard' },
+                { amount: 40000, label: 'Comfort Plus' }
+              ].map((p) => (
                 <button
-                  key={opt.id}
+                  key={p.amount}
                   type="button"
-                  onClick={() => dispatch({ type: 'TOGGLE_PERSONALITY', payload: opt.id })}
-                  className={`p-3 rounded-xl border text-left transition-all ${
-                    selected
-                      ? 'bg-[#0FA77A]/15 border-[#0FA77A] text-white shadow-md'
-                      : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
+                  onClick={() => dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: p.amount })}
+                  className={`p-2.5 rounded-2xl border text-center font-mono transition-all ${
+                    state.maximumBudget === p.amount
+                      ? 'bg-[#0B192C] text-white border-[#0B192C]'
+                      : 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100'
                   }`}
                 >
-                  <span className="block font-bold text-xs">{opt.label}</span>
-                  <span className="block text-[10px] text-slate-400 mt-0.5">{opt.desc}</span>
+                  <span className="block font-bold">₹{p.amount.toLocaleString()}</span>
+                  <span className="text-[10px] opacity-80">{p.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Travellers Count */}
+          <div className="space-y-3 pt-2">
+            <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <Users className="w-4 h-4 text-emerald-600" /> Number of Travellers
+              </span>
+              <span className="font-mono text-sm text-[#0B192C] font-bold">
+                {state.travellers} {state.travellers === 1 ? 'Person' : 'People'}
+              </span>
+            </label>
+
+            <div className="flex items-center gap-3">
+              {[1, 2, 3, 4, 6].map((num) => (
+                <button
+                  key={num}
+                  type="button"
+                  onClick={() => dispatch({ type: 'SET_TRAVELLERS_COUNT', payload: num })}
+                  className={`flex-1 py-2.5 rounded-2xl border text-xs font-bold font-mono transition-all ${
+                    state.travellers === num
+                      ? 'bg-[#0B192C] text-white border-[#0B192C]'
+                      : 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100'
+                  }`}
+                >
+                  {num} {num === 1 ? 'Solo' : 'Pax'}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Travel Style */}
+        <div className="bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm text-xs">
+          <div className="space-y-1">
+            <h3 className="text-base font-bold text-[#0B192C] flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-600" />
+              Travel Style &amp; Pace
+            </h3>
+            <p className="text-stone-500">Guides algorithm prioritization for transport class and lodging.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {travelStyles.map((style) => {
+              const selected = state.travelStyle === style.id;
+              return (
+                <button
+                  key={style.id}
+                  type="button"
+                  onClick={() => dispatch({ type: 'SET_TRAVEL_STYLE', payload: style.id })}
+                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                    selected
+                      ? 'bg-emerald-50 border-emerald-600 text-emerald-950 shadow-sm'
+                      : 'bg-stone-50 border-stone-200 text-stone-600 hover:bg-stone-100'
+                  }`}
+                >
+                  <span className="block font-bold text-xs">{style.label}</span>
+                  <span className="block text-[11px] text-stone-500 mt-0.5">{style.desc}</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Must Include & Avoid Tags */}
-        <div className="bg-[#101419] border border-white/15 rounded-2xl p-6 space-y-4 shadow-xl text-xs">
-          <h3 className="text-base font-bold text-white">Specific Travel Preferences</h3>
-          
-          <div className="space-y-2">
-            <span className="block text-slate-400 font-bold uppercase tracking-wider">Must Include</span>
-            <div className="flex flex-wrap gap-2">
-              {mustIncludeTags.map((tag) => {
-                const active = state.mustInclude.includes(tag);
-                return (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => dispatch({ type: 'TOGGLE_MUST_INCLUDE', payload: tag })}
-                    className={`px-3 py-1.5 rounded-full border text-xs font-semibold transition-smooth ${
-                      active ? 'bg-[#0FA77A] text-white border-[#0FA77A]' : 'bg-white/5 text-slate-400 border-white/15'
-                    }`}
-                  >
-                    + {tag}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="space-y-2 pt-2 border-t border-white/10">
-            <span className="block text-slate-400 font-bold uppercase tracking-wider">Avoid</span>
-            <div className="flex flex-wrap gap-2">
-              {avoidTags.map((tag) => {
-                const active = state.avoid.includes(tag);
-                return (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => dispatch({ type: 'TOGGLE_AVOID', payload: tag })}
-                    className={`px-3 py-1.5 rounded-full border text-xs font-semibold transition-smooth ${
-                      active ? 'bg-[#FF6B5D] text-white border-[#FF6B5D]' : 'bg-white/5 text-slate-400 border-white/15'
-                    }`}
-                  >
-                    - {tag}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Continue CTA */}
+        {/* Continue Action */}
         <div className="pt-2 flex items-center justify-between">
-          <div className="text-xs text-slate-400">
-            {!canContinue && validationWarning && (
-              <span className="text-amber-400/90 flex items-center gap-1.5 font-medium">
-                <ShieldCheck className="w-4 h-4 flex-shrink-0" />
-                {validationWarning}
+          <div className="text-xs text-stone-500">
+            {canContinue ? (
+              <span className="text-emerald-700 font-semibold flex items-center gap-1.5">
+                <Check className="w-4 h-4" /> Ready to select transport
               </span>
-            )}
-            {canContinue && (
-              <span className="text-[#0FA77A] flex items-center gap-1.5 font-semibold">
-                <Check className="w-4 h-4 flex-shrink-0" />
-                Ready to proceed to Transportation planning
-              </span>
+            ) : (
+              <span className="text-stone-400">Please provide valid trip details</span>
             )}
           </div>
 
           <button
             id="trip-setup-continue-btn"
-            data-testid="trip-setup-continue-btn"
             type="button"
             disabled={!canContinue}
             onClick={() => dispatch({ type: 'SET_STAGE', payload: 2 })}
-            className={`px-8 py-4 font-bold text-sm rounded-xl transition-all shadow-xl flex items-center gap-2 uppercase tracking-wider ${
+            className={`px-8 py-4 font-bold text-xs rounded-2xl transition-all shadow-md flex items-center gap-2 uppercase tracking-wider ${
               canContinue
-                ? 'bg-[#0FA77A] hover:bg-[#0B8465] text-white cursor-pointer hover:shadow-[#0FA77A]/25 hover:scale-[1.01]'
-                : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/50'
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-emerald-600/30'
+                : 'bg-stone-200 text-stone-400 cursor-not-allowed'
             }`}
           >
             <span>Continue to Transport &rarr;</span>
           </button>
         </div>
-
       </div>
 
-      {/* RIGHT 45%: MAP & JOURNEY PREVIEW */}
+      {/* RIGHT 45%: MAP & SUMMARY */}
       <div className="lg:col-span-5 sticky top-20 space-y-6">
-        
-        {/* Interactive Map Visual */}
-        <div className="bg-[#101419] border border-white/15 rounded-2xl p-4 space-y-3 shadow-xl">
-          <div className="flex items-center justify-between pb-2 border-b border-white/10 text-xs">
-            <span className="font-bold text-white flex items-center gap-1.5">
-              <Navigation className="w-4 h-4 text-[#0FA77A]" /> Geographic Corridor
+        <div className="bg-white border border-stone-200 rounded-3xl p-5 space-y-3 shadow-sm">
+          <div className="flex items-center justify-between pb-2 border-b border-stone-100 text-xs">
+            <span className="font-bold text-[#0B192C] flex items-center gap-1.5">
+              <Navigation className="w-4 h-4 text-emerald-600" /> Route Corridor
             </span>
-            <span className="font-mono text-slate-400 text-[11px]">OpenStreetMap</span>
+            <span className="font-mono text-stone-400 text-[11px]">OpenStreetMap</span>
           </div>
 
-          <InteractiveMap />
+          <InteractiveMap
+            origin={state.origin || 'Sangli'}
+            destination={state.destination || 'Old Manali'}
+          />
 
-          <div className="pt-2 text-xs font-mono text-slate-300 flex items-center justify-between border-t border-white/10">
-            <span className="text-[#0FA77A]">ORIGIN: {state.origin}</span>
-            <span className="text-[#4D7CFE]">TARGET: {state.destination}</span>
-          </div>
-        </div>
-
-        {/* Destination Mood Preview Card */}
-        <div className="bg-[#101419] border border-white/15 rounded-2xl p-5 space-y-3 shadow-xl">
-          <div className="relative h-44 rounded-xl overflow-hidden border border-white/10">
-            <img
-              src="/travel/destinations/old_manali.jpg"
-              alt={state.destination}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4 text-white">
-              <span className="text-xs font-bold flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-[#0FA77A]" /> {state.destination}
-              </span>
-              <span className="text-[11px] text-slate-300">Alpine Pine Forests &amp; Riverside Homestays</span>
-            </div>
-          </div>
-
-          <div className="text-xs text-slate-300 space-y-2">
-            <div className="flex items-center justify-between border-b border-white/10 pb-2">
-              <span className="text-slate-400">Budget Cap</span>
-              <span className="font-mono font-bold text-[#0FA77A]">₹{state.maximumBudget.toLocaleString()}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400">Pace Preference</span>
-              <span className="font-bold text-white">{state.travelPace}</span>
-            </div>
+          <div className="pt-2 text-xs font-mono text-stone-600 flex items-center justify-between border-t border-stone-100">
+            <span className="text-emerald-700 font-bold">FROM: {state.origin || '---'}</span>
+            <span className="text-sky-700 font-bold">TO: {state.destination || '---'}</span>
           </div>
         </div>
-
       </div>
-
     </div>
   );
 };
 
 /* ========================================================
-   3. STAGE 02 — TRANSPORT DISCOVERY & ROUTE CHOICE
+   3. STAGE 02 — TRANSPORTATION (MULTI-MODAL ALTERNATIVES)
    ======================================================== */
-export const TransportStage: React.FC<{ onExecutePlan: () => void; isSubmitting?: boolean }> = ({
-  onExecutePlan, isSubmitting = false
-}) => {
+export const TransportStage: React.FC<{ onExecutePlan?: () => void }> = () => {
   const { state, dispatch } = usePlanner();
+
+  const [alternatives, setAlternatives] = useState<TransportAlternative[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    getTransportAlternatives(state.origin || 'Sangli', state.destination || 'Old Manali')
+
+      .then((res) => {
+        if (mounted) {
+          const list = res.alternatives || [];
+          setAlternatives(list);
+          // If none selected, default to RECOMMENDED
+          if (!state.selectedTransportAlternative && list.length > 0) {
+            dispatch({ type: 'SET_SELECTED_TRANSPORT', payload: list[0] });
+          }
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [state.origin, state.destination, dispatch, state.selectedTransportAlternative]);
 
   const originName = state.origin || 'Origin';
   const destName = state.destination || 'Destination';
 
-  const routeOptions = [
-    {
-      id: 'BALANCED' as const,
-      name: `Balanced Transit: ${originName} → ${destName}`,
-      duration: 'Calculated via Transit Graph',
-      cost: `Allocated within ₹${state.maximumBudget.toLocaleString()} budget`,
-      layover: 'Enforces ≥30 min safe layover buffer',
-      modes: ['Local Hub Connector', 'Express Rail / Bus', 'Destination Transit'],
-      recommended: true,
-      description: `Optimized multi-modal corridor connecting ${originName} to ${destName}. Full GTFS timetable search launches in Phase 11.`
-    },
-    {
-      id: 'CHEAPEST' as const,
-      name: `Budget-First Transit: ${originName} → ${destName}`,
-      duration: 'Optimized for Cost',
-      cost: 'Lowest transit expenditure option',
-      layover: 'Validates standard hub transfers',
-      modes: ['Regional Bus / Rail', 'Intercity Connector'],
-      recommended: false,
-      description: `Economy corridor minimizing transportation cost to maximize staying and experience allocation.`
-    },
-    {
-      id: 'FASTER' as const,
-      name: `Express Priority: ${originName} → ${destName}`,
-      duration: 'Minimal Transit Duration',
-      cost: 'Premium express allocation',
-      layover: 'Direct transfers prioritized',
-      modes: ['Express Rail / Flight', 'Direct Hub Shuttle'],
-      recommended: false,
-      description: `Direct high-speed corridor connecting ${originName} to ${destName} with fastest arrival time.`
-    }
-  ];
-
-
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      
-      {/* Top Header Strip */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#101419]/90 border border-white/15 rounded-2xl p-6 backdrop-blur-xl shadow-xl">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 shadow-sm">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => dispatch({ type: 'SET_STAGE', payload: 1 })}
-              className="text-xs font-mono font-bold text-[#0FA77A] hover:underline flex items-center gap-1"
+              className="text-xs font-mono font-bold text-emerald-700 hover:underline flex items-center gap-1"
             >
               <ArrowLeft className="w-3.5 h-3.5" /> Stage 01
             </button>
-            <span className="text-slate-500">&bull;</span>
-            <span className="text-xs font-mono text-slate-400">Stage 02 of 07</span>
+            <span className="text-stone-300">&bull;</span>
+            <span className="text-xs font-mono text-stone-500">Stage 02 of 07</span>
           </div>
-          <h2 className="text-2xl font-extrabold text-white">Transport &amp; Multi-Modal Corridor Selection</h2>
-          <p className="text-xs text-slate-400">Deterministic transit search candidates evaluated for {state.origin} &rarr; {state.destination}.</p>
+          <h2 className="text-2xl font-black text-[#0B192C]">
+            Select Transportation Option
+          </h2>
+          <p className="text-xs text-stone-500">
+            Multi-modal corridors connecting {originName} &rarr; {destName} with verified layovers and fares.
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-mono text-[#0FA77A] bg-[#0FA77A]/10 px-3 py-1.5 rounded-xl border border-[#0FA77A]/30">
-            Active Route Option: {state.selectedRouteOption}
+          <span className="text-xs font-mono text-emerald-800 bg-emerald-50 px-3.5 py-1.5 rounded-xl border border-emerald-200 font-bold">
+            Selected: {state.selectedTransportAlternative?.label || 'Recommended'}
           </span>
         </div>
       </div>
 
-      {/* Main Grid: Left Filters + Right Recommended Routes */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        {/* LEFT FILTERS & PREFERENCES (lg:col-span-4) */}
-        <div className="lg:col-span-4 space-y-6">
-          <div className="bg-[#101419]/90 border border-white/15 rounded-2xl p-6 space-y-5 backdrop-blur-xl shadow-xl text-xs">
-            <h3 className="font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <Filter className="w-4 h-4 text-[#0FA77A]" /> Transport Controls
-            </h3>
-
-            {/* Optimization Priority */}
-            <div className="space-y-2">
-              <label className="block text-slate-400 font-mono text-[11px] uppercase">Routing Optimization Profile</label>
-              <div className="grid grid-cols-3 gap-2">
-                {(['CHEAPEST', 'BALANCED', 'FASTER'] as const).map((p) => (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => dispatch({ type: 'SET_ROUTE_OPTION', payload: p })}
-                    className={`py-2 px-2 rounded-xl font-bold font-mono text-[11px] transition-all border ${
-                      state.selectedRouteOption === p
-                        ? 'bg-[#0FA77A] text-white border-[#0FA77A] shadow-md'
-                        : 'bg-white/5 text-slate-400 border-white/10 hover:text-white'
-                    }`}
-                  >
-                    {p}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Modes Toggles */}
-            <div className="space-y-2 pt-2 border-t border-white/10">
-              <label className="block text-slate-400 font-mono text-[11px] uppercase">Preferred Modes</label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { id: 'TRAIN', label: 'Train Express', icon: Train },
-                  { id: 'BUS', label: 'Volvo / Bus', icon: Bus },
-                  { id: 'METRO', label: 'City Metro', icon: Navigation },
-                  { id: 'LOCAL', label: 'Cab / Shuttle', icon: Car }
-                ].map((m) => {
-                  const Icon = m.icon;
-                  const selected = state.preferredModes.includes(m.id as 'TRAIN' | 'BUS' | 'METRO' | 'LOCAL');
-                  return (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => dispatch({ type: 'TOGGLE_PREFERRED_MODE', payload: m.id as 'TRAIN' | 'BUS' | 'METRO' | 'LOCAL' })}
-                      className={`p-2.5 rounded-xl border text-left flex items-center gap-2 transition-all ${
-                        selected
-                          ? 'bg-[#0FA77A]/15 border-[#0FA77A] text-white font-bold'
-                          : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      <Icon className={`w-3.5 h-3.5 ${selected ? 'text-[#0FA77A]' : 'text-slate-500'}`} />
-                      <span className="text-[11px]">{m.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Max Transfers */}
-            <div className="space-y-2 pt-2 border-t border-white/10">
-              <label className="block text-slate-400 font-mono text-[11px] uppercase">Max Transfers Limit</label>
-              <div className="grid grid-cols-3 gap-2">
-                {(['Any', '≤3', '≤2'] as const).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => dispatch({ type: 'SET_MAX_TRANSFERS', payload: t })}
-                    className={`py-2 px-2 rounded-xl font-mono text-[11px] font-bold border transition-all ${
-                      state.maxTransfers === t
-                        ? 'bg-[#0FA77A] text-white border-[#0FA77A]'
-                        : 'bg-white/5 text-slate-400 border-white/10 hover:text-white'
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Active vs Future Metadata Tag */}
-            <div className="p-3 bg-[#161B22] rounded-xl border border-white/10 text-[11px] space-y-1">
-              <span className="text-[#0FA77A] font-bold block">Engine Note:</span>
-              <p className="text-slate-400 leading-relaxed">
-                Routing uses time-dependent A* over deterministic transit schedules. Layover safety windows (min 30 min) are enforced automatically.
-              </p>
-            </div>
-
-          </div>
+      {/* Alternatives List */}
+      {loading ? (
+        <div className="p-16 text-center text-xs text-stone-500 bg-white rounded-3xl border border-stone-200 flex items-center justify-center gap-2">
+          <RefreshCw className="w-5 h-5 animate-spin text-emerald-600" />
+          <span>Computing time-dependent multi-modal transit options...</span>
         </div>
+      ) : (
+        <div className="space-y-4">
+          {alternatives.map((alt) => {
+            const isSelected = state.selectedTransportAlternative?.id === alt.id || state.selectedTransportAlternative?.label === alt.label;
+            const remainingBudget = state.maximumBudget - (alt.total_cost * state.travellers);
+            const totalHours = Math.round(alt.duration_minutes / 60);
 
-        {/* RIGHT CANDIDATE ROUTE CARDS (lg:col-span-8) */}
-        <div className="lg:col-span-8 space-y-5">
-          {/* Phase 10 Validated Trip Setup Confirmation Banner */}
-          <div
-            id="trip-setup-confirmed-banner"
-            data-testid="trip-setup-confirmed-banner"
-            className="bg-slate-900/95 border border-teal-500/30 rounded-2xl p-6 space-y-3 shadow-xl backdrop-blur-xl animate-in fade-in duration-200"
-          >
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#0FA77A]">
-                <ShieldCheck className="w-4 h-4" />
-                <span>STEP 1: TRIP SETUP CONFIRMED &amp; PERSISTED</span>
-              </div>
-              <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-teal-950 text-teal-300 border border-teal-800/40 font-semibold uppercase">
-                Phase 11 Transit Engine
-              </span>
-            </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Real trip parameters for <strong className="text-white">{originName}</strong> &rarr; <strong className="text-white">{destName}</strong> have been validated using authoritative Foursquare place identities. Multimodal transportation planning (Phase 11) will deterministically compute multi-segment transit graphs from verified GTFS feeds.
-            </p>
-            <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-slate-400 pt-1">
-              <span className="text-white font-semibold">Budget: ₹{state.maximumBudget.toLocaleString()}</span>
-              <span>&bull;</span>
-              <span>Travellers: {state.travellers}</span>
-              <span>&bull;</span>
-              <span>Dates: {state.departureDate} &rarr; {state.returnDate}</span>
-              {state.originPlace && (
-                <>
-                  <span>&bull;</span>
-                  <span className="text-slate-500 text-[10px]">
-                    Origin: {state.originPlace.latitude.toFixed(2)}°, {state.originPlace.longitude.toFixed(2)}°
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
+            const badgeColorMap: Record<string, string> = {
+              'RECOMMENDED': 'bg-emerald-600 text-white',
+              'CHEAPEST': 'bg-amber-600 text-white',
+              'FASTEST': 'bg-sky-600 text-white',
+              'COMFORT': 'bg-purple-600 text-white',
+              'LOWEST TRANSFERS': 'bg-teal-600 text-white'
+            };
 
-          {routeOptions.map((option) => {
-            const isSelected = state.selectedRouteOption === option.id;
             return (
               <div
-                key={option.id}
-                onClick={() => dispatch({ type: 'SET_ROUTE_OPTION', payload: option.id })}
-                className={`cursor-pointer bg-[#101419]/90 border rounded-2xl p-6 transition-all space-y-4 shadow-xl relative overflow-hidden ${
+                key={alt.id}
+                data-testid="alt-card"
+                role="button"
+                tabIndex={0}
+                onClick={() => dispatch({ type: 'SET_SELECTED_TRANSPORT', payload: alt })}
+                className={`cursor-pointer bg-white border rounded-3xl p-6 sm:p-8 transition-all space-y-4 shadow-sm hover:shadow-md relative overflow-hidden ${
                   isSelected
-                    ? 'border-[#0FA77A] ring-2 ring-[#0FA77A]/30 bg-[#101419]'
-                    : 'border-white/15 hover:border-white/30 opacity-90 hover:opacity-100'
+                    ? 'border-emerald-600 ring-2 ring-emerald-600/30'
+                    : 'border-stone-200 hover:border-stone-300'
                 }`}
               >
-                {/* Header Badge */}
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
-                  <div className="flex items-center gap-2">
-                    {option.recommended && (
-                      <span className="bg-[#0FA77A] text-white text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase">
-                        Recommended by NAVIX
-                      </span>
-                    )}
-                    <span className="text-xs font-mono text-slate-400">{option.duration}</span>
+                {/* Header */}
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 pb-4">
+                  <div className="flex items-center gap-3">
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase ${badgeColorMap[alt.label] || 'bg-stone-800 text-white'}`}>
+                      {alt.label}
+                    </span>
+                    <span className="text-xs font-mono text-stone-500">
+                      {totalHours}h {alt.duration_minutes % 60}m &bull; {alt.transfers} Transfer(s)
+                    </span>
                   </div>
-                  <span className="text-base font-bold text-[#0FA77A] font-mono">{option.cost}</span>
+
+                  <div className="text-right">
+                    <span className="text-xl font-black text-emerald-700 font-mono">
+                      ₹{alt.total_cost.toLocaleString()}
+                    </span>
+                    <span className="block text-[10px] text-stone-400 font-mono">
+                      ₹{(alt.total_cost * state.travellers).toLocaleString()} for {state.travellers} traveler(s)
+                    </span>
+                  </div>
                 </div>
 
-                {/* Route Title & Desc */}
-                <div className="space-y-1">
-                  <h3 className="text-lg font-extrabold text-white">{option.name}</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">{option.description}</p>
-                </div>
-
-                {/* Mode Segments Strip */}
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  {option.modes.map((mode, idx) => (
-                    <React.Fragment key={mode}>
-                      <span className="px-2.5 py-1 bg-[#161B22] border border-white/10 rounded-lg text-[11px] text-slate-200 font-mono">
-                        {mode}
-                      </span>
-                      {idx < option.modes.length - 1 && (
-                        <span className="text-slate-600 text-xs">&rarr;</span>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
-
-                {/* Layover Protection Indicator */}
-                <div className="flex items-center justify-between pt-2 text-xs">
-                  <span className="inline-flex items-center gap-1.5 text-emerald-400 text-[11px] font-mono">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#0FA77A]" /> {option.layover} &bull; SAFE Connection
+                {/* Segments Timeline */}
+                <div className="space-y-3 pt-2">
+                  <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider block">
+                    Transit Timeline &amp; Connectors:
                   </span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {alt.segments.map((seg, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-stone-50 border border-stone-200 rounded-2xl p-3.5 space-y-2 text-xs font-mono"
+                      >
+                        <div className="flex items-center justify-between text-stone-500 text-[10px]">
+                          <span className="font-bold text-emerald-700">{seg.transport_mode}</span>
+                          <span>{Math.round(seg.duration_minutes / 60)}h {seg.duration_minutes % 60}m</span>
+                        </div>
+                        <div className="font-bold text-[#0B192C] text-xs">
+                          {seg.source_city} &rarr; {seg.dest_city}
+                        </div>
+                        <div className="text-[10px] text-stone-500 flex items-center justify-between">
+                          <span>{seg.provider}</span>
+                          <span className="font-bold text-stone-700">₹{seg.cost}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Footer Selection & Remaining Budget */}
+                <div className="pt-3 border-t border-stone-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-3">
+                    <span className="text-stone-500 font-mono">
+                      Remaining Budget after transit:
+                    </span>
+                    <span className={`font-mono font-bold ${remainingBudget >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
+                      ₹{remainingBudget.toLocaleString()}
+                    </span>
+                  </div>
 
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      dispatch({ type: 'SET_ROUTE_OPTION', payload: option.id });
+                      dispatch({ type: 'SET_SELECTED_TRANSPORT', payload: alt });
                     }}
-                    className={`px-4 py-1.5 rounded-xl font-bold text-xs transition-all ${
+                    className={`px-5 py-2 rounded-xl font-bold text-xs transition-all ${
                       isSelected
-                        ? 'bg-[#0FA77A] text-white'
-                        : 'bg-white/10 text-slate-300 hover:bg-white/20'
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
                     }`}
                   >
-                    {isSelected ? '✓ Selected Route' : 'Select Option'}
+                    {isSelected ? '✓ Selected Route' : 'Choose Route'}
                   </button>
                 </div>
               </div>
             );
           })}
-
-          {/* Navigation Action Footer */}
-          <div className="pt-4 flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => dispatch({ type: 'SET_STAGE', payload: 1 })}
-              className="px-5 py-2.5 border border-white/15 hover:bg-white/10 text-slate-300 font-bold text-xs rounded-xl transition-all"
-            >
-              &larr; Back to Setup
-            </button>
-
-            <button
-              type="button"
-              onClick={() => dispatch({ type: 'SET_STAGE', payload: 3 })}
-              className="px-8 py-3.5 bg-gradient-to-r from-[#0FA77A] to-[#0B8465] hover:brightness-110 text-white font-bold text-xs rounded-xl transition-all shadow-lg shadow-[#0FA77A]/20 flex items-center gap-2 uppercase tracking-wider"
-            >
-              <span>Continue to Places &rarr;</span>
-            </button>
-          </div>
         </div>
+      )}
 
+      {/* Navigation Footer */}
+      <div className="pt-4 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => dispatch({ type: 'SET_STAGE', payload: 1 })}
+          className="px-6 py-3 border border-stone-200 hover:bg-stone-100 text-stone-700 font-bold text-xs rounded-2xl transition-all"
+        >
+          &larr; Back to Setup
+        </button>
+
+        <button
+          type="button"
+          onClick={() => dispatch({ type: 'SET_STAGE', payload: 3 })}
+          className="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl transition-all shadow-md flex items-center gap-2 uppercase tracking-wider"
+        >
+          <span>Continue to Places &rarr;</span>
+        </button>
       </div>
-
     </div>
   );
 };
 
 /* ========================================================
-   4. STAGE 03 — PLACES DISCOVERY & MUST-HAVE SELECTION
+   4. STAGE 03 — PLACES & ATTRACTIONS
    ======================================================== */
 export const PlacesStage: React.FC = () => {
   const { state, dispatch } = usePlanner();
+
+  const [attractions, setAttractions] = useState<AttractionItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('ALL');
+  const [loading, setLoading] = useState(true);
 
-  // Optimizer-backed Activities (Source of Truth)
-  const optimizerActivities = [
-    {
-      id: 'act_01',
-      name: 'Old Manali Village & Temple Walk',
-      category: 'Culture',
-      cost: 0,
-      duration: '2 hrs',
-      location: 'Old Manali Village',
-      description: 'Free self-guided heritage walk through Manu Temple, pine lanes, and riverside stone houses.',
-      image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=600&auto=format&fit=crop',
-      optimizerBacked: true
-    },
-    {
-      id: 'act_02',
-      name: 'Hadimba Temple & Van Vihar Deodar Park',
-      category: 'Culture',
-      cost: 100,
-      duration: '2.5 hrs',
-      location: 'Dungri Forest, Manali',
-      description: '16th-century wooden pagoda temple surrounded by towering ancient cedar forest trees.',
-      image: 'https://images.unsplash.com/photo-1593181629936-11c609b8db9b?q=80&w=600&auto=format&fit=crop',
-      optimizerBacked: true
-    },
-    {
-      id: 'act_03',
-      name: 'Jogini Waterfall Scenic Trek',
-      category: 'Adventure',
-      cost: 300,
-      duration: '4 hrs',
-      location: 'Vashisht Village Trail',
-      description: 'Scenic trail through apple orchards and pine cliffs leading to cascading mountain falls.',
-      image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=600&auto=format&fit=crop',
-      optimizerBacked: true
-    },
-    {
-      id: 'act_04',
-      name: 'Solang Valley Snow Point & Cable Car',
-      category: 'Adventure',
-      cost: 1000,
-      duration: '6 hrs',
-      location: 'Solang Valley',
-      description: 'Alpine valley ropeway cable car ride with panoramic glacier views and paragliding points.',
-      image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=600&auto=format&fit=crop',
-      optimizerBacked: true
-    }
-  ];
+  useEffect(() => {
+    let mounted = true;
 
-  // Curated Discovery Guide Entries (Labeled Discovery-Only)
-  const discoveryActivities = [
-    {
-      id: 'disc_05',
-      name: 'Vashisht Hot Water Springs & Himalayan Temple',
-      category: 'Wellness',
-      cost: 0,
-      duration: '1.5 hrs',
-      location: 'Vashisht Village',
-      description: 'Natural thermal sulphur springs with dedicated stone bathing tanks and ancient temple carvings.',
-      image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=600&auto=format&fit=crop',
-      optimizerBacked: false
-    },
-    {
-      id: 'disc_06',
-      name: 'Naggar Castle & Roerich Heritage Art Gallery',
-      category: 'Heritage',
-      cost: 50,
-      duration: '3 hrs',
-      location: 'Naggar Town',
-      description: '15th-century wood-and-stone Kullu kingdom castle overlooking the Beas river valley.',
-      image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=600&auto=format&fit=crop',
-      optimizerBacked: false
-    },
-    {
-      id: 'disc_07',
-      name: 'Mall Road Evening Food Stroll & Souvenir Market',
-      category: 'Local Walk',
-      cost: 0,
-      duration: '2 hrs',
-      location: 'Central Manali',
-      description: 'Vibrant pedestrian street with Kullu shawls, wooden handicrafts, soft-serve ice cream, and momos.',
-      image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop',
-      optimizerBacked: false
-    },
-    {
-      id: 'disc_08',
-      name: 'Gulaba Alpine Meadow Viewpoint',
-      category: 'Nature',
-      cost: 0,
-      duration: '3 hrs',
-      location: 'Rohtang Highway',
-      description: 'Breathtaking high-altitude grassy meadows surrounded by snow peaks on the way to Rohtang.',
-      image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=600&auto=format&fit=crop',
-      optimizerBacked: false
-    }
-  ];
+    getDestinationAttractions(state.destination || 'Old Manali')
 
-  const allPlaces = [...optimizerActivities, ...discoveryActivities];
+      .then((items) => {
+        if (mounted) {
+          setAttractions(items);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (mounted) setLoading(false);
+      });
 
-  // Personality sorting: boost places matching selected personality
-  const sortedPlaces = [...allPlaces].sort((a, b) => {
-    const aMatch = state.personalities.some(p => p.toLowerCase() === a.category.toLowerCase() || (p === 'Adventure' && a.category === 'Adventure'));
-    const bMatch = state.personalities.some(p => p.toLowerCase() === b.category.toLowerCase() || (p === 'Adventure' && b.category === 'Adventure'));
-    if (aMatch && !bMatch) return -1;
-    if (!aMatch && bMatch) return 1;
-    return 0;
-  });
+    return () => {
+      mounted = false;
+    };
+  }, [state.destination]);
 
-  const filteredPlaces = sortedPlaces.filter(p => {
+  const categories = ['ALL', 'RECOMMENDED', 'NATURE', 'HERITAGE', 'ADVENTURE', 'SPIRITUAL', 'SHOPPING', 'FREE'];
+
+  const filtered = attractions.filter((a) => {
     if (activeCategory === 'ALL') return true;
-    if (activeCategory === 'FREE') return p.cost === 0;
-    if (activeCategory === 'UNDER ₹500') return p.cost <= 500;
-    return p.category.toUpperCase() === activeCategory;
+    if (activeCategory === 'FREE') return a.entry_fee === 0;
+    if (activeCategory === 'RECOMMENDED') return (a.recommended_score || 0) >= 8.5;
+    return a.category?.toUpperCase() === activeCategory;
   });
+
+  const selectedCount = state.selectedAttractionItems.length;
+  const placesSubtotal = state.selectedAttractionItems.reduce((acc, a) => acc + (a.entry_fee || 0), 0) * state.travellers;
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#101419]/90 border border-white/15 rounded-2xl p-6 backdrop-blur-xl shadow-xl">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 shadow-sm">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => dispatch({ type: 'SET_STAGE', payload: 2 })}
-              className="text-xs font-mono font-bold text-[#0FA77A] hover:underline flex items-center gap-1"
+              className="text-xs font-mono font-bold text-emerald-700 hover:underline flex items-center gap-1"
             >
               <ArrowLeft className="w-3.5 h-3.5" /> Stage 02
             </button>
-            <span className="text-slate-500">&bull;</span>
-            <span className="text-xs font-mono text-slate-400">Stage 03 of 07</span>
+            <span className="text-stone-300">&bull;</span>
+            <span className="text-xs font-mono text-stone-500">Stage 03 of 07</span>
           </div>
-          <h2 className="text-2xl font-extrabold text-white">Destination Experiences &amp; Places</h2>
-          <p className="text-xs text-slate-400">Select must-have experiences for Old Manali &amp; surrounding valley.</p>
+          <h2 className="text-2xl font-black text-[#0B192C]">
+            Experiences &amp; Must-Visit Places in {state.destination}
+          </h2>
+          <p className="text-xs text-stone-500">
+            Pick activities to include. Mark must-visits to make them hard constraints in your daily schedule.
+          </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-[#161B22] px-3.5 py-1.5 rounded-xl border border-white/10 text-xs font-mono">
-          <span className="text-slate-400">Selected:</span>
-          <span className="text-[#0FA77A] font-bold">{state.selectedPlaces.length + state.selectedDiscoveryPlaces.length} Items</span>
+        <div className="flex items-center gap-3">
+          <div className="bg-stone-50 px-3.5 py-1.5 rounded-xl border border-stone-200 text-xs font-mono">
+            <span className="text-stone-500">Selected: </span>
+            <span className="font-bold text-emerald-700">{selectedCount} Places</span>
+            <span className="text-stone-400 ml-2">(₹{placesSubtotal.toLocaleString()})</span>
+          </div>
         </div>
       </div>
 
-      {/* Category Chips */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        {['ALL', 'NATURE', 'CULTURE', 'ADVENTURE', 'WELLNESS', 'HERITAGE', 'FREE', 'UNDER ₹500'].map((cat) => (
+      {/* Categories */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        {categories.map((cat) => (
           <button
             key={cat}
             type="button"
             onClick={() => setActiveCategory(cat)}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold whitespace-nowrap transition-all border ${
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold whitespace-nowrap transition-all border ${
               activeCategory === cat
-                ? 'bg-[#0FA77A] text-white border-[#0FA77A] shadow-md'
-                : 'bg-white/5 text-slate-400 border-white/10 hover:text-white'
+                ? 'bg-[#0B192C] text-white border-[#0B192C]'
+                : 'bg-white text-stone-600 border-stone-200 hover:border-stone-300'
             }`}
           >
             {cat}
@@ -1045,105 +826,115 @@ export const PlacesStage: React.FC = () => {
         ))}
       </div>
 
-      {/* Grid of Places */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filteredPlaces.map((place) => {
-          const isOptimizerSelected = state.selectedPlaces.includes(place.id);
-          const isDiscoverySelected = state.selectedDiscoveryPlaces.includes(place.id);
-          const isSelected = place.optimizerBacked ? isOptimizerSelected : isDiscoverySelected;
+      {/* Grid */}
+      {loading ? (
+        <div className="p-16 text-center text-xs text-stone-500 bg-white rounded-3xl border border-stone-200 flex items-center justify-center gap-2">
+          <RefreshCw className="w-5 h-5 animate-spin text-emerald-600" />
+          <span>Loading verified attractions for {state.destination}...</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filtered.map((place) => {
+            const isAdded = state.selectedAttractionItems.some((a) => a.id === place.id);
+            const isMustVisit = state.mustVisitPlaceIds.includes(place.id);
 
-          return (
-            <div
-              key={place.id}
-              className={`bg-[#101419]/90 border rounded-2xl overflow-hidden flex flex-col justify-between transition-all group shadow-xl ${
-                isSelected
-                  ? 'border-[#0FA77A] ring-2 ring-[#0FA77A]/30'
-                  : 'border-white/15 hover:border-white/30'
-              }`}
-            >
-              {/* Image Header */}
-              <div className="relative h-44 overflow-hidden">
-                <img
-                  src={place.image}
-                  alt={place.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#101419] via-transparent to-black/30" />
-
-                {/* Category Badge */}
-                <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                  <span className="text-[10px] font-mono font-bold bg-black/60 backdrop-blur-md text-white px-2.5 py-0.5 rounded-full border border-white/20">
+            return (
+              <div
+                key={place.id}
+                className={`bg-white border rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between ${
+                  isAdded
+                    ? 'border-emerald-600 ring-2 ring-emerald-600/20'
+                    : 'border-stone-200'
+                }`}
+              >
+                <div className="relative h-48 overflow-hidden bg-stone-100">
+                  <SafeImage
+                    src={place.image}
+                    alt={place.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-white">
                     {place.category}
-                  </span>
+                  </div>
+
+                  <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => dispatch({ type: 'TOGGLE_MUST_VISIT_PLACE', payload: place.id })}
+                      title={isMustVisit ? 'Remove hard constraint' : 'Mark as must-visit constraint'}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-bold backdrop-blur-md transition-all flex items-center gap-1 ${
+                        isMustVisit
+                          ? 'bg-amber-500 text-white shadow-md'
+                          : 'bg-black/50 text-white hover:bg-black/70'
+                      }`}
+                    >
+                      <Star className={`w-3 h-3 ${isMustVisit ? 'fill-current' : ''}`} />
+                      <span>{isMustVisit ? 'Must-Visit' : 'Mark Must'}</span>
+                    </button>
+                  </div>
+
+                  <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between text-[11px] font-mono text-white bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-xl">
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-emerald-400" />
+                      {place.visit_duration_minutes}m
+                    </span>
+                    <span className="font-bold">
+                      {place.entry_fee === 0 ? 'FREE' : `₹${place.entry_fee}`}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Data Model Badge */}
-                <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between text-[10px] font-mono text-slate-300">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-[#0FA77A]" /> {place.duration}
-                  </span>
-                  <span className="font-bold text-white">
-                    {place.cost === 0 ? 'FREE' : `₹${place.cost}`}
-                  </span>
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-3 text-xs">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-[#0B192C] text-sm line-clamp-1">{place.name}</h3>
+                      <span className="text-[11px] font-mono text-amber-600 font-bold flex items-center gap-0.5">
+                        <Star className="w-3 h-3 fill-current" /> {place.rating}
+                      </span>
+                    </div>
+                    <p className="text-stone-500 leading-relaxed text-[11px] line-clamp-2">
+                      {place.description}
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
+                    <span className="text-[10px] text-stone-400 font-mono">
+                      Hours: {place.opening_time} - {place.closing_time}
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={() => dispatch({ type: 'TOGGLE_ATTRACTION_ITEM', payload: place })}
+                      className={`px-4 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1 ${
+                        isAdded
+                          ? 'bg-emerald-600 text-white shadow-sm'
+                          : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                      }`}
+                    >
+                      {isAdded ? (
+                        <>
+                          <Check className="w-3.5 h-3.5" /> Added
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-3.5 h-3.5" /> Add Place
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
+            );
+          })}
+        </div>
+      )}
 
-              {/* Body */}
-              <div className="p-4 space-y-2 flex-1 flex flex-col justify-between text-xs">
-                <div className="space-y-1">
-                  <h3 className="font-extrabold text-white text-sm line-clamp-1">{place.name}</h3>
-                  <p className="text-[#0FA77A] font-mono text-[10px] flex items-center gap-1">
-                    <MapPin className="w-3 h-3" /> {place.location}
-                  </p>
-                  <p className="text-slate-400 leading-relaxed text-[11px] line-clamp-2 mt-1">
-                    {place.description}
-                  </p>
-                </div>
-
-                {/* Footer Action */}
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between">
-                  <span className="text-[9px] font-mono text-slate-500 uppercase">
-                    {place.optimizerBacked ? 'Optimizer Engine' : 'Curated Guide'}
-                  </span>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (place.optimizerBacked) {
-                        dispatch({ type: 'TOGGLE_SELECTED_PLACE', payload: place.id });
-                      } else {
-                        dispatch({ type: 'TOGGLE_DISCOVERY_PLACE', payload: place.id });
-                      }
-                    }}
-                    className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1 ${
-                      isSelected
-                        ? 'bg-[#0FA77A] text-white shadow-md'
-                        : 'bg-white/10 text-slate-300 hover:bg-white/20'
-                    }`}
-                  >
-                    {isSelected ? (
-                      <>
-                        <Check className="w-3.5 h-3.5" /> Added
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-3.5 h-3.5" /> Add
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Action Footer */}
+      {/* Navigation Footer */}
       <div className="pt-4 flex items-center justify-between">
         <button
           type="button"
           onClick={() => dispatch({ type: 'SET_STAGE', payload: 2 })}
-          className="px-5 py-2.5 border border-white/15 hover:bg-white/10 text-slate-300 font-bold text-xs rounded-xl transition-all"
+          className="px-6 py-3 border border-stone-200 hover:bg-stone-100 text-stone-700 font-bold text-xs rounded-2xl transition-all"
         >
           &larr; Back to Transport
         </button>
@@ -1151,196 +942,241 @@ export const PlacesStage: React.FC = () => {
         <button
           type="button"
           onClick={() => dispatch({ type: 'SET_STAGE', payload: 4 })}
-          className="px-8 py-3.5 bg-gradient-to-r from-[#0FA77A] to-[#0B8465] hover:brightness-110 text-white font-bold text-xs rounded-xl transition-all shadow-lg shadow-[#0FA77A]/20 flex items-center gap-2 uppercase tracking-wider"
+          className="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl transition-all shadow-md flex items-center gap-2 uppercase tracking-wider"
         >
           <span>Continue to Food &rarr;</span>
         </button>
       </div>
-
     </div>
   );
 };
 
 /* ========================================================
-   5. STAGE 04 — FOOD & DINING DISCOVERY
+   5. STAGE 04 — REGIONAL DINING & FOOD
    ======================================================== */
 export const FoodStage: React.FC = () => {
   const { state, dispatch } = usePlanner();
 
-  const foodTiers = [
+  const [foodPlaces, setFoodPlaces] = useState<FoodPlaceItem[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string>('ALL');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    getDestinationFood(state.destination || 'Old Manali')
+
+      .then((items) => {
+        if (mounted) {
+          setFoodPlaces(items);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [state.destination]);
+
+  const diningTiers = [
     {
       id: 'BASIC' as const,
-      name: 'BASIC DINING',
+      name: 'LOCAL DHABAS & THALIS',
       dailyCost: 300,
-      description: 'Local dhabas, roadside thali, Maggi, tea & hot parathas.',
-      examples: 'Traditional Thalis, Dhabas, Street Food',
-      icon: Utensils
+      desc: 'Authentic local eateries, street food stalls, chai & hot parathas.'
     },
     {
       id: 'BALANCED' as const,
       name: 'BALANCED CAFÉ DINING',
       dailyCost: 700,
-      description: 'Popular Old Manali cafés, fresh Himalayan trout & regional cuisine.',
-      examples: 'Cafés, Family Restaurants, Himachali Specialties',
-      icon: Coffee
+      desc: 'Popular town cafes, fresh regional cuisine & riverside breakfast.'
     },
     {
       id: 'FLEXIBLE' as const,
-      name: 'FLEXIBLE / GOURMET',
+      name: 'GOURMET & SPECIALTY',
       dailyCost: 1200,
-      description: 'Artisanal coffee, wood-fired pizza, gourmet dinners & specialty cafés.',
-      examples: 'Destination Dining, Artisanal Bakeries, Italian',
-      icon: Sparkles
+      desc: 'Artisanal bakeries, destination dining & heritage dinners.'
     }
   ];
 
-  const editorialDiscussions = [
-    {
-      title: 'Himachali Dham Festive Thali',
-      tag: 'Regional Specialty',
-      desc: 'Traditional slow-cooked feast with Madra, Sepu Badi, and Rajma served on leaves.',
-      image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=400&auto=format&fit=crop'
-    },
-    {
-      title: 'Pan-Seared Fresh River Trout',
-      tag: 'Old Manali Icon',
-      desc: 'Local river trout grilled with butter garlic and herbs in Old Manali cafés.',
-      image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=400&auto=format&fit=crop'
-    },
-    {
-      title: 'Hot Siddu with Pure Ghee',
-      tag: 'Mountain Comfort',
-      desc: 'Local steamed wheat bread stuffed with poppy seed or walnut mix, drenched in ghee.',
-      image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=400&auto=format&fit=crop'
-    },
-    {
-      title: 'Riverside Café Hopping',
-      tag: 'Acoustic & Coffee',
-      desc: 'Chilling on river balconies with artisanal espresso and live acoustic sessions.',
-      image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=400&auto=format&fit=crop'
-    }
-  ];
+  const dep = new Date(state.departureDate);
+  const ret = new Date(state.returnDate);
+  const days = Math.max(1, Math.round((ret.getTime() - dep.getTime()) / (1000 * 3600 * 24)));
 
-  const days = 7;
-  const totalTravellers = state.travellers;
+  const categories = ['ALL', 'LOCAL', 'VEGETARIAN', 'CAFE', 'STREET FOOD', 'PREMIUM'];
+
+  const filtered = foodPlaces.filter((f) => {
+    if (activeCategory === 'ALL') return true;
+    if (activeCategory === 'VEGETARIAN') return (f.dietary || '').toLowerCase().includes('veg');
+    return (f.cuisine || '').toUpperCase().includes(activeCategory);
+  });
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#101419]/90 border border-white/15 rounded-2xl p-6 backdrop-blur-xl shadow-xl">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 shadow-sm">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => dispatch({ type: 'SET_STAGE', payload: 3 })}
-              className="text-xs font-mono font-bold text-[#0FA77A] hover:underline flex items-center gap-1"
+              className="text-xs font-mono font-bold text-emerald-700 hover:underline flex items-center gap-1"
             >
               <ArrowLeft className="w-3.5 h-3.5" /> Stage 03
             </button>
-            <span className="text-slate-500">&bull;</span>
-            <span className="text-xs font-mono text-slate-400">Stage 04 of 07</span>
+            <span className="text-stone-300">&bull;</span>
+            <span className="text-xs font-mono text-stone-500">Stage 04 of 07</span>
           </div>
-          <h2 className="text-2xl font-extrabold text-white">Dining Style &amp; Food Allocation</h2>
-          <p className="text-xs text-slate-400">Select functional dining budget tier &amp; explore regional Himachali culinary highlights.</p>
+          <h2 className="text-2xl font-black text-[#0B192C]">
+            Regional Dining &amp; Food in {state.destination}
+          </h2>
+          <p className="text-xs text-stone-500">
+            Set your daily dining allocation tier and browse verified local culinary spots.
+          </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-[#161B22] px-3.5 py-1.5 rounded-xl border border-white/10 text-xs font-mono">
-          <span className="text-slate-400">Selected Tier:</span>
-          <span className="text-[#0FA77A] font-bold">{state.foodPreference}</span>
+        <div className="flex items-center gap-2 bg-stone-50 px-3.5 py-1.5 rounded-xl border border-stone-200 text-xs font-mono">
+          <span className="text-stone-500">Active Tier: </span>
+          <span className="font-bold text-emerald-700">{state.foodPreference}</span>
         </div>
       </div>
 
-      {/* Functional Dining Tier Selectors (Source of Truth) */}
+      {/* 3 Dining Allocation Tiers */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {foodTiers.map((tier) => {
+        {diningTiers.map((tier) => {
           const isSelected = state.foodPreference === tier.id;
-          const calculatedCost = tier.dailyCost * days * totalTravellers;
-          const Icon = tier.icon;
-
+          const totalCost = tier.dailyCost * days * state.travellers;
           return (
             <div
               key={tier.id}
               onClick={() => dispatch({ type: 'SET_FOOD_PREFERENCE', payload: tier.id })}
-              className={`cursor-pointer bg-[#101419]/90 border rounded-2xl p-6 space-y-4 flex flex-col justify-between transition-all shadow-xl ${
+              className={`cursor-pointer bg-white border rounded-3xl p-6 space-y-4 flex flex-col justify-between transition-all shadow-sm hover:shadow-md ${
                 isSelected
-                  ? 'border-[#0FA77A] ring-2 ring-[#0FA77A]/30 bg-[#101419]'
-                  : 'border-white/15 hover:border-white/30 opacity-90 hover:opacity-100'
+                  ? 'border-emerald-600 ring-2 ring-emerald-600/20'
+                  : 'border-stone-200'
               }`}
             >
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-xl bg-[#0FA77A]/15 border border-[#0FA77A]/30 flex items-center justify-center text-[#0FA77A]">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <span className="text-xs font-mono font-bold text-[#0FA77A]">₹{tier.dailyCost}/day/person</span>
+                  <Utensils className="w-5 h-5 text-emerald-600" />
+                  <span className="text-xs font-mono font-bold text-emerald-700">₹{tier.dailyCost}/day/pax</span>
                 </div>
-
-                <div className="space-y-1">
-                  <h3 className="text-lg font-extrabold text-white">{tier.name}</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">{tier.description}</p>
-                </div>
+                <h3 className="font-black text-[#0B192C] text-base">{tier.name}</h3>
+                <p className="text-xs text-stone-500 leading-relaxed">{tier.desc}</p>
               </div>
 
-              <div className="pt-4 border-t border-white/10 space-y-3 text-xs">
-                <div className="flex items-center justify-between text-slate-400 font-mono">
-                  <span>TRIP FOOD TOTAL ({days} days)</span>
-                  <span className="font-bold text-white">₹{calculatedCost.toLocaleString()}</span>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch({ type: 'SET_FOOD_PREFERENCE', payload: tier.id });
-                  }}
-                  className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all ${
-                    isSelected
-                      ? 'bg-[#0FA77A] text-white shadow-md'
-                      : 'bg-white/10 text-slate-300 hover:bg-white/20'
-                  }`}
-                >
-                  {isSelected ? '✓ Selected Dining Tier' : 'Choose Tier'}
-                </button>
+              <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs font-mono">
+                <span className="text-stone-400">Total ({days}d):</span>
+                <span className="font-bold text-[#0B192C]">₹{totalCost.toLocaleString()}</span>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Editorial Food Inspiration Cards */}
-      <div className="bg-[#101419]/90 border border-white/15 rounded-2xl p-6 space-y-4 backdrop-blur-xl shadow-xl">
-        <div className="space-y-1">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            <Utensils className="w-4 h-4 text-[#0FA77A]" /> Old Manali Culinary Inspiration
+      {/* Verified Local Food Spots */}
+      <div className="space-y-4 pt-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold text-[#0B192C] flex items-center gap-2">
+            <Coffee className="w-4 h-4 text-emerald-600" />
+            Verified Local Food Spots
           </h3>
-          <p className="text-xs text-slate-400">Curated regional dishes and dining experiences in Old Manali.</p>
+          <div className="flex items-center gap-2 overflow-x-auto">
+            {categories.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setActiveCategory(c)}
+                className={`px-3 py-1 rounded-xl text-xs font-mono font-bold border transition-all ${
+                  activeCategory === c
+                    ? 'bg-[#0B192C] text-white border-[#0B192C]'
+                    : 'bg-white text-stone-600 border-stone-200'
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-          {editorialDiscussions.map((item) => (
-            <div key={item.title} className="bg-[#161B22] border border-white/10 rounded-xl overflow-hidden text-xs space-y-2">
-              <div className="h-32 relative overflow-hidden">
-                <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                <div className="absolute top-2 left-2 px-2 py-0.5 bg-black/70 backdrop-blur-md rounded-full text-[9px] font-mono text-[#0FA77A] font-bold">
-                  {item.tag}
+        {loading ? (
+          <div className="p-16 text-center text-xs text-stone-500 bg-white rounded-3xl border border-stone-200 flex items-center justify-center gap-2">
+            <RefreshCw className="w-5 h-5 animate-spin text-emerald-600" />
+            <span>Loading food places...</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((place) => {
+              const isSelected = state.selectedFoodItems.some((f) => f.id === place.id);
+              return (
+                <div
+                  key={place.id}
+                  className={`bg-white border rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between ${
+                    isSelected ? 'border-emerald-600 ring-2 ring-emerald-600/20' : 'border-stone-200'
+                  }`}
+                >
+                  <div className="relative h-44 overflow-hidden bg-stone-100">
+                    <SafeImage
+                      src={place.image}
+                      alt={place.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-white">
+                      {place.cuisine}
+                    </div>
+                    <div className="absolute bottom-2 right-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-xl text-[10px] font-mono text-white">
+                      ₹{place.cost_for_two} for two
+                    </div>
+                  </div>
+
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-3 text-xs">
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-bold text-[#0B192C] text-sm">{place.name}</h4>
+                        <span className="text-[11px] font-mono text-amber-600 font-bold flex items-center gap-0.5">
+                          <Star className="w-3 h-3 fill-current" /> {place.rating}
+                        </span>
+                      </div>
+                      <p className="text-emerald-700 font-semibold text-[11px]">
+                        Speciality: {place.speciality}
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
+                      <span className="text-[10px] text-stone-400 font-mono">
+                        {place.opening_hours}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => dispatch({ type: 'TOGGLE_FOOD_ITEM', payload: place })}
+                        className={`px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1 ${
+                          isSelected
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                        }`}
+                      >
+                        {isSelected ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                        <span>{isSelected ? 'Added' : 'Add Spot'}</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="p-3 space-y-1">
-                <h4 className="font-extrabold text-white text-xs line-clamp-1">{item.title}</h4>
-                <p className="text-slate-400 text-[11px] leading-relaxed line-clamp-2">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Footer Navigation */}
+      {/* Navigation Footer */}
       <div className="pt-4 flex items-center justify-between">
         <button
           type="button"
           onClick={() => dispatch({ type: 'SET_STAGE', payload: 3 })}
-          className="px-5 py-2.5 border border-white/15 hover:bg-white/10 text-slate-300 font-bold text-xs rounded-xl transition-all"
+          className="px-6 py-3 border border-stone-200 hover:bg-stone-100 text-stone-700 font-bold text-xs rounded-2xl transition-all"
         >
           &larr; Back to Places
         </button>
@@ -1348,200 +1184,214 @@ export const FoodStage: React.FC = () => {
         <button
           type="button"
           onClick={() => dispatch({ type: 'SET_STAGE', payload: 5 })}
-          className="px-8 py-3.5 bg-gradient-to-r from-[#0FA77A] to-[#0B8465] hover:brightness-110 text-white font-bold text-xs rounded-xl transition-all shadow-lg shadow-[#0FA77A]/20 flex items-center gap-2 uppercase tracking-wider"
+          className="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl transition-all shadow-md flex items-center gap-2 uppercase tracking-wider"
         >
-          <span>Continue to Stay &rarr;</span>
+          <span>Continue to Stays &rarr;</span>
         </button>
       </div>
-
     </div>
   );
 };
 
 /* ========================================================
-   6. STAGE 05 — ACCOMMODATION & STAY DISCOVERY
+   6. STAGE 05 — ACCOMMODATION & HOTELS
    ======================================================== */
-export const StayStage: React.FC<{ onExecutePlan: () => void }> = ({ onExecutePlan }) => {
+export const StayStage: React.FC<{ onExecutePlan?: () => void }> = () => {
   const { state, dispatch } = usePlanner();
 
-  const stayTiers = [
-    {
-      id: 'BUDGET' as const,
-      name: 'Old Manali Backpacker Hostel / Homestay',
-      rate: 500,
-      description: 'Shared dorm or simple private room with basic mountain amenities in Old Manali.',
-      tag: 'Budget Tier',
-      image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=600&auto=format&fit=crop'
-    },
-    {
-      id: 'STANDARD' as const,
-      name: 'Manali Riverside Guest House',
-      rate: 1500,
-      description: 'Clean private room with attached bathroom, Wi-Fi, and river view balcony.',
-      tag: 'Standard Tier (Recommended)',
-      image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=600&auto=format&fit=crop'
-    },
-    {
-      id: 'COMFORT' as const,
-      name: 'Himalayan Boutique Heritage Hotel',
-      rate: 3000,
-      description: 'Premium heated room with breakfast included, balcony view, and room service.',
-      tag: 'Comfort Tier',
-      image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=600&auto=format&fit=crop'
-    }
-  ];
+  const [hotels, setHotels] = useState<HotelItem[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string>('ALL');
+  const [loading, setLoading] = useState(true);
 
-  const nights = 6;
-  const currentTier = stayTiers.find(s => s.id === state.stayPreference) || stayTiers[1];
-  const calculatedStayCost = currentTier.rate * nights;
+  useEffect(() => {
+    let mounted = true;
+
+    getDestinationHotels(state.destination || 'Old Manali')
+
+      .then((items) => {
+        if (mounted) {
+          setHotels(items);
+          if (!state.selectedHotelItem && items.length > 0) {
+            dispatch({ type: 'SET_SELECTED_HOTEL', payload: items[0] });
+          }
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [state.destination, dispatch, state.selectedHotelItem]);
+
+  const dep = new Date(state.departureDate);
+  const ret = new Date(state.returnDate);
+  const nights = Math.max(1, Math.round((ret.getTime() - dep.getTime()) / (1000 * 3600 * 24)) - 1);
+
+  const categories = ['ALL', 'BUDGET', 'STANDARD', 'PREMIUM'];
+
+  const filtered = hotels.filter((h) => {
+    if (activeCategory === 'ALL') return true;
+    return (h.category || '').toUpperCase() === activeCategory;
+  });
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#101419]/90 border border-white/15 rounded-2xl p-6 backdrop-blur-xl shadow-xl">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 shadow-sm">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => dispatch({ type: 'SET_STAGE', payload: 4 })}
-              className="text-xs font-mono font-bold text-[#0FA77A] hover:underline flex items-center gap-1"
+              className="text-xs font-mono font-bold text-emerald-700 hover:underline flex items-center gap-1"
             >
               <ArrowLeft className="w-3.5 h-3.5" /> Stage 04
             </button>
-            <span className="text-slate-500">&bull;</span>
-            <span className="text-xs font-mono text-slate-400">Stage 05 of 07</span>
+            <span className="text-stone-300">&bull;</span>
+            <span className="text-xs font-mono text-stone-500">Stage 05 of 07</span>
           </div>
-          <h2 className="text-2xl font-extrabold text-white">Accommodation &amp; Lodging Selection</h2>
-          <p className="text-xs text-slate-400">Select lodging tier for your stay in Old Manali ({nights} Nights).</p>
+          <h2 className="text-2xl font-black text-[#0B192C]">
+            Select Primary Stay in {state.destination} ({nights} Nights)
+          </h2>
+          <p className="text-xs text-stone-500">
+            Choose exactly one primary accommodation for your trip. Your running budget updates immediately.
+          </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-[#161B22] px-3.5 py-1.5 rounded-xl border border-white/10 text-xs font-mono">
-          <span className="text-slate-400">Lodging Preference:</span>
-          <span className="text-[#0FA77A] font-bold">{state.stayPreference}</span>
+        <div className="flex items-center gap-2 bg-stone-50 px-3.5 py-1.5 rounded-xl border border-stone-200 text-xs font-mono">
+          <span className="text-stone-500">Selected Stay: </span>
+          <span className="font-bold text-emerald-700">{state.selectedHotelItem?.name || 'Standard Stay'}</span>
         </div>
       </div>
 
-      {/* Accommodation Tiers Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stayTiers.map((stay) => {
-          const isSelected = state.stayPreference === stay.id;
-          const totalCost = stay.rate * nights;
+      {/* Category Filter */}
+      <div className="flex items-center gap-2">
+        {categories.map((c) => (
+          <button
+            key={c}
+            type="button"
+            onClick={() => setActiveCategory(c)}
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold border transition-all ${
+              activeCategory === c
+                ? 'bg-[#0B192C] text-white border-[#0B192C]'
+                : 'bg-white text-stone-600 border-stone-200 hover:border-stone-300'
+            }`}
+          >
+            {c}
+          </button>
+        ))}
+      </div>
 
-          return (
-            <div
-              key={stay.id}
-              onClick={() => dispatch({ type: 'SET_STAY_PREFERENCE', payload: stay.id })}
-              className={`cursor-pointer bg-[#101419]/90 border rounded-2xl overflow-hidden flex flex-col justify-between transition-all shadow-xl ${
-                isSelected
-                  ? 'border-[#0FA77A] ring-2 ring-[#0FA77A]/30 bg-[#101419]'
-                  : 'border-white/15 hover:border-white/30 opacity-90 hover:opacity-100'
-              }`}
-            >
-              <div className="space-y-3">
-                <div className="h-44 relative overflow-hidden">
-                  <img src={stay.image} alt={stay.name} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#101419] via-transparent to-black/30" />
-                  <span className="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-0.5 rounded-full text-[10px] font-mono text-[#0FA77A] font-bold">
-                    {stay.tag}
-                  </span>
-                  <div className="absolute bottom-3 right-3 bg-[#101419]/90 backdrop-blur-md px-3 py-1 rounded-xl text-xs font-mono font-bold text-white border border-white/15">
-                    ₹{stay.rate}/night
+      {/* Hotels Grid */}
+      {loading ? (
+        <div className="p-16 text-center text-xs text-stone-500 bg-white rounded-3xl border border-stone-200 flex items-center justify-center gap-2">
+          <RefreshCw className="w-5 h-5 animate-spin text-emerald-600" />
+          <span>Loading verified hotels for {state.destination}...</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {filtered.map((hotel) => {
+            const isSelected = state.selectedHotelItem?.id === hotel.id;
+            const totalStayCost = hotel.price_per_night * nights;
+
+            return (
+              <div
+                key={hotel.id}
+                onClick={() => dispatch({ type: 'SET_SELECTED_HOTEL', payload: hotel })}
+                className={`cursor-pointer bg-white border rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between ${
+                  isSelected ? 'border-emerald-600 ring-2 ring-emerald-600/30' : 'border-stone-200'
+                }`}
+              >
+                <div className="relative h-48 overflow-hidden bg-stone-100">
+                  <SafeImage
+                    src={hotel.image}
+                    alt={hotel.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-white uppercase">
+                    {hotel.category}
+                  </div>
+                  <div className="absolute bottom-2 right-3 bg-black/70 backdrop-blur-md px-3 py-1 rounded-xl text-xs font-mono font-bold text-white">
+                    ₹{hotel.price_per_night}/night
                   </div>
                 </div>
 
-                <div className="p-4 space-y-1 text-xs">
-                  <h3 className="text-base font-extrabold text-white">{stay.name}</h3>
-                  <p className="text-slate-400 leading-relaxed">{stay.description}</p>
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-4 text-xs">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-[#0B192C] text-sm">{hotel.name}</h3>
+                      <span className="text-[11px] font-mono text-amber-600 font-bold flex items-center gap-0.5">
+                        <Star className="w-3 h-3 fill-current" /> {hotel.rating}
+                      </span>
+                    </div>
+
+                    <p className="text-stone-500 text-[11px]">
+                      Room: <span className="font-semibold text-stone-700">{hotel.room_type}</span>
+                    </p>
+
+                    {hotel.amenities && (
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {hotel.amenities.slice(0, 4).map((amenity) => (
+                          <span
+                            key={amenity}
+                            className="px-2 py-0.5 bg-stone-100 rounded-md text-[10px] text-stone-600"
+                          >
+                            {amenity}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] text-stone-400 font-mono block">TOTAL ({nights} NIGHTS)</span>
+                      <span className="font-bold text-[#0B192C] font-mono text-sm">₹{totalStayCost.toLocaleString()}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        dispatch({ type: 'SET_SELECTED_HOTEL', payload: hotel });
+                      }}
+                      className={`px-4 py-2 rounded-xl font-bold text-xs transition-all ${
+                        isSelected
+                          ? 'bg-emerald-600 text-white shadow-sm'
+                          : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                      }`}
+                    >
+                      {isSelected ? '✓ Selected Stay' : 'Select Stay'}
+                    </button>
+                  </div>
                 </div>
               </div>
+            );
+          })}
+        </div>
+      )}
 
-              <div className="p-4 pt-0 space-y-3 text-xs">
-                <div className="flex items-center justify-between text-slate-400 font-mono pt-3 border-t border-white/10">
-                  <span>TOTAL STAY COST ({nights} nights)</span>
-                  <span className="font-bold text-[#0FA77A] text-sm">₹{totalCost.toLocaleString()}</span>
-                </div>
+      {/* Navigation Footer */}
+      <div className="pt-4 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => dispatch({ type: 'SET_STAGE', payload: 4 })}
+          className="px-6 py-3 border border-stone-200 hover:bg-stone-100 text-stone-700 font-bold text-xs rounded-2xl transition-all"
+        >
+          &larr; Back to Food
+        </button>
 
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch({ type: 'SET_STAY_PREFERENCE', payload: stay.id });
-                  }}
-                  className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all ${
-                    isSelected
-                      ? 'bg-[#0FA77A] text-white shadow-md'
-                      : 'bg-white/10 text-slate-300 hover:bg-white/20'
-                  }`}
-                >
-                  {isSelected ? '✓ Selected Lodging' : 'Choose Lodging'}
-                </button>
-              </div>
-            </div>
-          );
-        })}
+        <button
+          type="button"
+          onClick={() => dispatch({ type: 'SET_STAGE', payload: 6 })}
+          className="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl transition-all shadow-md flex items-center gap-2 uppercase tracking-wider"
+        >
+          <span>Continue to Review &rarr;</span>
+        </button>
       </div>
-
-      {/* Full Trip Selection Summary Drawer / Rail */}
-      <div className="bg-[#101419]/90 border border-white/15 rounded-2xl p-6 space-y-5 backdrop-blur-xl shadow-xl">
-        <div className="flex items-center justify-between border-b border-white/10 pb-3">
-          <div className="space-y-0.5">
-            <span className="text-xs font-mono font-bold text-[#0FA77A] uppercase tracking-wider block">
-              Trip Workspace Summary
-            </span>
-            <h3 className="text-lg font-extrabold text-white">Your Configured Trip Parameters</h3>
-          </div>
-
-          <div className="text-right">
-            <span className="text-[10px] font-mono text-slate-400 block">HARD BUDGET CAP</span>
-            <span className="text-xl font-bold font-mono text-[#0FA77A]">₹{state.maximumBudget.toLocaleString()}</span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-          <div className="bg-[#161B22] p-4 rounded-xl border border-white/10 space-y-1">
-            <span className="text-slate-400 font-mono text-[10px]">ROUTE &amp; TRANSPORT</span>
-            <p className="font-bold text-white">{state.origin} &rarr; {state.destination}</p>
-            <p className="text-[11px] text-slate-400">Profile: {state.selectedRouteOption}</p>
-          </div>
-
-          <div className="bg-[#161B22] p-4 rounded-xl border border-white/10 space-y-1">
-            <span className="text-slate-400 font-mono text-[10px]">PLACES &amp; EXPERIENCES</span>
-            <p className="font-bold text-white">{state.selectedPlaces.length + state.selectedDiscoveryPlaces.length} Must-See Items</p>
-            <p className="text-[11px] text-slate-400">Pace: {state.travelPace}</p>
-          </div>
-
-          <div className="bg-[#161B22] p-4 rounded-xl border border-white/10 space-y-1">
-            <span className="text-slate-400 font-mono text-[10px]">DINING TIER</span>
-            <p className="font-bold text-white">{state.foodPreference} Tier</p>
-            <p className="text-[11px] text-slate-400">{state.dietPreference}</p>
-          </div>
-
-          <div className="bg-[#161B22] p-4 rounded-xl border border-white/10 space-y-1">
-            <span className="text-slate-400 font-mono text-[10px]">LODGING TIER</span>
-            <p className="font-bold text-white">{state.stayPreference} Tier</p>
-            <p className="text-[11px] text-slate-400">Est. ₹{calculatedStayCost.toLocaleString()} / trip</p>
-          </div>
-        </div>
-
-        {/* Primary CTA: Run Solver */}
-        <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-slate-400 text-xs">
-            Ready to generate deterministic time-dependent itinerary &amp; DP budget allocation?
-          </span>
-
-          <button
-            type="button"
-            onClick={onExecutePlan}
-            className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-[#0FA77A] to-[#0B8465] hover:brightness-110 text-white font-bold text-sm rounded-xl transition-all shadow-xl shadow-[#0FA77A]/20 flex items-center justify-center gap-2 uppercase tracking-wider"
-          >
-            <span>Run Complete Journey Optimization &rarr;</span>
-          </button>
-        </div>
-      </div>
-
     </div>
   );
 };
-
-

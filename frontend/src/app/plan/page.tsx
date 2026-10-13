@@ -1,33 +1,35 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Navbar, Footer, PlannerTopNav, TripSetupStage, TransportStage, PlacesStage, FoodStage, StayStage, AutoPlanStage, ReviewStage } from '@/components';
+import { useSearchParams } from 'next/navigation';
+import {
+  Footer, PlannerTopNav,
+  TripSetupStage, TransportStage, PlacesStage, FoodStage, StayStage,
+  ReviewStage, AutoPlanStage
+} from '@/components';
 import { PlannerProvider, usePlanner } from '@/context/PlannerContext';
 import { requestTripPlan, APIError } from '@/services';
 import { saveTripPlan, getTripPlan } from '@/lib';
 import { TripPlanResult } from '@/types';
 import { Loader2, Check, AlertTriangle, Sparkles } from 'lucide-react';
 
-
 const LOADING_CHECKLIST = [
-  'Mapping viable multi-modal transit graph',
-  'Evaluating time-dependent schedules & transfers',
-  'Validating layover connection safety windows',
-  'Optimizing whole-trip budget DP allocation',
-  'Constructing daily itinerary & experience timeline'
+  'Mapping viable multi-modal transit graph & schedules',
+  'Evaluating time-dependent train, bus & local transfers',
+  'Enforcing mandatory ≥30 min safe layover connection windows',
+  'Optimizing whole-trip budget allocation across transport, stay & food',
+  'Scheduling personalized daily itinerary with must-visit highlights'
 ];
 
 function InnerPlannerWorkspace() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { state, dispatch, getBackendPayload } = usePlanner();
+
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingStage, setLoadingStage] = useState(0);
   const [errorInfo, setErrorInfo] = useState<{ code: string; message: string } | null>(null);
   const [planResult, setPlanResult] = useState<TripPlanResult | null>(() => getTripPlan());
-
 
   // Sync initial query params if present
   useEffect(() => {
@@ -66,7 +68,7 @@ function InnerPlannerWorkspace() {
       saveTripPlan(result);
       setPlanResult(result);
       setIsSubmitting(false);
-      dispatch({ type: 'SET_STAGE', payload: 6 });
+      dispatch({ type: 'SET_STAGE', payload: 7 });
     } catch (err: unknown) {
       setIsSubmitting(false);
       if (err instanceof APIError) {
@@ -81,32 +83,31 @@ function InnerPlannerWorkspace() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1320] text-slate-100 flex flex-col font-sans relative selection:bg-[#0E9F7A] selection:text-white">
-      {/* Background Travel Canvas Image Overlay */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center filter saturate-50 contrast-125" />
-      <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#0B1320]/90 via-[#0B1320]/95 to-[#0B1320]" />
-
+    <div className="min-h-screen bg-[#FDFBF7] text-[#0B192C] flex flex-col font-sans relative selection:bg-emerald-600 selection:text-white">
       {/* Persistent Stage Header Navigation Bar */}
       <div className="relative z-20">
         <PlannerTopNav />
       </div>
 
       {/* Main Workspace Body */}
-      <main className="flex-1 relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        
+      <main className="flex-1 relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* API Error Notification */}
         {errorInfo && (
-          <div className="mb-6 p-4 sm:p-5 bg-rose-950/80 border border-rose-500/40 rounded-2xl text-rose-100 shadow-2xl backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="mb-6 p-5 bg-rose-50 border border-rose-200 rounded-3xl text-rose-900 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in duration-300">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center flex-shrink-0 border border-rose-500/30">
+              <div className="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div className="space-y-0.5">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  {errorInfo.code === 'BUDGET_TOO_LOW' ? 'Trip Budget Shortfall' : 'Planner Warning'}
-                  <span className="text-[10px] font-mono px-2 py-0.5 bg-rose-900/50 rounded-full text-rose-300 border border-rose-700/50">{errorInfo.code}</span>
+                <h4 className="text-sm font-bold text-[#0B192C] flex items-center gap-2">
+                  {errorInfo.code === 'BUDGET_TOO_LOW' ? 'Trip Budget Shortfall' : 'Planner Notice'}
+                  <span className="text-[10px] font-mono px-2 py-0.5 bg-rose-100 rounded-full text-rose-800 border border-rose-200">
+                    {errorInfo.code}
+                  </span>
                 </h4>
-                <p className="text-xs text-rose-200/90 leading-relaxed max-w-xl">{errorInfo.message}</p>
+                <p className="text-xs text-rose-700 leading-relaxed max-w-xl">
+                  {errorInfo.message}
+                </p>
               </div>
             </div>
 
@@ -118,7 +119,7 @@ function InnerPlannerWorkspace() {
                     setErrorInfo(null);
                     dispatch({ type: 'SET_STAGE', payload: 1 });
                   }}
-                  className="px-4 py-2 bg-gradient-to-r from-[#0E9F7A] to-[#0B8465] hover:brightness-110 text-white text-xs font-bold rounded-xl transition-all shadow-lg hover:shadow-[#0E9F7A]/20"
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm"
                 >
                   Add ₹5,000 to Budget
                 </button>
@@ -127,7 +128,7 @@ function InnerPlannerWorkspace() {
                     setErrorInfo(null);
                     dispatch({ type: 'SET_STAGE', payload: 1 });
                   }}
-                  className="px-3.5 py-2 border border-rose-500/30 hover:bg-rose-900/40 text-rose-200 text-xs font-medium rounded-xl transition-all"
+                  className="px-3.5 py-2 border border-rose-200 hover:bg-rose-100/50 text-rose-800 text-xs font-semibold rounded-xl transition-all"
                 >
                   Adjust Inputs
                 </button>
@@ -138,37 +139,39 @@ function InnerPlannerWorkspace() {
 
         {/* Loading Overlay State */}
         {isSubmitting ? (
-          <div className="my-12 max-w-xl mx-auto bg-slate-900/90 border border-teal-500/30 rounded-3xl p-8 sm:p-12 text-center space-y-8 shadow-2xl backdrop-blur-2xl">
+          <div className="my-12 max-w-xl mx-auto bg-white border border-stone-200 rounded-3xl p-8 sm:p-12 text-center space-y-8 shadow-xl">
             <div className="space-y-4">
               <div className="relative w-16 h-16 mx-auto flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full border-4 border-teal-500/20 border-t-[#0E9F7A] animate-spin" />
-                <Sparkles className="w-6 h-6 text-[#0E9F7A] animate-pulse" />
+                <div className="absolute inset-0 rounded-full border-4 border-emerald-100 border-t-emerald-600 animate-spin" />
+                <Sparkles className="w-6 h-6 text-emerald-600 animate-pulse" />
               </div>
               <div>
-                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">Solving Multi-Modal Journey</h3>
-                <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                  Evaluating schedules, transfers, and budget constraints for {state.origin} &rarr; {state.destination}
+                <h3 className="text-xl sm:text-2xl font-black text-[#0B192C] tracking-tight">
+                  Solving Multi-Modal Journey
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-500 mt-1">
+                  Evaluating transit schedules, transfers, and budget constraints for {state.origin} &rarr; {state.destination}
                 </p>
               </div>
             </div>
 
             {/* Checklist Progress */}
-            <div className="text-left space-y-3 bg-slate-950/70 p-5 sm:p-6 rounded-2xl border border-slate-800">
+            <div className="text-left space-y-3 bg-stone-50 p-6 rounded-2xl border border-stone-200">
               {LOADING_CHECKLIST.map((item, idx) => {
                 const isDone = idx < loadingStage;
                 const isCurrent = idx === loadingStage;
                 return (
                   <div key={item} className="flex items-center gap-3 text-xs sm:text-sm transition-all duration-300">
                     {isDone ? (
-                      <div className="w-5 h-5 rounded-full bg-[#0E9F7A]/20 text-[#0E9F7A] flex items-center justify-center border border-[#0E9F7A]/40 flex-shrink-0">
+                      <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
                         <Check className="w-3.5 h-3.5" />
                       </div>
                     ) : isCurrent ? (
-                      <div className="w-5 h-5 rounded-full border-2 border-[#0E9F7A] border-t-transparent animate-spin flex-shrink-0" />
+                      <div className="w-5 h-5 rounded-full border-2 border-emerald-600 border-t-transparent animate-spin shrink-0" />
                     ) : (
-                      <div className="w-5 h-5 rounded-full border border-slate-800 flex-shrink-0 bg-slate-900" />
+                      <div className="w-5 h-5 rounded-full border border-stone-200 shrink-0 bg-white" />
                     )}
-                    <span className={isDone ? 'text-slate-200 font-medium' : isCurrent ? 'text-[#0E9F7A] font-bold' : 'text-slate-500'}>
+                    <span className={isDone ? 'text-stone-800 font-semibold' : isCurrent ? 'text-emerald-700 font-bold' : 'text-stone-400'}>
                       {item}
                     </span>
                   </div>
@@ -185,24 +188,20 @@ function InnerPlannerWorkspace() {
             {state.stage === 4 && <FoodStage />}
             {state.stage === 5 && <StayStage onExecutePlan={handleExecutePlan} />}
             {state.stage === 6 && (
+              <ReviewStage
+                onExecutePlan={handleExecutePlan}
+                isSubmitting={isSubmitting}
+              />
+            )}
+            {state.stage === 7 && (
               <AutoPlanStage
                 planResult={planResult}
                 onReOptimize={handleExecutePlan}
                 isSubmitting={isSubmitting}
               />
             )}
-
-            {/* Stage 07 Final Review View */}
-            {state.stage === 7 && (
-              <ReviewStage
-                planResult={planResult}
-                onBackToAutoPlan={() => dispatch({ type: 'SET_STAGE', payload: 6 })}
-              />
-            )}
-
           </div>
         )}
-
       </main>
 
       <Footer />
@@ -210,14 +209,13 @@ function InnerPlannerWorkspace() {
   );
 }
 
-
 export default function PlannerPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#0B1320] flex items-center justify-center text-xs text-slate-400 gap-3">
-          <Loader2 className="w-5 h-5 animate-spin text-[#0E9F7A]" />
-          <span>Loading NAVIX Cinematic Planner Workspace...</span>
+        <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center text-xs text-stone-500 gap-3">
+          <Loader2 className="w-5 h-5 animate-spin text-emerald-600" />
+          <span>Loading NAVIX Travel Planner...</span>
         </div>
       }
     >
@@ -227,4 +225,3 @@ export default function PlannerPage() {
     </Suspense>
   );
 }
-

@@ -38,7 +38,12 @@ const KNOWN_COORDS: Record<string, [number, number]> = {
   'Old Manali': [32.2548, 77.1751],
 };
 
-interface InteractiveMapProps {
+export interface InteractiveMapProps {
+  origin?: string;
+  destination?: string;
+  centerLat?: number;
+  centerLng?: number;
+  zoom?: number;
   segments?: Array<{
     source_city: string;
     source_node_name: string;
@@ -46,9 +51,36 @@ interface InteractiveMapProps {
     dest_node_name: string;
     transport_mode: string;
   }>;
+  attractions?: Array<{
+    name: string;
+    latitude: number;
+    longitude: number;
+    category?: string;
+  }>;
+  foodPlaces?: Array<{
+    name: string;
+    latitude: number;
+    longitude: number;
+    speciality?: string;
+  }>;
+  hotel?: {
+    name: string;
+    latitude: number;
+    longitude: number;
+  };
 }
 
-export default function InteractiveMap({ segments = [] }: InteractiveMapProps) {
+export default function InteractiveMap({
+  origin,
+  destination,
+  centerLat: customCenterLat,
+  centerLng: customCenterLng,
+  zoom = 6,
+  segments = [],
+  attractions = [],
+  foodPlaces = [],
+  hotel
+}: InteractiveMapProps) {
   const points: NodePoint[] = [];
   const polylineCoords: [number, number][] = [];
 
@@ -64,25 +96,70 @@ export default function InteractiveMap({ segments = [] }: InteractiveMapProps) {
       points.push({ id: `dest-${idx}`, name: `${seg.dest_city} (${seg.dest_node_name})`, lat: destCoord[0], lng: destCoord[1] });
       polylineCoords.push(destCoord);
     });
+  } else if (origin || destination) {
+    const oCoord = (origin && KNOWN_COORDS[origin]) || [16.8524, 74.5815];
+    const dCoord = (destination && KNOWN_COORDS[destination]) || [32.2548, 77.1751];
+    polylineCoords.push(oCoord, dCoord);
+    if (origin) points.push({ id: 'origin', name: origin, lat: oCoord[0], lng: oCoord[1] });
+    if (destination) points.push({ id: 'dest', name: destination, lat: dCoord[0], lng: dCoord[1] });
   } else {
     // Default Corridor Demo Points: Sangli -> Miraj -> Delhi -> Manali -> Old Manali
     polylineCoords.push([16.8524, 74.5815], [16.8202, 74.6468], [28.6430, 77.2194], [32.2396, 77.1887], [32.2548, 77.1751]);
     points.push(
-      { id: '1', name: 'Sangli', lat: 16.8524, lng: 74.5815 },
+      { id: '1', name: 'Sangli Hub', lat: 16.8524, lng: 74.5815 },
       { id: '2', name: 'Miraj Junction', lat: 16.8202, lng: 74.6468 },
-      { id: '3', name: 'Delhi ISBT', lat: 28.6675, lng: 77.2285 },
+      { id: '3', name: 'Delhi ISBT Hub', lat: 28.6675, lng: 77.2285 },
       { id: '4', name: 'Old Manali', lat: 32.2548, lng: 77.1751 }
     );
   }
 
-  const centerLat = polylineCoords.length > 0 ? polylineCoords[Math.floor(polylineCoords.length / 2)][0] : 24.5;
-  const centerLng = polylineCoords.length > 0 ? polylineCoords[Math.floor(polylineCoords.length / 2)][1] : 76.0;
+  // Plot custom attraction points if available
+  attractions.forEach((a, i) => {
+    points.push({
+      id: `att-${i}`,
+      name: `★ ${a.name} (${a.category || 'Attraction'})`,
+      lat: a.latitude,
+      lng: a.longitude
+    });
+  });
+
+  // Plot custom food points if available
+  foodPlaces.forEach((f, i) => {
+    points.push({
+      id: `food-${i}`,
+      name: `🍴 ${f.name} (${f.speciality || 'Food'})`,
+      lat: f.latitude,
+      lng: f.longitude
+    });
+  });
+
+  // Plot hotel if available
+  if (hotel) {
+    points.push({
+      id: 'hotel',
+      name: `🏨 ${hotel.name}`,
+      lat: hotel.latitude,
+      lng: hotel.longitude
+    });
+  }
+
+  const effectiveLat = customCenterLat !== undefined
+    ? customCenterLat
+    : polylineCoords.length > 0
+    ? polylineCoords[Math.floor(polylineCoords.length / 2)][0]
+    : 24.5;
+
+  const effectiveLng = customCenterLng !== undefined
+    ? customCenterLng
+    : polylineCoords.length > 0
+    ? polylineCoords[Math.floor(polylineCoords.length / 2)][1]
+    : 76.0;
 
   return (
     <div className="w-full h-[450px] sm:h-full min-h-[400px] rounded-2xl overflow-hidden border border-[#E7E5E0] shadow-sm relative z-0">
       <MapContainer
-        center={[centerLat, centerLng]}
-        zoom={5}
+        center={[effectiveLat, effectiveLng]}
+        zoom={zoom}
         scrollWheelZoom={false}
         className="w-full h-full"
       >
@@ -112,3 +189,4 @@ export default function InteractiveMap({ segments = [] }: InteractiveMapProps) {
     </div>
   );
 }
+

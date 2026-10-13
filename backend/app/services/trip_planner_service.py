@@ -1,11 +1,13 @@
 from datetime import datetime
 from decimal import Decimal
 from sqlalchemy.orm import Session
+from sqlalchemy import select, func, or_
 
 from app.algorithms import TransitGraph, search_routes, RoutingRequest, SearchError
 from app.algorithms.budget_optimizer import optimize_trip_budget
 from app.algorithms.itinerary_scheduler import generate_automatic_itinerary
 from app.schemas.trip_planner import TripPlanRequest, TripPlanResult
+from app.models.demo_catalog import DemoDestination, DemoHotel, DemoFoodPlace, DemoAttraction
 
 
 def generate_complete_trip_plan(db: Session, request: TripPlanRequest) -> TripPlanResult:
@@ -54,7 +56,68 @@ def generate_complete_trip_plan(db: Session, request: TripPlanRequest) -> TripPl
 
     route_res = search_routes(graph, routing_req, use_heuristic=True)
 
-    # 3. Whole-Trip Budget Optimization
+    # 3. Whole-Trip Budget Optimization with Destination-Specific Catalog
+    custom_hotels = None
+    custom_food = None
+    custom_activities = None
+
+    dest_pattern = f"%{request.destination.strip().lower()}%"
+    dest_obj = db.scalar(
+        select(DemoDestination).where(
+            or_(
+                func.lower(DemoDestination.name).like(dest_pattern),
+                func.lower(DemoDestination.city).like(dest_pattern),
+                DemoDestination.slug.like(dest_pattern)
+            )
+        )
+    )
+
+    if dest_obj and request.destination.strip().lower() != "old manali":
+        db_hotels = db.scalars(
+            select(DemoHotel).where(DemoHotel.destination_id == dest_obj.id).order_by(DemoHotel.price_per_night.asc())
+        ).all()
+        if db_hotels:
+            custom_hotels = [
+                {
+                    "tier": h.category,
+                    "name": h.name,
+                    "cost_per_night": Decimal(str(h.price_per_night)),
+                    "description": f"{h.room_type} • {', '.join(h.amenities or [])}"
+                }
+                for h in db_hotels
+            ]
+
+        db_food = db.scalars(
+            select(DemoFoodPlace).where(DemoFoodPlace.destination_id == dest_obj.id).order_by(DemoFoodPlace.cost_for_two.asc())
+        ).all()
+        if db_food:
+            tiers = ["Basic", "Balanced", "Flexible"]
+            custom_food = []
+            for i, fp in enumerate(db_food[:3]):
+                tier_name = tiers[i] if i < len(tiers) else "Flexible"
+                custom_food.append({
+                    "tier": tier_name,
+                    "name": fp.name,
+                    "cost_per_day": Decimal(str(round(fp.cost_for_two * 1.5))),
+                    "description": f"{fp.cuisine} • Speciality: {fp.speciality}"
+                })
+
+        db_attractions = db.scalars(
+            select(DemoAttraction).where(DemoAttraction.destination_id == dest_obj.id).order_by(DemoAttraction.recommended_score.desc())
+        ).all()
+        if db_attractions:
+            custom_activities = [
+                {
+                    "id": a.id,
+                    "name": a.name,
+                    "category": a.category,
+                    "cost": Decimal(str(a.entry_fee)),
+                    "duration_hours": max(1, round(a.visit_duration_minutes / 60)),
+                    "description": a.description
+                }
+                for a in db_attractions
+            ]
+
     stay, food, activities, breakdown, explanations = optimize_trip_budget(
         maximum_budget=request.maximum_budget,
         transport_cost_per_person=route_res.summary.total_transport_cost,
@@ -63,7 +126,10 @@ def generate_complete_trip_plan(db: Session, request: TripPlanRequest) -> TripPl
         nights=nights,
         stay_preference=request.stay_preference,
         food_preference=request.food_preference,
-        activity_preference=request.activity_preference
+        activity_preference=request.activity_preference,
+        accommodations=custom_hotels,
+        food_options=custom_food,
+        activities=custom_activities
     )
 
     # 4. Automatic Daily Itinerary Scheduling

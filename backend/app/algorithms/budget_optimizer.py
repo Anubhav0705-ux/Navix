@@ -76,7 +76,10 @@ def optimize_trip_budget(
     nights: int,
     stay_preference: StayPreference,
     food_preference: FoodPreference,
-    activity_preference: ActivityPreference
+    activity_preference: ActivityPreference,
+    accommodations: Optional[List[Dict[str, Any]]] = None,
+    food_options: Optional[List[Dict[str, Any]]] = None,
+    activities: Optional[List[Dict[str, Any]]] = None
 ) -> Tuple[SelectedStay, SelectedFood, List[SelectedActivity], CostBreakdown, List[str]]:
     """
     Constrained DP / Knapsack Optimizer for whole-trip budget allocation.
@@ -85,9 +88,13 @@ def optimize_trip_budget(
     total_transport_cost = transport_cost_per_person * Decimal(str(travellers))
     unavoidable_local_transport = Decimal("100.00") * Decimal(str(days)) * Decimal(str(travellers))
 
+    stay_catalog = accommodations or ACCOMMODATION_TIERS
+    food_catalog = food_options or FOOD_TIERS
+    activity_catalog = activities if activities is not None else ACTIVITY_OPTIONS
+
     # 1. Calculate Minimum Mandatory Cost (Cheapest stay, food, 0 activities)
-    min_stay = ACCOMMODATION_TIERS[0]
-    min_food = FOOD_TIERS[0]
+    min_stay = stay_catalog[0]
+    min_food = food_catalog[0]
 
     min_stay_total = min_stay["cost_per_night"] * Decimal(str(nights))
     min_food_total = min_food["cost_per_day"] * Decimal(str(days)) * Decimal(str(travellers))
@@ -104,16 +111,17 @@ def optimize_trip_budget(
     best_combo = None
     best_utility = -1.0
 
-    # Activity subsets (from empty to all activities)
+    # Activity subsets (from empty to all activities, capped at 4 for combinatorics)
     activity_subsets = []
-    for r in range(len(ACTIVITY_OPTIONS) + 1):
-        for combo in combinations(ACTIVITY_OPTIONS, r):
+    eff_activities = activity_catalog[:6]  # Limit to 6 top activities for optimal combinations
+    for r in range(min(5, len(eff_activities) + 1)):
+        for combo in combinations(eff_activities, r):
             activity_subsets.append(list(combo))
 
-    for stay in ACCOMMODATION_TIERS:
+    for stay in stay_catalog:
         stay_cost = stay["cost_per_night"] * Decimal(str(nights))
 
-        for food in FOOD_TIERS:
+        for food in food_catalog:
             food_cost = food["cost_per_day"] * Decimal(str(days)) * Decimal(str(travellers))
 
             for act_subset in activity_subsets:

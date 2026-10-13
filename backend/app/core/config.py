@@ -71,7 +71,9 @@ class Settings(BaseSettings):
     DUFFEL_ACCESS_TOKEN: Optional[str] = Field(default=None, description="Duffel Flights Access Token (Test mode)")
     HOTELBEDS_API_KEY: Optional[str] = Field(default=None, description="Hotelbeds Evaluation API Key")
     HOTELBEDS_SECRET: Optional[str] = Field(default=None, description="Hotelbeds Evaluation Shared Secret")
-    HOTELBEDS_BASE_URL: str = Field(default="https://api.test.hotelbeds.com", description="Hotelbeds Base URL")
+    HOTELBEDS_BASE_URL: Optional[str] = Field(default="https://api.test.hotelbeds.com", description="Hotelbeds API Base URL")
+    # Data Source Mode (demo | hybrid | live) - 48-Hour Presentation Release
+    NAVIX_DATA_MODE: str = Field(default="demo", description="Data mode: demo | hybrid | live")
 
     @model_validator(mode="after")
     def validate_and_normalize_configuration(self) -> "Settings":
@@ -87,6 +89,12 @@ class Settings(BaseSettings):
                 f"Invalid APP_ENV '{self.APP_ENV}'. Allowed options are: {', '.join(allowed_envs)}"
             )
         self.APP_ENV = env_upper
+
+        # 1b. Normalize NAVIX_DATA_MODE (demo | hybrid | live)
+        mode_lower = (self.NAVIX_DATA_MODE or "demo").strip().lower()
+        if mode_lower not in ("demo", "hybrid", "live"):
+            mode_lower = "demo"
+        self.NAVIX_DATA_MODE = mode_lower
 
         # 2. Set Default DEBUG Flag based on Environment if not explicitly overridden
         if self.DEBUG is None:

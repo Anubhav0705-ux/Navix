@@ -29,6 +29,13 @@ from app.models.transport_platform import (
     TransportRealtimeObservation,
     TransportRefreshLock
 )
+from app.models.demo_catalog import (
+    DemoDestination,
+    DemoAttraction,
+    DemoFoodPlace,
+    DemoHotel,
+    DemoStory
+)
 
 __all__ = [
     "Base",
@@ -65,5 +72,10 @@ __all__ = [
     "TransportCalendarDate",
     "TransportServiceAlert",
     "TransportRealtimeObservation",
-    "TransportRefreshLock"
+    "TransportRefreshLock",
+    "DemoDestination",
+    "DemoAttraction",
+    "DemoFoodPlace",
+    "DemoHotel",
+    "DemoStory"
 ]
