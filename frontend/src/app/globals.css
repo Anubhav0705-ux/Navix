@@ -2,24 +2,45 @@
 
 @layer base {
   :root {
-    --font-sans: var(--font-manrope), system-ui, -apple-system, sans-serif;
-    --font-serif: var(--font-playfair), Georgia, serif;
+    --font-sans: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-serif: var(--font-serif), Georgia, serif;
     
-    --bg-dark: #101419;
-    --bg-light: #F5F0E8;
-    --emerald: #0FA77A;
-    --electric-blue: #4D7CFE;
-    --coral: #FF6B5D;
-    --warm-yellow: #F7B955;
-    --sand-muted: #D8CBB8;
-    --text-dark: #101828;
+    /* NAVIX Sunlit India Palette Tokens */
+    --bg-main: #FFF9F2;       /* Warm sunlit linen/cream */
+    --bg-surface: #FFFFFF;    /* Crisp white elevated card surface */
+    --bg-subtle: #F7EFE4;     /* Warm neutral for secondary containers */
+    --bg-muted: #F1E5D5;      /* Subtle border & badge fill */
+
+    /* Typography: Deep ink & readable slates */
+    --ink-primary: #193451;   /* Deep ink for headings & high-contrast titles */
+    --ink-secondary: #475569; /* Slate gray for readable body text */
+    --ink-muted: #64748B;     /* Muted slate for metadata */
+    --ink-light: #94A3B8;     /* Inactive elements */
+
+    /* Vibrant Brand Accents */
+    --primary-blue: #246BCE;  /* Ocean azure for CTAs, active controls & links */
+    --primary-hover: #1A56A8;
+    --coral-accent: #F46F58;  /* Warm coral for highlights & energy */
+    --coral-hover: #E05841;
+    --sunshine-yellow: #F7C963; /* Sunshine gold for stars & warmth */
+    --mint-accent: #BFE8D6;   /* Mint green for nature tags */
+
+    /* Warm Borders & Shadows */
+    --border-light: #EADBCE;
+    --border-card: #E5DDD2;
   }
 
   body {
-    background-color: var(--bg-light);
-    color: var(--text-dark);
+    background-color: #FFF9F2;
+    color: #193451;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(36, 107, 206, 0.18);
+    color: #193451;
   }
 }
 
@@ -27,91 +48,73 @@
   font-family: var(--font-serif), Georgia, serif;
 }
 
-/* Custom Design Tokens V2 */
-.bg-v2-dark {
-  background-color: #101419;
+/* Warm, elegant custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.bg-v2-light {
-  background-color: #F5F0E8;
+::-webkit-scrollbar-track {
+  background: #FFF9F2;
 }
 
-.text-v2-emerald {
-  color: #0FA77A;
+::-webkit-scrollbar-thumb {
+  background: #EADBCE;
+  border-radius: 9999px;
 }
 
-.bg-v2-emerald {
-  background-color: #0FA77A;
+::-webkit-scrollbar-thumb:hover {
+  background: #D8C7B5;
 }
 
-.bg-v2-emerald:hover {
-  background-color: #0B8465;
+/* Sunlit Card & Elevation Styles */
+.sunlit-card {
+  background-color: #FFFFFF;
+  border: 1px solid #EADBCE;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(25, 52, 81, 0.05), 0 2px 6px -1px rgba(25, 52, 81, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.text-v2-blue {
-  color: #4D7CFE;
+.sunlit-card:hover {
+  border-color: #246BCE;
+  box-shadow: 0 16px 36px -6px rgba(25, 52, 81, 0.09), 0 4px 12px -2px rgba(25, 52, 81, 0.04);
 }
 
-.bg-v2-blue {
-  background-color: #4D7CFE;
+.sunlit-card-static {
+  background-color: #FFFFFF;
+  border: 1px solid #EADBCE;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(25, 52, 81, 0.05), 0 2px 6px -1px rgba(25, 52, 81, 0.02);
 }
 
-.text-v2-coral {
-  color: #FF6B5D;
+/* Photo card hover effect */
+.photo-card-hover {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
 }
 
-.bg-v2-coral {
-  background-color: #FF6B5D;
+.photo-card-hover:hover {
+  transform: translateY(-4px);
+  border-color: #246BCE;
+  box-shadow: 0 20px 40px -10px rgba(25, 52, 81, 0.12), 0 4px 14px -2px rgba(36, 107, 206, 0.08);
 }
 
-.text-v2-yellow {
-  color: #F7B955;
-}
-
-.bg-v2-yellow {
-  background-color: #F7B955;
-}
-
-/* Animated SVG Route Line Draw */
-@keyframes routeDraw {
-  0% {
-    stroke-dashoffset: 1000;
-  }
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-.animate-route-draw {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: routeDraw 3s ease-out forwards;
-}
-
+/* Subtle Hero Zoom */
 @keyframes heroZoom {
   0% {
     transform: scale(1);
   }
   100% {
-    transform: scale(1.05);
+    transform: scale(1.04);
   }
 }
 
 .animate-hero-zoom {
-  animation: heroZoom 15s ease-out infinite alternate;
-}
-
-/* Photo card hover effect */
-.photo-card-hover {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.photo-card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  animation: heroZoom 24s ease-out infinite alternate;
 }
 
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
+  color-scheme: light;
 }

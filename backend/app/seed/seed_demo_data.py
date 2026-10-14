@@ -206,6 +206,13 @@ def seed_data() -> Dict[str, int]:
                 )
                 session.add(attr)
                 counts["attractions"] += 1
+            else:
+                existing.name = item["name"]
+                existing.category = item["category"]
+                existing.description = item["description"]
+                existing.entry_fee = float(item.get("demo_entry_fee") or item.get("entry_fee", 0.0))
+                existing.image = item["image"]
+                existing.rating = float(item["rating"])
         session.commit()
 
         # 5. Seed Food Places
@@ -232,6 +239,14 @@ def seed_data() -> Dict[str, int]:
                 )
                 session.add(fp)
                 counts["food_places"] += 1
+            else:
+                existing.name = item["name"]
+                existing.cuisine = item["cuisine"]
+                existing.speciality = item["speciality"]
+                existing.dietary = item.get("dietary") or item.get("food_type", "both")
+                existing.cost_for_two = float(item.get("demo_cost_for_two") or item.get("cost_for_two", 400.0))
+                existing.image = item["image"]
+                existing.rating = float(item["rating"])
         session.commit()
 
         # 6. Seed Hotels / Stays
@@ -258,6 +273,12 @@ def seed_data() -> Dict[str, int]:
                 )
                 session.add(ht)
                 counts["hotels"] += 1
+            else:
+                existing.name = item["name"]
+                existing.category = item.get("tier") or item.get("category", "Standard")
+                existing.price_per_night = float(item.get("demo_price_per_night") or item.get("price_per_night", 1500.0))
+                existing.image = item["image"]
+                existing.rating = float(item["rating"])
         session.commit()
 
         # 7. Seed Transit Nodes (Legacy + National Demo Graph)
@@ -336,6 +357,17 @@ def seed_data() -> Dict[str, int]:
                 )
                 session.add(story)
                 counts["stories"] += 1
+            else:
+                existing.title = item["title"]
+                existing.slug = item["slug"]
+                existing.destination_slug = item.get("destination_slug") or item.get("destination", "").lower().replace(" ", "-")
+                existing.destination_name = item.get("destination") or item.get("destination_name", existing.destination_name)
+                existing.category = item.get("category", existing.category)
+                existing.summary = item["summary"]
+                existing.body = item["body"]
+                existing.author = item.get("author", existing.author)
+                existing.read_time = item.get("read_time", existing.read_time)
+                existing.hero_image = item.get("cover_image") or item.get("hero_image", existing.hero_image)
         session.commit()
 
         return counts

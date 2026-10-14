@@ -1,4 +1,5 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
+import math
 from datetime import datetime, timedelta
 from decimal import Decimal
 from sqlalchemy.orm import Session
@@ -8,6 +9,105 @@ from app.algorithms import TransitGraph, search_routes, RoutingRequest, RouteSea
 from app.algorithms.types import OptimizationProfile, RouteSegmentResult, RouteSummary, TransportMode, TransferStatus
 from app.models.transit_node import TransitNode
 from app.models.transit_schedule import TransitSchedule
+from app.models.demo_catalog import DemoDestination
+from app.core.destinations import resolve_canonical_destination, normalize_city_name
+
+
+def haversine_distance_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Calculates great-circle distance between two geographic coordinates in kilometers."""
+    R = 6371.0
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return R * c
+
+
+def get_city_coordinates(db: Session, city_name: str) -> Tuple[float, float]:
+    """Resolves coordinates for any city name using catalog destinations or transit nodes."""
+    dest = resolve_canonical_destination(db, city_name)
+    if dest and dest.latitude and dest.longitude:
+        return (dest.latitude, dest.longitude)
+
+    norm = normalize_city_name(city_name)
+    node = db.scalar(
+        select(TransitNode).where(
+            or_(
+                func.lower(TransitNode.city) == norm,
+                func.lower(TransitNode.node_name).like(f"%{norm}%")
+            )
+        )
+    )
+    if node and node.latitude and node.longitude:
+        return (node.latitude, node.longitude)
+
+    return (20.5937, 78.9629)
+
+
+def compute_road_fallback_route(
+    db: Session,
+    origin: str,
+    destination: str,
+    departure_time: Optional[datetime] = None,
+    max_transport_budget: Optional[Decimal] = None
+) -> RouteSearchResult:
+    """
+    Computes a deterministic road transfer estimate (DEMO_ESTIMATE) between any two Indian locations
+    when scheduled rail/flight transit is not directly connected on the presentation graph.
+    """
+    lat1, lon1 = get_city_coordinates(db, origin)
+    lat2, lon2 = get_city_coordinates(db, destination)
+
+    d_km = haversine_distance_km(lat1, lon1, lat2, lon2)
+    road_km = max(35.0, round(d_km * 1.25, 1))
+
+    # Average interstate road speed ~52 km/h
+    dur_mins = max(60, int(road_km / 52.0 * 60))
+    # Express bus estimate rate ~Rs. 2.10/km
+    base_cost = Decimal(str(max(150, round(road_km * 2.10))))
+
+    dep = departure_time or datetime.now()
+    arr = dep + timedelta(minutes=dur_mins)
+
+    norm_orig = normalize_city_name(origin).title() or origin
+    norm_dest = normalize_city_name(destination).title() or destination
+
+    seg = RouteSegmentResult(
+        schedule_id=f"demo_road_{abs(hash(origin + destination)) % 100000}",
+        source_node_id=f"road_hub_{normalize_city_name(origin)}",
+        source_node_name=f"{norm_orig} Highway Terminus",
+        source_city=norm_orig,
+        dest_node_id=f"road_hub_{normalize_city_name(destination)}",
+        dest_node_name=f"{norm_dest} Highway Station",
+        dest_city=norm_dest,
+        provider="National Highway Express (Road Transfer)",
+        transport_mode=TransportMode.BUS,
+        departure_time=dep,
+        arrival_time=arr,
+        duration_minutes=dur_mins,
+        cost=base_cost,
+        layover_before_minutes=0,
+        transfer_status=TransferStatus.SAFE
+    )
+
+    summary = RouteSummary(
+        total_transport_cost=base_cost,
+        total_elapsed_minutes=dur_mins,
+        total_travel_minutes=dur_mins,
+        total_layover_minutes=0,
+        number_of_segments=1,
+        number_of_transfers=0,
+        algorithm_used="Regional Road Transfer Estimate (DEMO_ESTIMATE)",
+        data_source="National Road Network Estimate (DEMO_ESTIMATE)"
+    )
+
+    return RouteSearchResult(
+        origin=norm_orig,
+        destination=norm_dest,
+        profile=OptimizationProfile.BALANCED,
+        segments=[seg],
+        summary=summary
+    )
 
 
 def plan_route(db: Session, request: RoutingRequest) -> RouteSearchResult:
@@ -16,7 +116,19 @@ def plan_route(db: Session, request: RoutingRequest) -> RouteSearchResult:
     """
     target_date = request.departure_time.date() if request.departure_time else None
     graph = TransitGraph.load_from_db(db, target_date=target_date)
-    return search_routes(graph=graph, request=request, use_heuristic=True)
+    try:
+        return search_routes(graph=graph, request=request, use_heuristic=True)
+    except SearchError as e:
+        if e.code == "NO_ROUTE":
+            return compute_road_fallback_route(
+                db=db,
+                origin=request.origin,
+                destination=request.destination,
+                departure_time=request.departure_time,
+                max_transport_budget=request.max_transport_budget
+            )
+        raise
+
 
 
 def get_route_alternatives(db: Session, request: RoutingRequest) -> List[Dict[str, Any]]:
@@ -138,9 +250,31 @@ def get_route_alternatives(db: Session, request: RoutingRequest) -> List[Dict[st
                         "duration_minutes": dur
                     })
 
-    # If still empty, raise NO_ROUTE
+    # If still empty, fall back to nationwide road transfer estimate (DEMO_ESTIMATE)
     if not alternatives:
-        raise SearchError(code="NO_ROUTE", message=f"No viable transport route found between '{request.origin}' and '{request.destination}'.")
+        road_res = compute_road_fallback_route(
+            db=db,
+            origin=request.origin,
+            destination=request.destination,
+            departure_time=request.departure_time,
+            max_transport_budget=request.max_transport_budget
+        )
+        base_seg = road_res.segments[0]
+        alternatives.append({
+            "id": "alt_1",
+            "label": "RECOMMENDED",
+            "profile": OptimizationProfile.BALANCED,
+            "summary": road_res.summary,
+            "segments": road_res.segments,
+            "modes": [base_seg.transport_mode.value],
+            "operators": [base_seg.provider],
+            "departure_time": base_seg.departure_time,
+            "arrival_time": base_seg.arrival_time,
+            "transfers": 0,
+            "total_cost": road_res.summary.total_transport_cost,
+            "duration_minutes": road_res.summary.total_elapsed_minutes
+        })
+
 
     # If we have fewer than 3 options, synthesize distinctive alternatives
     if alternatives:

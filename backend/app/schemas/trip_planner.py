@@ -60,6 +60,9 @@ class TripPlanRequest(BaseModel):
     food_preference: FoodPreference = FoodPreference.BALANCED
     activity_preference: ActivityPreference = ActivityPreference.MEDIUM
     planner_preferences: Optional[PlannerPreferences] = None
+    selected_hotel_id: Optional[str] = None
+    selected_food_id: Optional[str] = None
+    selected_transport_alternative_id: Optional[str] = None
 
 
 class SelectedStay(BaseModel):

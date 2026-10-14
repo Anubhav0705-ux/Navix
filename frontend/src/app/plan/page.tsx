@@ -9,22 +9,21 @@ import {
 } from '@/components';
 import { PlannerProvider, usePlanner } from '@/context/PlannerContext';
 import { requestTripPlan, APIError } from '@/services';
-import { saveTripPlan, getTripPlan } from '@/lib';
+import { saveTripPlan, getTripPlan, clearTripPlan } from '@/lib';
 import { TripPlanResult } from '@/types';
 import { Loader2, Check, AlertTriangle, Sparkles } from 'lucide-react';
 
 const LOADING_CHECKLIST = [
-  'Mapping viable multi-modal transit graph & schedules',
-  'Evaluating time-dependent train, bus & local transfers',
-  'Enforcing mandatory ≥30 min safe layover connection windows',
-  'Optimizing whole-trip budget allocation across transport, stay & food',
-  'Scheduling personalized daily itinerary with must-visit highlights'
+  'Checking multi-modal rail, bus & local connections',
+  'Validating comfortable layovers (minimum 30 min transfer buffer)',
+  'Selecting vetted stays and regional dining within budget',
+  'Balancing daily allocations against your trip ceiling',
+  'Organizing day-by-day activities and scenic highlights'
 ];
 
 function InnerPlannerWorkspace() {
   const searchParams = useSearchParams();
   const { state, dispatch, getBackendPayload } = usePlanner();
-
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingStage, setLoadingStage] = useState(0);
@@ -37,12 +36,40 @@ function InnerPlannerWorkspace() {
     const qDest = searchParams.get('destination');
     const qBudget = searchParams.get('budget');
     const qTravellers = searchParams.get('travellers');
+    const qReopen = searchParams.get('reopen');
 
-    if (qOrigin) dispatch({ type: 'SET_ORIGIN', payload: qOrigin });
-    if (qDest) dispatch({ type: 'SET_DESTINATION', payload: qDest });
+    if (qReopen === 'true') {
+      const saved = getTripPlan();
+      if (saved) {
+        queueMicrotask(() => {
+          setPlanResult(saved);
+          dispatch({ type: 'SET_ORIGIN', payload: saved.origin });
+          dispatch({ type: 'SET_DESTINATION', payload: saved.destination });
+          dispatch({ type: 'SET_STAGE', payload: 7 });
+        });
+        return;
+      }
+    }
+
+    if (qDest) {
+      if (qDest !== state.destination || (planResult && planResult.destination.toLowerCase() !== qDest.toLowerCase())) {
+        queueMicrotask(() => {
+          dispatch({ type: 'SET_DESTINATION', payload: qDest });
+          dispatch({ type: 'SET_STAGE', payload: 1 });
+          clearTripPlan();
+          setPlanResult(null);
+        });
+      }
+    }
+
+
+    if (qOrigin && qOrigin !== state.origin) {
+      dispatch({ type: 'SET_ORIGIN', payload: qOrigin });
+    }
     if (qBudget && !isNaN(Number(qBudget))) dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: Number(qBudget) });
     if (qTravellers && !isNaN(Number(qTravellers))) dispatch({ type: 'SET_TRAVELLERS_COUNT', payload: Number(qTravellers) });
   }, [searchParams, dispatch]);
+
 
   // Loading checklist timer animation
   useEffect(() => {
@@ -76,14 +103,14 @@ function InnerPlannerWorkspace() {
       } else {
         setErrorInfo({
           code: 'UNKNOWN_ERROR',
-          message: 'An unexpected error occurred during trip calculation. Please verify inputs and try again.'
+          message: 'An unexpected issue occurred while calculating your itinerary. Please check your inputs and try again.'
         });
       }
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#0B192C] flex flex-col font-sans relative selection:bg-emerald-600 selection:text-white">
+    <div className="min-h-screen bg-[#FFF9F2] text-[#193451] flex flex-col font-sans relative selection:bg-[#246BCE]/20 selection:text-[#246BCE]">
       {/* Persistent Stage Header Navigation Bar */}
       <div className="relative z-20">
         <PlannerTopNav />
@@ -95,17 +122,17 @@ function InnerPlannerWorkspace() {
         {errorInfo && (
           <div className="mb-6 p-5 bg-rose-50 border border-rose-200 rounded-3xl text-rose-900 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in duration-300">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0 border border-rose-200">
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div className="space-y-0.5">
-                <h4 className="text-sm font-bold text-[#0B192C] flex items-center gap-2">
-                  {errorInfo.code === 'BUDGET_TOO_LOW' ? 'Trip Budget Shortfall' : 'Planner Notice'}
-                  <span className="text-[10px] font-mono px-2 py-0.5 bg-rose-100 rounded-full text-rose-800 border border-rose-200">
+                <h4 className="text-sm font-bold text-[#193451] flex items-center gap-2">
+                  {errorInfo.code === 'BUDGET_TOO_LOW' ? 'Trip Budget Needs Adjustment' : 'Planner Notice'}
+                  <span className="text-[10px] font-mono px-2 py-0.5 bg-rose-100 rounded-full text-rose-700 border border-rose-200 font-bold">
                     {errorInfo.code}
                   </span>
                 </h4>
-                <p className="text-xs text-rose-700 leading-relaxed max-w-xl">
+                <p className="text-xs text-[#64748B] leading-relaxed max-w-xl">
                   {errorInfo.message}
                 </p>
               </div>
@@ -119,7 +146,7 @@ function InnerPlannerWorkspace() {
                     setErrorInfo(null);
                     dispatch({ type: 'SET_STAGE', payload: 1 });
                   }}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm"
+                  className="px-4 py-2 bg-[#246BCE] hover:bg-[#1B56A8] text-white text-xs font-bold rounded-xl transition-all shadow-md cursor-pointer"
                 >
                   Add ₹5,000 to Budget
                 </button>
@@ -128,7 +155,7 @@ function InnerPlannerWorkspace() {
                     setErrorInfo(null);
                     dispatch({ type: 'SET_STAGE', payload: 1 });
                   }}
-                  className="px-3.5 py-2 border border-rose-200 hover:bg-rose-100/50 text-rose-800 text-xs font-semibold rounded-xl transition-all"
+                  className="px-3.5 py-2 border border-rose-300 hover:bg-rose-100/50 text-rose-800 text-xs font-semibold rounded-xl transition-all cursor-pointer"
                 >
                   Adjust Inputs
                 </button>
@@ -139,39 +166,39 @@ function InnerPlannerWorkspace() {
 
         {/* Loading Overlay State */}
         {isSubmitting ? (
-          <div className="my-12 max-w-xl mx-auto bg-white border border-stone-200 rounded-3xl p-8 sm:p-12 text-center space-y-8 shadow-xl">
+          <div className="my-12 max-w-xl mx-auto bg-white border border-[#EADBCE] rounded-3xl p-8 sm:p-12 text-center space-y-8 shadow-xl shadow-[#193451]/5">
             <div className="space-y-4">
               <div className="relative w-16 h-16 mx-auto flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full border-4 border-emerald-100 border-t-emerald-600 animate-spin" />
-                <Sparkles className="w-6 h-6 text-emerald-600 animate-pulse" />
+                <div className="absolute inset-0 rounded-full border-4 border-[#EADBCE] border-t-[#246BCE] animate-spin" />
+                <Sparkles className="w-6 h-6 text-[#246BCE] animate-pulse" />
               </div>
               <div>
-                <h3 className="text-xl sm:text-2xl font-black text-[#0B192C] tracking-tight">
-                  Solving Multi-Modal Journey
+                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#193451] tracking-tight">
+                  Crafting Your Journey
                 </h3>
-                <p className="text-xs sm:text-sm text-stone-500 mt-1">
-                  Evaluating transit schedules, transfers, and budget constraints for {state.origin} &rarr; {state.destination}
+                <p className="text-xs sm:text-sm text-[#64748B] mt-1">
+                  Connecting transit schedules, verified stays, and budget boundaries for {state.origin} &rarr; {state.destination}
                 </p>
               </div>
             </div>
 
             {/* Checklist Progress */}
-            <div className="text-left space-y-3 bg-stone-50 p-6 rounded-2xl border border-stone-200">
+            <div className="text-left space-y-3 bg-[#FFF9F2] p-6 rounded-2xl border border-[#EADBCE]">
               {LOADING_CHECKLIST.map((item, idx) => {
                 const isDone = idx < loadingStage;
                 const isCurrent = idx === loadingStage;
                 return (
                   <div key={item} className="flex items-center gap-3 text-xs sm:text-sm transition-all duration-300">
                     {isDone ? (
-                      <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                      <div className="w-5 h-5 rounded-full bg-[#246BCE]/10 text-[#246BCE] flex items-center justify-center shrink-0 border border-[#246BCE]/30">
                         <Check className="w-3.5 h-3.5" />
                       </div>
                     ) : isCurrent ? (
-                      <div className="w-5 h-5 rounded-full border-2 border-emerald-600 border-t-transparent animate-spin shrink-0" />
+                      <div className="w-5 h-5 rounded-full border-2 border-[#246BCE] border-t-transparent animate-spin shrink-0" />
                     ) : (
-                      <div className="w-5 h-5 rounded-full border border-stone-200 shrink-0 bg-white" />
+                      <div className="w-5 h-5 rounded-full border border-[#EADBCE] shrink-0 bg-white" />
                     )}
-                    <span className={isDone ? 'text-stone-800 font-semibold' : isCurrent ? 'text-emerald-700 font-bold' : 'text-stone-400'}>
+                    <span className={isDone ? 'text-[#193451] font-semibold' : isCurrent ? 'text-[#246BCE] font-bold' : 'text-[#64748B]/60'}>
                       {item}
                     </span>
                   </div>
@@ -213,8 +240,8 @@ export default function PlannerPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center text-xs text-stone-500 gap-3">
-          <Loader2 className="w-5 h-5 animate-spin text-emerald-600" />
+        <div className="min-h-screen bg-[#FFF9F2] flex items-center justify-center text-sm font-medium text-[#64748B] gap-3">
+          <Loader2 className="w-5 h-5 animate-spin text-[#246BCE]" />
           <span>Loading NAVIX Travel Planner...</span>
         </div>
       }

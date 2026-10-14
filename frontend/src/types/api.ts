@@ -42,7 +42,11 @@ export interface TripPlanRequest {
   food_preference: FoodPreference;
   activity_preference: ActivityPreference;
   planner_preferences?: PlannerPreferences;
+  selected_hotel_id?: string;
+  selected_food_id?: string;
+  selected_transport_alternative_id?: string;
 }
+
 
 export interface RouteSegmentResult {
   schedule_id: string;

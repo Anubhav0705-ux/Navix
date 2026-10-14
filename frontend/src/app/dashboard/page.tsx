@@ -12,7 +12,6 @@ import {
   Compass, Calendar, Trash2, ExternalLink, ArrowRight, Loader2,
   MapPin, Download, Copy, Sparkles, CheckCircle2, Plus
 } from 'lucide-react';
-
 import { exportTripPlanPDF } from '@/lib/pdf-export';
 
 const RECOMMENDED_DESTINATIONS = [
@@ -82,7 +81,7 @@ export default function DashboardPage() {
 
   const handleView = (item: SavedTripItem) => {
     saveTripPlan(item.plan);
-    router.push('/plan');
+    router.push('/plan?reopen=true');
   };
 
   const handleDelete = async (trip_id: string) => {
@@ -123,36 +122,36 @@ export default function DashboardPage() {
   const upcomingTrip = savedTrips.length > 0 ? savedTrips[0] : null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FDFBF7] text-[#0B192C]">
+    <div className="min-h-screen flex flex-col bg-[#FFF9F2] text-[#193451] selection:bg-[#246BCE]/15 selection:text-[#193451]">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-12">
         
         {/* Toast Feedback */}
         {feedbackMsg && (
-          <div className="fixed bottom-6 right-6 z-50 bg-[#0B192C] text-white px-5 py-3 rounded-2xl shadow-2xl border border-stone-700 text-xs flex items-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-200">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <div className="fixed bottom-6 right-6 z-50 bg-[#193451] text-white px-5 py-3 rounded-2xl shadow-xl text-xs flex items-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-200">
+            <CheckCircle2 className="w-4 h-4 text-[#F7C963]" />
             <span>{feedbackMsg}</span>
           </div>
         )}
 
         {/* --- WELCOME HEADER --- */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-[#EADBCE] rounded-3xl p-6 sm:p-8 shadow-xs">
           <div className="space-y-1">
-            <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider block">
-              Traveler Profile
+            <span className="text-xs font-bold text-[#F46F58] tracking-wider uppercase block">
+              Personal Travel Library
             </span>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#0B192C]">
+            <h1 className="text-2xl sm:text-4xl font-black font-editorial text-[#193451]">
               Welcome back, {currentUser?.name || 'Explorer'}
             </h1>
-            <p className="text-xs text-stone-500">
+            <p className="text-xs text-[#64748B]">
               {currentUser?.email} &bull; Manage your multi-modal budget journeys and saved itineraries.
             </p>
           </div>
 
           <Link
             href="/plan"
-            className="inline-flex items-center gap-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3.5 rounded-2xl transition-all shadow-md hover:shadow-emerald-600/30 whitespace-nowrap uppercase tracking-wider"
+            className="inline-flex items-center gap-2 text-xs font-bold bg-[#246BCE] hover:bg-[#1A56A8] text-white px-6 py-3.5 rounded-2xl transition-all shadow-md shadow-[#246BCE]/20 whitespace-nowrap uppercase tracking-wider cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Plan New Journey</span>
@@ -161,40 +160,38 @@ export default function DashboardPage() {
 
         {/* --- 1. UPCOMING / ACTIVE TRIP SPOTLIGHT --- */}
         {upcomingTrip && (
-          <section className="bg-gradient-to-r from-[#0B192C] to-[#1E3E62] text-white rounded-3xl p-6 sm:p-10 shadow-xl space-y-6 relative overflow-hidden">
-            <div className="absolute right-0 top-0 bottom-0 w-1/3 opacity-15 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-400 to-transparent" />
-
+          <section className="bg-[#193451] text-white rounded-3xl p-6 sm:p-10 shadow-xl space-y-6 relative overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
-              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-mono font-bold uppercase tracking-wider border border-emerald-500/30 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
+              <span className="px-3.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#F7C963]" />
                 Featured Active Journey
               </span>
-              <span className="text-xs font-mono text-stone-300">
+              <span className="text-xs text-[#CBD5E1]">
                 Departure: {upcomingTrip.travel_date}
               </span>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
               <div className="lg:col-span-7 space-y-3">
-                <h2 className="text-2xl sm:text-4xl font-black tracking-tight">
-                  {upcomingTrip.origin} <span className="text-emerald-400 font-light">&rarr;</span> {upcomingTrip.destination}
+                <h2 className="text-2xl sm:text-4xl font-black font-editorial tracking-tight text-white">
+                  {upcomingTrip.origin} <span className="text-[#F46F58] font-light">&rarr;</span> {upcomingTrip.destination}
                 </h2>
-                <p className="text-xs sm:text-sm text-stone-300 leading-relaxed max-w-xl">
-                  Algorithmic itinerary computed within hard budget cap. Multi-modal connections and daily activities validated.
+                <p className="text-xs sm:text-sm text-[#CBD5E1] leading-relaxed max-w-xl">
+                  Personalized itinerary computed within hard budget cap. Multi-modal connections and daily activities validated.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-4 pt-2 text-xs font-mono">
-                  <div className="bg-white/10 px-3.5 py-2 rounded-xl border border-white/10">
-                    <span className="text-stone-400 block text-[10px]">TOTAL EXPENSE</span>
-                    <span className="font-bold text-emerald-400 text-sm">₹{upcomingTrip.total_cost.toLocaleString()}</span>
+                <div className="flex flex-wrap items-center gap-4 pt-2 text-xs">
+                  <div className="bg-white/10 px-4 py-2.5 rounded-2xl border border-white/10">
+                    <span className="text-[#94A3B8] block text-[10px] uppercase font-bold">TOTAL EXPENSE</span>
+                    <span className="font-bold text-white text-base">₹{upcomingTrip.total_cost.toLocaleString()}</span>
                   </div>
-                  <div className="bg-white/10 px-3.5 py-2 rounded-xl border border-white/10">
-                    <span className="text-stone-400 block text-[10px]">BUDGET CAP</span>
-                    <span className="font-bold text-white text-sm">₹{upcomingTrip.budget_cap.toLocaleString()}</span>
+                  <div className="bg-white/10 px-4 py-2.5 rounded-2xl border border-white/10">
+                    <span className="text-[#94A3B8] block text-[10px] uppercase font-bold">BUDGET CAP</span>
+                    <span className="font-bold text-[#F7C963] text-base">₹{upcomingTrip.budget_cap.toLocaleString()}</span>
                   </div>
-                  <div className="bg-white/10 px-3.5 py-2 rounded-xl border border-white/10">
-                    <span className="text-stone-400 block text-[10px]">STATUS</span>
-                    <span className="font-bold text-emerald-300 text-sm">{upcomingTrip.budget_status}</span>
+                  <div className="bg-white/10 px-4 py-2.5 rounded-2xl border border-white/10">
+                    <span className="text-[#94A3B8] block text-[10px] uppercase font-bold">STATUS</span>
+                    <span className="font-bold text-emerald-400 text-base">{upcomingTrip.budget_status}</span>
                   </div>
                 </div>
               </div>
@@ -202,17 +199,17 @@ export default function DashboardPage() {
               <div className="lg:col-span-5 flex flex-wrap lg:justify-end gap-3">
                 <button
                   onClick={() => handleView(upcomingTrip)}
-                  className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-2"
+                  className="px-6 py-3.5 bg-[#246BCE] hover:bg-[#1A56A8] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md shadow-[#246BCE]/25 flex items-center gap-2 cursor-pointer"
                 >
                   <span>Open Full Itinerary</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <ExternalLink className="w-4 h-4" />
                 </button>
 
                 <button
                   onClick={() => handlePDF(upcomingTrip)}
-                  className="px-4 py-3 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl transition-all border border-white/15 flex items-center gap-2"
+                  className="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl transition-all border border-white/20 flex items-center gap-2 cursor-pointer"
                 >
-                  <Download className="w-3.5 h-3.5 text-emerald-400" />
+                  <Download className="w-4 h-4 text-[#F7C963]" />
                   <span>Download PDF</span>
                 </button>
               </div>
@@ -221,31 +218,31 @@ export default function DashboardPage() {
         )}
 
         {/* --- 2. SAVED TRIPS DIRECTORY --- */}
-        <section className="space-y-4">
+        <section className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-black text-[#0B192C] flex items-center gap-2">
-              <Compass className="w-6 h-6 text-emerald-600" />
+            <h2 className="text-2xl sm:text-3xl font-black font-editorial text-[#193451] flex items-center gap-2.5">
+              <Compass className="w-6 h-6 text-[#246BCE]" />
               <span>Saved Journeys ({savedTrips.length})</span>
             </h2>
           </div>
 
           {loading ? (
-            <div className="p-16 text-center text-xs text-stone-500 bg-white rounded-3xl border border-stone-200 flex items-center justify-center gap-2">
-              <Loader2 className="w-5 h-5 animate-spin text-emerald-600" />
+            <div className="p-16 text-center text-xs text-[#64748B] bg-white rounded-3xl border border-[#EADBCE] flex items-center justify-center gap-2 shadow-xs">
+              <Loader2 className="w-5 h-5 animate-spin text-[#246BCE]" />
               <span>Loading saved itineraries...</span>
             </div>
           ) : savedTrips.length === 0 ? (
-            <div className="bg-white border border-stone-200 rounded-3xl p-12 text-center space-y-4 shadow-sm">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto text-emerald-600">
+            <div className="bg-white border border-[#EADBCE] rounded-3xl p-12 text-center space-y-4 shadow-sm max-w-lg mx-auto">
+              <div className="w-14 h-14 rounded-2xl bg-[#F7EFE4] border border-[#EADBCE] flex items-center justify-center mx-auto text-[#246BCE]">
                 <Compass className="w-7 h-7" />
               </div>
-              <h3 className="text-lg font-bold text-[#0B192C]">No Saved Journeys Yet</h3>
-              <p className="text-xs text-stone-500 max-w-md mx-auto leading-relaxed">
+              <h3 className="text-xl font-bold font-editorial text-[#193451]">No Saved Journeys Yet</h3>
+              <p className="text-xs text-[#64748B] max-w-md mx-auto leading-relaxed">
                 Generate an algorithmic multi-modal itinerary using the planner, then click &quot;Save Trip&quot; to keep it in your permanent traveler account.
               </p>
               <Link
                 href="/plan"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md"
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#246BCE] hover:bg-[#1A56A8] text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md shadow-[#246BCE]/20"
               >
                 <span>Start Planning Now &rarr;</span>
               </Link>
@@ -255,43 +252,43 @@ export default function DashboardPage() {
               {savedTrips.map((item) => (
                 <div
                   key={item.trip_id}
-                  className="bg-white border border-stone-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                  className="bg-white border border-[#EADBCE] rounded-3xl overflow-hidden shadow-sm hover:border-[#246BCE] transition-all flex flex-col justify-between photo-card-hover"
                 >
                   <div className="p-6 space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-mono font-bold uppercase border border-emerald-200">
+                      <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase border border-emerald-200">
                         {item.budget_status}
                       </span>
-                      <span className="text-[11px] font-mono text-stone-400">#{item.trip_id.slice(-6)}</span>
+                      <span className="text-[11px] font-mono text-[#94A3B8]">#{item.trip_id.slice(-6)}</span>
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-bold text-[#0B192C] flex items-center gap-1.5">
-                        <MapPin className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <h3 className="text-xl font-bold font-editorial text-[#193451] flex items-center gap-1.5">
+                        <MapPin className="w-4 h-4 text-[#246BCE] shrink-0" />
                         <span>{item.origin} &rarr; {item.destination}</span>
                       </h3>
-                      <p className="text-xs text-stone-500 flex items-center gap-1 mt-1">
-                        <Calendar className="w-3.5 h-3.5 text-stone-400" />
+                      <p className="text-xs text-[#64748B] flex items-center gap-1 mt-1">
+                        <Calendar className="w-3.5 h-3.5 text-[#94A3B8]" />
                         <span>Travel Date: {item.travel_date}</span>
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 p-3.5 bg-stone-50 rounded-2xl border border-stone-100 font-mono text-xs">
+                    <div className="grid grid-cols-2 gap-3 p-4 bg-[#FFF9F2] rounded-2xl border border-[#EADBCE] text-xs">
                       <div>
-                        <span className="text-[10px] text-stone-500 block">TOTAL COST</span>
-                        <span className="font-bold text-emerald-700 text-sm">₹{item.total_cost.toLocaleString()}</span>
+                        <span className="text-[10px] text-[#94A3B8] font-bold uppercase block">TOTAL COST</span>
+                        <span className="font-bold text-[#193451] text-base">₹{item.total_cost.toLocaleString()}</span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-stone-500 block">BUDGET CAP</span>
-                        <span className="font-bold text-[#0B192C] text-sm">₹{item.budget_cap.toLocaleString()}</span>
+                        <span className="text-[10px] text-[#94A3B8] font-bold uppercase block">BUDGET CAP</span>
+                        <span className="font-bold text-[#246BCE] text-base">₹{item.budget_cap.toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-stone-50/70 border-t border-stone-100 flex items-center justify-between text-xs">
+                  <div className="p-4 bg-[#FFF9F2] border-t border-[#EADBCE] flex items-center justify-between text-xs">
                     <button
                       onClick={() => handleView(item)}
-                      className="font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1"
+                      className="font-bold text-[#246BCE] hover:text-[#1A56A8] flex items-center gap-1 cursor-pointer"
                     >
                       <span>Open Plan</span>
                       <ExternalLink className="w-3.5 h-3.5" />
@@ -301,7 +298,7 @@ export default function DashboardPage() {
                       <button
                         onClick={() => handleDuplicate(item)}
                         disabled={duplicatingId === item.trip_id}
-                        className="p-2 text-stone-500 hover:text-[#0B192C] hover:bg-stone-200/50 rounded-lg transition-all"
+                        className="p-2 text-[#64748B] hover:text-[#193451] hover:bg-white rounded-lg transition-all cursor-pointer"
                         title="Duplicate Trip"
                       >
                         <Copy className="w-4 h-4" />
@@ -309,7 +306,7 @@ export default function DashboardPage() {
 
                       <button
                         onClick={() => handlePDF(item)}
-                        className="p-2 text-stone-500 hover:text-emerald-700 hover:bg-stone-200/50 rounded-lg transition-all"
+                        className="p-2 text-[#64748B] hover:text-[#246BCE] hover:bg-white rounded-lg transition-all cursor-pointer"
                         title="Download PDF"
                       >
                         <Download className="w-4 h-4" />
@@ -318,7 +315,7 @@ export default function DashboardPage() {
                       <button
                         onClick={() => handleDelete(item.trip_id)}
                         disabled={deletingId === item.trip_id}
-                        className="p-2 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                        className="p-2 text-[#94A3B8] hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
                         title="Delete Trip"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -332,16 +329,16 @@ export default function DashboardPage() {
         </section>
 
         {/* --- 3. RECOMMENDED DESTINATIONS --- */}
-        <section className="space-y-4">
+        <section className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-black text-[#0B192C]">
+            <h2 className="text-2xl sm:text-3xl font-black font-editorial text-[#193451]">
               Recommended for Your Next Journey
             </h2>
             <Link
               href="/explore"
-              className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-[#246BCE] hover:underline flex items-center gap-1"
             >
-              <span>Explore All 65 Cities</span>
+              <span>Explore All 113 Destinations</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -350,30 +347,30 @@ export default function DashboardPage() {
             {RECOMMENDED_DESTINATIONS.map((dest) => (
               <div
                 key={dest.name}
-                className="bg-white border border-stone-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
+                className="bg-white border border-[#EADBCE] rounded-3xl overflow-hidden shadow-sm hover:border-[#246BCE] transition-all group flex flex-col justify-between photo-card-hover"
               >
-                <div className="relative h-44 overflow-hidden bg-stone-100">
+                <div className="relative h-44 overflow-hidden bg-[#F7EFE4]">
                   <SafeImage
                     src={dest.image}
                     alt={dest.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-white">
+                  <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-[#193451] shadow-xs">
                     {dest.tag}
                   </div>
                 </div>
 
                 <div className="p-5 space-y-3">
                   <div>
-                    <h3 className="text-base font-bold text-[#0B192C]">{dest.name}</h3>
-                    <p className="text-xs text-stone-500">{dest.state}</p>
+                    <h3 className="text-lg font-bold font-editorial text-[#193451]">{dest.name}</h3>
+                    <p className="text-xs text-[#64748B]">{dest.state}</p>
                   </div>
 
-                  <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-xs">
-                    <span className="font-mono text-stone-600">From {dest.budget}</span>
+                  <div className="pt-2 border-t border-[#EADBCE] flex items-center justify-between text-xs">
+                    <span className="text-[#64748B] font-medium">From {dest.budget}</span>
                     <Link
                       href={`/plan?destination=${encodeURIComponent(dest.name)}`}
-                      className="px-3.5 py-1.5 bg-emerald-50 text-emerald-800 font-bold rounded-xl text-[11px] hover:bg-emerald-100 transition-colors"
+                      className="px-3.5 py-1.5 bg-[#246BCE]/10 text-[#246BCE] font-bold rounded-xl text-xs hover:bg-[#246BCE] hover:text-white transition-colors"
                     >
                       Plan Trip &rarr;
                     </Link>

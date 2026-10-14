@@ -178,16 +178,29 @@ function plannerReducer(state: PlannerState, action: PlannerAction): PlannerStat
     case 'SET_STAGE':
       return { ...state, stage: action.payload };
     case 'SET_ORIGIN':
-      return { ...state, origin: action.payload };
+      return { ...state, origin: action.payload, selectedTransportAlternative: undefined };
     case 'SET_DESTINATION':
-      return { ...state, destination: action.payload };
+      return {
+        ...state,
+        destination: action.payload,
+        selectedTransportAlternative: undefined,
+        selectedPlaces: [],
+        selectedDiscoveryPlaces: [],
+        selectedAttractionItems: [],
+        mustVisitPlaceIds: [],
+        mustInclude: [],
+        selectedFoodItems: [],
+        mustEatFoodIds: [],
+        selectedHotelItem: undefined
+      };
     case 'SET_ORIGIN_PLACE':
       return {
         ...state,
         origin: action.payload.display_name,
         originPlace: action.payload,
         originLocationId: action.payload.provider_place_id,
-        originEntityType: 'EXTERNAL_PLACE'
+        originEntityType: 'EXTERNAL_PLACE',
+        selectedTransportAlternative: undefined
       };
     case 'SET_DESTINATION_PLACE':
       return {
@@ -195,27 +208,42 @@ function plannerReducer(state: PlannerState, action: PlannerAction): PlannerStat
         destination: action.payload.display_name,
         destinationPlace: action.payload,
         destinationLocationId: action.payload.provider_place_id,
-        destinationEntityType: 'EXTERNAL_PLACE'
+        destinationEntityType: 'EXTERNAL_PLACE',
+        selectedTransportAlternative: undefined,
+        selectedPlaces: [],
+        selectedDiscoveryPlaces: [],
+        selectedAttractionItems: [],
+        mustVisitPlaceIds: [],
+        mustInclude: [],
+        selectedFoodItems: [],
+        mustEatFoodIds: [],
+        selectedHotelItem: undefined
       };
     case 'CLEAR_ORIGIN_PLACE':
       return {
         ...state,
         originPlace: undefined,
         originLocationId: undefined,
-        originEntityType: undefined
+        originEntityType: undefined,
+        selectedTransportAlternative: undefined
       };
     case 'CLEAR_DESTINATION_PLACE':
       return {
         ...state,
         destinationPlace: undefined,
         destinationLocationId: undefined,
-        destinationEntityType: undefined
+        destinationEntityType: undefined,
+        selectedTransportAlternative: undefined,
+        selectedPlaces: [],
+        selectedDiscoveryPlaces: [],
+        selectedAttractionItems: [],
+        mustVisitPlaceIds: [],
+        mustInclude: [],
+        selectedFoodItems: [],
+        mustEatFoodIds: [],
+        selectedHotelItem: undefined
       };
 
-    case 'SET_ORIGIN':
-      return { ...state, origin: action.payload };
-    case 'SET_DESTINATION':
-      return { ...state, destination: action.payload };
     case 'SET_ORIGIN_LOCATION':
       return {
         ...state,
@@ -517,7 +545,11 @@ export const PlannerProvider: React.FC<{ children: React.ReactNode }> = ({ child
       stay_preference: state.stayPreference,
       food_preference: state.foodPreference,
       activity_preference: state.activityPreference,
+      selected_hotel_id: state.selectedHotelItem?.id,
+      selected_food_id: state.selectedFoodItems[0]?.id,
+      selected_transport_alternative_id: state.selectedTransportAlternative?.id,
       planner_preferences: {
+
         selected_activity_ids: state.selectedPlaces,
         trip_personalities: state.personalities,
         pace: state.travelPace.toUpperCase() as 'RELAXED' | 'BALANCED' | 'PACKED',

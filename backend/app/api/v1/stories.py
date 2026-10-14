@@ -42,7 +42,7 @@ def list_stories(
     category: Optional[str] = Query(None, description="Category filter (Guides, Budget Travel, Food, Adventure, Culture, Weekend Trips)"),
     search: Optional[str] = Query(None, description="Search by title, destination, or topic"),
     page: int = Query(1, ge=1),
-    limit: int = Query(32, ge=1, le=50),
+    limit: int = Query(32, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
     """List travel stories and curated guides."""

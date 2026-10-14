@@ -4,8 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Navbar, Footer, SafeImage } from '@/components';
 import { Search, Star, Compass } from 'lucide-react';
-
-
 import { getDestinations, DestinationSummary } from '@/services/destinations';
 
 const CATEGORIES = [
@@ -26,17 +24,25 @@ export default function ExplorePage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+
+  const PAGE_SIZE = 60;
 
   useEffect(() => {
-    async function loadData() {
+    async function loadInitial() {
       setLoading(true);
+      setPage(1);
       try {
         const res = await getDestinations({
           category: selectedCategory === 'All' ? undefined : selectedCategory,
           search: searchQuery.trim() || undefined,
-          limit: 80
+          page: 1,
+          limit: PAGE_SIZE
         });
         setDestinations(res.items || []);
+        setTotal(res.total || 0);
       } catch (err) {
         console.error('Failed to load destinations:', err);
       } finally {
@@ -44,43 +50,100 @@ export default function ExplorePage() {
       }
     }
 
-    const timer = setTimeout(loadData, 200);
+    const timer = setTimeout(loadInitial, 250);
     return () => clearTimeout(timer);
   }, [selectedCategory, searchQuery]);
 
+  const handleLoadMore = async () => {
+    if (loadingMore || destinations.length >= total) return;
+    setLoadingMore(true);
+    const nextPage = page + 1;
+    try {
+      const res = await getDestinations({
+        category: selectedCategory === 'All' ? undefined : selectedCategory,
+        search: searchQuery.trim() || undefined,
+        page: nextPage,
+        limit: PAGE_SIZE
+      });
+      if (res.items && res.items.length > 0) {
+        setDestinations((prev) => {
+          const existingIds = new Set(prev.map((d) => d.id));
+          const newItems = res.items.filter((d) => !existingIds.has(d.id));
+          return [...prev, ...newItems];
+        });
+        setPage(nextPage);
+        setTotal(res.total || 0);
+      }
+    } catch (err) {
+      console.error('Failed to load more destinations:', err);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  const handleLoadAll = async () => {
+    if (loadingMore || destinations.length >= total) return;
+    setLoadingMore(true);
+    try {
+      // Fetch remaining pages until all are loaded
+      let currentPage = page + 1;
+      let currentItems = [...destinations];
+      while (currentItems.length < total) {
+        const res = await getDestinations({
+          category: selectedCategory === 'All' ? undefined : selectedCategory,
+          search: searchQuery.trim() || undefined,
+          page: currentPage,
+          limit: PAGE_SIZE
+        });
+        if (!res.items || res.items.length === 0) break;
+        const existingIds = new Set(currentItems.map((d) => d.id));
+        const newItems = res.items.filter((d) => !existingIds.has(d.id));
+        currentItems = [...currentItems, ...newItems];
+        currentPage++;
+        if (currentItems.length >= res.total) break;
+      }
+      setDestinations(currentItems);
+      setPage(currentPage);
+    } catch (err) {
+      console.error('Failed to load all destinations:', err);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#0B192C] flex flex-col font-sans selection:bg-emerald-700 selection:text-white">
+    <div className="min-h-screen bg-[#FFF9F2] text-[#193451] flex flex-col font-sans selection:bg-[#246BCE]/15 selection:text-[#193451]">
       <Navbar />
 
       {/* Header Banner */}
-      <section className="bg-white border-b border-stone-200/80 pt-10 pb-8 px-4 sm:px-6 lg:px-8">
+      <section className="bg-[#F7EFE4]/80 border-b border-[#EADBCE] pt-14 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-            <Compass className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-[#F46F58] bg-white px-3.5 py-1 rounded-full border border-[#EADBCE] shadow-xs">
+            <Compass className="w-3.5 h-3.5" />
             <span>Discover India</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-extrabold font-serif text-[#0B192C]">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-editorial text-[#193451]">
             Explore Destinations
           </h1>
-          <p className="text-sm sm:text-base text-stone-600 max-w-2xl leading-relaxed">
-            From the pine ridges of Himachal and mountain passes of Ladakh to coastal palms of Kerala and royal forts of Rajasthan.
+          <p className="text-sm sm:text-base text-[#64748B] max-w-2xl leading-relaxed font-normal">
+            From the pine ridges of Himachal and mountain passes of Ladakh to coastal palms of Kerala and royal desert havelis of Rajasthan.
           </p>
 
           {/* Search Bar */}
           <div className="max-w-xl relative pt-2">
-            <Search className="w-5 h-5 text-stone-400 absolute left-4.5 top-5" />
+            <Search className="w-5 h-5 text-[#94A3B8] absolute left-4.5 top-5.5" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by city, state, or destination name (e.g. Manali, Goa, Sangli)..."
-              className="w-full pl-12 pr-4 py-3 bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200 rounded-2xl text-sm font-semibold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all shadow-xs"
+              placeholder="Search by city, state, or name (e.g. Manali, Goa, Sangli, Jaipur)..."
+              className="w-full pl-12 pr-4 py-3.5 bg-white border border-[#EADBCE] rounded-2xl text-sm font-bold text-[#193451] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#246BCE] transition-all shadow-xs"
             />
           </div>
 
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pt-3 pb-1 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto pt-4 pb-1 scrollbar-none">
             {CATEGORIES.map((cat) => {
               const active = selectedCategory === cat.id;
               return (
@@ -89,8 +152,8 @@ export default function ExplorePage() {
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                     active
-                      ? 'bg-[#0B192C] text-white shadow-sm'
-                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200/80 hover:text-stone-900'
+                      ? 'bg-[#246BCE] text-white shadow-sm font-black'
+                      : 'bg-white text-[#475569] hover:bg-[#F7EFE4] hover:text-[#193451] border border-[#EADBCE]'
                   }`}
                 >
                   {cat.label}
@@ -102,41 +165,44 @@ export default function ExplorePage() {
       </section>
 
       {/* Destination Grid */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl overflow-hidden border border-stone-200 animate-pulse h-80">
-                <div className="bg-stone-200 h-44 w-full" />
-                <div className="p-4 space-y-3">
-                  <div className="h-4 bg-stone-200 rounded w-1/3" />
-                  <div className="h-6 bg-stone-200 rounded w-3/4" />
-                  <div className="h-4 bg-stone-200 rounded w-full" />
+              <div key={i} className="bg-white rounded-3xl overflow-hidden border border-[#EADBCE] animate-pulse h-84 shadow-xs">
+                <div className="bg-[#F7EFE4] h-48 w-full" />
+                <div className="p-5 space-y-3">
+                  <div className="h-3 bg-[#F7EFE4] rounded w-1/3" />
+                  <div className="h-5 bg-[#F7EFE4] rounded w-3/4" />
+                  <div className="h-3 bg-[#F7EFE4] rounded w-full" />
                 </div>
               </div>
             ))}
           </div>
         ) : destinations.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-stone-200 p-8 space-y-4">
-            <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mx-auto">
+          <div className="text-center py-20 bg-white rounded-3xl border border-[#EADBCE] p-8 space-y-4 max-w-lg mx-auto shadow-sm">
+            <div className="w-16 h-16 rounded-2xl bg-[#F7EFE4] text-[#F46F58] flex items-center justify-center mx-auto border border-[#EADBCE]">
               <Compass className="w-8 h-8" />
             </div>
-            <h3 className="text-xl font-bold text-stone-900">No destinations found</h3>
-            <p className="text-sm text-stone-500 max-w-md mx-auto">
+            <h3 className="text-2xl font-bold font-editorial text-[#193451]">No destinations found</h3>
+            <p className="text-sm text-[#64748B] max-w-md mx-auto">
               Try adjusting your search terms or filter category to discover other Indian destinations.
             </p>
             <button
               onClick={() => { setSelectedCategory('All'); setSearchQuery(''); }}
-              className="px-6 py-2.5 bg-emerald-700 text-white rounded-xl text-xs font-bold hover:bg-emerald-800 transition-colors cursor-pointer"
+              className="px-6 py-2.5 bg-[#246BCE] hover:bg-[#1A56A8] text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
             >
               Reset Filters
             </button>
           </div>
         ) : (
           <div className="space-y-6">
-            <div className="flex items-center justify-between text-xs font-semibold text-stone-500">
-              <span>Showing {destinations.length} Indian destinations</span>
-              <span>Category: {selectedCategory}</span>
+            <div className="flex items-center justify-between text-xs font-bold text-[#64748B]">
+              <span>
+                Showing <strong className="text-[#193451]">{destinations.length}</strong> of{' '}
+                <strong className="text-[#193451]">{total}</strong> Indian destinations
+              </span>
+              <span className="text-[#193451]">Filter: {selectedCategory}</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -144,51 +210,75 @@ export default function ExplorePage() {
                 <Link
                   key={dest.id}
                   href={`/explore/${dest.slug}`}
-                  className="group bg-white rounded-2xl overflow-hidden border border-stone-200/80 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col"
+                  className="group bg-white rounded-3xl overflow-hidden border border-[#EADBCE] hover:border-[#246BCE] transition-all duration-300 flex flex-col photo-card-hover shadow-sm"
                 >
-                  <div className="relative h-48 w-full overflow-hidden">
+                  <div className="relative h-56 w-full overflow-hidden">
                     <SafeImage
                       src={dest.hero_image}
                       alt={dest.name}
                       category={dest.categories?.[0]}
-                      className="w-full h-full group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full group-hover:scale-105 transition-transform duration-500 object-cover"
                     />
-                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-stone-800 shadow-xs">
+                    <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-[#193451] shadow-xs">
                       {dest.categories?.[0] || 'Popular'}
                     </div>
-                    <div className="absolute top-3 right-3 bg-stone-900/80 backdrop-blur-md px-2 py-1 rounded-full text-[10px] font-bold text-amber-300 flex items-center gap-1">
-                      <Star className="w-3 h-3 fill-amber-300" />
+                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-[#193451] flex items-center gap-1 shadow-xs">
+                      <Star className="w-3 h-3 text-[#F7C963] fill-[#F7C963]" />
                       <span>{dest.rating.toFixed(1)}</span>
                     </div>
                   </div>
 
-                  <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
                     <div>
-                      <div className="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider">
+                      <div className="text-[11px] font-bold text-[#F46F58] uppercase tracking-wider">
                         {dest.state}
                       </div>
-                      <h3 className="text-lg font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">
+                      <h3 className="text-xl font-bold font-editorial text-[#193451] group-hover:text-[#246BCE] transition-colors mt-0.5">
                         {dest.name}
                       </h3>
-                      <p className="text-xs text-stone-500 line-clamp-2 mt-1 leading-relaxed">
+                      <p className="text-xs text-[#64748B] line-clamp-2 mt-1 leading-relaxed">
                         {dest.description}
                       </p>
                     </div>
 
-                    <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
+                    <div className="pt-3 border-t border-[#EADBCE] flex items-center justify-between text-xs">
                       <div>
-                        <span className="text-[10px] text-stone-400 block">Indicative Budget</span>
-                        <span className="font-bold font-mono text-stone-900">₹{dest.daily_budget.toLocaleString()}/day</span>
+                        <span className="text-[10px] text-[#94A3B8] font-bold uppercase block">Avg. Daily Budget</span>
+                        <span className="font-bold text-[#193451]">₹{dest.daily_budget.toLocaleString()}/day</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-[10px] text-stone-400 block">Best Season</span>
-                        <span className="font-semibold text-stone-700 text-[11px]">{dest.best_season}</span>
+                        <span className="text-[10px] text-[#94A3B8] font-bold uppercase block">Best Season</span>
+                        <span className="font-semibold text-[#64748B] text-[11px]">{dest.best_season}</span>
                       </div>
                     </div>
                   </div>
                 </Link>
               ))}
             </div>
+
+            {/* Pagination Controls */}
+            {destinations.length < total ? (
+              <div className="pt-8 pb-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={loadingMore}
+                  className="px-6 py-3 bg-[#246BCE] hover:bg-[#1A56A8] text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer disabled:opacity-50"
+                >
+                  {loadingMore ? 'Loading More...' : `Load More Destinations (${destinations.length} of ${total} loaded)`}
+                </button>
+                <button
+                  onClick={handleLoadAll}
+                  disabled={loadingMore}
+                  className="px-6 py-3 bg-white hover:bg-[#F7EFE4] text-[#193451] border border-[#EADBCE] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
+                >
+                  {loadingMore ? 'Loading All...' : `Show All (${total} Destinations)`}
+                </button>
+              </div>
+            ) : total > 0 ? (
+              <div className="pt-6 pb-2 text-center text-xs text-[#64748B] font-medium">
+                ✓ Showing all {total} destinations across India
+              </div>
+            ) : null}
           </div>
         )}
       </main>

@@ -11,12 +11,13 @@ import {
 
 const CATEGORIES = [
   'All',
-  'Guides',
-  'Budget Travel',
-  'Food',
+  'Mountain Diaries',
+  'Coastal Escapes',
+  'Food Trails',
+  'Heritage Trails',
+  'Weekend Escapes',
   'Adventure',
-  'Culture',
-  'Weekend Trips'
+  'Slow Travel'
 ];
 
 export default function StoriesPage() {
@@ -50,10 +51,9 @@ export default function StoriesPage() {
     let mounted = true;
 
     getStories({
-
       category: selectedCategory === 'All' ? undefined : selectedCategory,
       search: searchQuery.trim() || undefined,
-      limit: 60
+      limit: 32
     })
       .then((res) => {
         if (mounted) {
@@ -71,54 +71,54 @@ export default function StoriesPage() {
   }, [selectedCategory, searchQuery]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FDFBF7] text-[#0B192C]">
+    <div className="min-h-screen flex flex-col bg-[#FFF9F2] text-[#193451] selection:bg-[#246BCE]/15 selection:text-[#193451]">
       <Navbar />
 
       {/* --- HERO BANNER --- */}
-      <section className="bg-white border-b border-stone-200 py-12 sm:py-16">
+      <section className="bg-[#F7EFE4]/80 border-b border-[#EADBCE] py-14 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Travel Editorial &amp; Destination Guides</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-[#EADBCE] text-[#F46F58] text-xs font-bold tracking-wider uppercase shadow-xs">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Travel Dispatch &amp; Editorial Guides</span>
               </div>
-              <h1 className="text-3xl sm:text-5xl font-black text-[#0B192C] tracking-tight">
-                Authentic Travel Stories &amp; Guides
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-editorial text-[#193451] tracking-tight">
+                Authentic Travel Stories
               </h1>
-              <p className="text-sm sm:text-base text-stone-600 max-w-2xl leading-relaxed">
-                Curated itineraries, regional food deep-dives, budget secrets, and mountain trail notes across India.
+              <p className="text-sm sm:text-base text-[#64748B] max-w-2xl leading-relaxed font-normal">
+                Curated travel notes, regional food trails, budget observations, and mountain dispatches across India.
               </p>
             </div>
 
             {/* Quick Search */}
-            <div className="w-full sm:w-72">
+            <div className="w-full sm:w-80">
               <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8]" />
                 <input
                   type="text"
-                  placeholder="Search stories, destinations..."
+                  placeholder="Search dispatches, destinations..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-xs text-[#0B192C] placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white border border-[#EADBCE] text-sm font-bold text-[#193451] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#246BCE] shadow-xs"
                 />
               </div>
             </div>
           </div>
 
           {/* Category Filter Pills */}
-          <div className="pt-2 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-            <span className="text-xs font-bold text-stone-500 uppercase tracking-wider mr-2 flex items-center gap-1 shrink-0">
+          <div className="pt-4 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider mr-2 flex items-center gap-1 shrink-0">
               <Filter className="w-3.5 h-3.5" /> Category:
             </span>
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
                   selectedCategory === cat
-                    ? 'bg-[#0B192C] text-white shadow-sm'
-                    : 'bg-white text-stone-600 hover:text-[#0B192C] border border-stone-200 hover:border-stone-300'
+                    ? 'bg-[#246BCE] text-white shadow-sm font-black'
+                    : 'bg-white text-[#475569] hover:text-[#193451] hover:bg-[#F7EFE4] border border-[#EADBCE]'
                 }`}
               >
                 {cat}
@@ -129,28 +129,28 @@ export default function StoriesPage() {
       </section>
 
       {/* --- STORIES GRID --- */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-14 space-y-14">
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3, 4, 5, 6].map((n) => (
-              <div key={n} className="bg-white rounded-2xl border border-stone-200 p-4 space-y-4 animate-pulse">
-                <div className="h-52 bg-stone-100 rounded-xl" />
-                <div className="h-4 bg-stone-100 rounded w-1/3" />
-                <div className="h-6 bg-stone-100 rounded w-3/4" />
-                <div className="h-12 bg-stone-100 rounded w-full" />
+              <div key={n} className="bg-white rounded-3xl border border-[#EADBCE] p-4 space-y-4 animate-pulse shadow-xs">
+                <div className="h-56 bg-[#F7EFE4] rounded-2xl" />
+                <div className="h-4 bg-[#F7EFE4] rounded w-1/3" />
+                <div className="h-6 bg-[#F7EFE4] rounded w-3/4" />
+                <div className="h-12 bg-[#F7EFE4] rounded w-full" />
               </div>
             ))}
           </div>
         ) : stories.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-stone-200 p-8 space-y-4 max-w-md mx-auto">
-            <BookOpen className="w-12 h-12 text-stone-300 mx-auto" />
-            <h3 className="text-lg font-bold text-[#0B192C]">No stories found</h3>
-            <p className="text-xs text-stone-500">
+          <div className="text-center py-20 bg-white rounded-3xl border border-[#EADBCE] p-8 space-y-4 max-w-md mx-auto shadow-sm">
+            <BookOpen className="w-12 h-12 text-[#94A3B8] mx-auto" />
+            <h3 className="text-2xl font-bold font-editorial text-[#193451]">No stories found</h3>
+            <p className="text-xs text-[#64748B]">
               No articles match your selected filter or query. Try another category.
             </p>
             <button
               onClick={() => { setSelectedCategory('All'); setSearchQuery(''); }}
-              className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700"
+              className="px-5 py-2.5 bg-[#246BCE] hover:bg-[#1A56A8] text-white rounded-xl text-xs font-bold cursor-pointer shadow-xs"
             >
               Reset Filters
             </button>
@@ -162,23 +162,22 @@ export default function StoriesPage() {
               return (
                 <article
                   key={story.id}
-                  className="bg-white border border-stone-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col group"
+                  className="bg-white border border-[#EADBCE] rounded-3xl overflow-hidden hover:border-[#246BCE] transition-all duration-300 flex flex-col group photo-card-hover shadow-sm"
                 >
                   {/* Cover Image */}
-                  <div className="relative h-56 w-full overflow-hidden bg-stone-100">
+                  <div className="relative h-64 w-full overflow-hidden bg-[#F7EFE4]">
                     <SafeImage
                       src={story.hero_image}
                       alt={story.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
 
                     <div className="absolute top-3 left-3 flex items-center gap-2">
-                      <span className="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-[#0B192C] text-[11px] font-bold shadow-sm flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-emerald-600" />
+                      <span className="px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#193451] text-[11px] font-bold shadow-xs flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-[#246BCE]" />
                         {story.destination_name}
                       </span>
-                      <span className="px-2.5 py-1 rounded-full bg-[#0B192C]/80 backdrop-blur-md text-white text-[11px] font-semibold">
+                      <span className="px-3 py-1 rounded-full bg-[#193451] text-white text-[10px] font-bold shadow-xs">
                         {story.category}
                       </span>
                     </div>
@@ -187,21 +186,21 @@ export default function StoriesPage() {
                       type="button"
                       onClick={(e) => toggleBookmark(story.slug, e)}
                       title={isBookmarked ? 'Remove bookmark' : 'Bookmark story'}
-                      className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition-all ${
+                      className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer ${
                         isBookmarked
                           ? 'bg-rose-500 text-white shadow-md'
-                          : 'bg-black/40 text-white hover:bg-black/60'
+                          : 'bg-white/80 text-[#193451] hover:bg-white shadow-xs'
                       }`}
                     >
-                      <Heart className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}`} />
+                      <Heart className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
                     </button>
 
-                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px] text-stone-200">
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-white bg-black/50 backdrop-blur-md px-3 py-1 rounded-full">
                       <span className="flex items-center gap-1 font-medium">
-                        <Clock className="w-3 h-3 text-emerald-400" />
+                        <Clock className="w-3 h-3 text-[#F7C963]" />
                         {story.read_time}
                       </span>
-                      <span className="font-semibold text-white">
+                      <span className="font-semibold">
                         By {story.author}
                       </span>
                     </div>
@@ -210,24 +209,24 @@ export default function StoriesPage() {
                   {/* Body Content */}
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                     <div className="space-y-2">
-                      <h3 className="text-lg font-bold text-[#0B192C] group-hover:text-emerald-700 transition-colors leading-snug line-clamp-2">
+                      <h3 className="text-xl font-bold font-editorial text-[#193451] group-hover:text-[#246BCE] transition-colors leading-snug line-clamp-2">
                         {story.title}
                       </h3>
-                      <p className="text-xs text-stone-600 leading-relaxed line-clamp-3">
+                      <p className="text-xs text-[#64748B] leading-relaxed line-clamp-3">
                         {story.summary}
                       </p>
                     </div>
 
                     {/* Footer Links */}
-                    <div className="pt-4 border-t border-stone-100 flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-xs text-stone-500 font-medium">
-                        <User className="w-3.5 h-3.5 text-stone-400" />
+                    <div className="pt-4 border-t border-[#EADBCE] flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-xs text-[#64748B] font-medium">
+                        <User className="w-3.5 h-3.5 text-[#94A3B8]" />
                         <span>{story.author}</span>
                       </div>
 
                       <Link
                         href={`/stories/${story.slug}`}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#246BCE] hover:text-[#1A56A8] transition-colors"
                       >
                         <span>Read Story</span>
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -241,22 +240,22 @@ export default function StoriesPage() {
         )}
 
         {/* --- PLANNER PROMO BANNER --- */}
-        <section className="bg-gradient-to-r from-[#0B192C] to-[#1E3E62] text-white rounded-3xl p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+        <section className="bg-[#193451] text-white rounded-3xl p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
           <div className="space-y-2 text-center md:text-left max-w-xl">
-            <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider block">
-              Algorithmic Travel Planner
+            <span className="text-xs font-bold text-[#F7C963] uppercase tracking-wider block">
+              Multi-Modal Travel Planner
             </span>
-            <h3 className="text-2xl sm:text-3xl font-black">
-              Ready to create your own journey?
+            <h3 className="text-2xl sm:text-4xl font-black font-editorial text-white">
+              Inspired to plan your own journey?
             </h3>
-            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#CBD5E1] leading-relaxed">
               Route multi-modal transit, stays, food, and activities from Sangli, Pune, Delhi, or your home city under your exact trip budget.
             </p>
           </div>
 
           <Link
             href="/plan"
-            className="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-2xl flex items-center gap-2 transition-all shadow-lg hover:shadow-emerald-600/30 whitespace-nowrap uppercase tracking-wider shrink-0"
+            className="px-8 py-4 bg-[#F46F58] hover:bg-[#E05841] text-white text-xs font-bold uppercase tracking-wider rounded-2xl flex items-center gap-2 transition-all shadow-lg shadow-[#F46F58]/25 whitespace-nowrap shrink-0 cursor-pointer"
           >
             <span>Plan Your Journey</span>
             <ArrowRight className="w-4 h-4" />

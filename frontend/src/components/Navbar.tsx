@@ -43,18 +43,18 @@ export const Navbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-stone-200/80 transition-all">
+    <header className="sticky top-0 z-50 bg-[#FFF9F2]/90 backdrop-blur-md border-b border-[#EADBCE]/80 shadow-xs transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
         {/* Brand Logo */}
         <div className="flex items-center gap-3">
           <Logo light={false} />
-          <span className="hidden sm:inline-flex items-center text-[11px] font-bold tracking-wider uppercase text-emerald-800 bg-emerald-100/70 px-2.5 py-0.5 rounded-full border border-emerald-300">
+          <span className="hidden sm:inline-flex items-center text-[10px] font-bold tracking-widest uppercase text-[#F46F58] bg-[#F46F58]/10 px-2.5 py-0.5 rounded-full border border-[#F46F58]/20">
             India Travel
           </span>
         </div>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-stone-700">
+        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[#475569]">
           {navLinks.map((link) => {
             const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
             const Icon = link.icon;
@@ -62,13 +62,13 @@ export const Navbar: React.FC = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-1.5 transition-colors duration-200 py-1 ${
+                className={`flex items-center gap-1.5 transition-colors duration-200 py-1.5 text-xs uppercase tracking-wider font-bold ${
                   isActive
-                    ? 'text-emerald-700 font-bold border-b-2 border-emerald-600'
-                    : 'hover:text-emerald-700'
+                    ? 'text-[#246BCE] border-b-2 border-[#246BCE]'
+                    : 'hover:text-[#193451]'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-600' : 'text-stone-400'}`} />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#246BCE]' : 'text-[#64748B]'}`} />
                 <span>{link.label}</span>
               </Link>
             );
@@ -76,11 +76,11 @@ export const Navbar: React.FC = () => {
         </nav>
 
         {/* Right Action Icons / Auth */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3">
           <Link
             href="/explore"
             aria-label="Search destinations"
-            className="p-2 text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-full transition-colors"
+            className="p-2 text-[#64748B] hover:text-[#193451] hover:bg-black/5 rounded-full transition-colors"
           >
             <Search className="w-4 h-4" />
           </Link>
@@ -88,18 +88,18 @@ export const Navbar: React.FC = () => {
           <Link
             href="/dashboard"
             aria-label="Saved trips"
-            className="p-2 text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-full transition-colors relative"
+            className="p-2 text-[#64748B] hover:text-[#193451] hover:bg-black/5 rounded-full transition-colors relative"
           >
             <Bookmark className="w-4 h-4" />
           </Link>
 
           {currentUser ? (
-            <div className="flex items-center gap-3 pl-2 border-l border-stone-200">
+            <div className="flex items-center gap-2.5 pl-3 border-l border-[#EADBCE]">
               <Link
                 href="/dashboard"
-                className="flex items-center gap-2 text-xs font-semibold text-stone-800 bg-stone-100 hover:bg-stone-200/80 px-3 py-1.5 rounded-full transition-colors"
+                className="flex items-center gap-2 text-xs font-bold text-[#193451] bg-white hover:bg-[#F7EFE4] border border-[#EADBCE] px-3.5 py-1.5 rounded-full transition-colors shadow-xs"
               >
-                <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold">
+                <div className="w-5 h-5 rounded-full bg-[#246BCE] text-white flex items-center justify-center text-[10px] font-black">
                   {currentUser.name ? currentUser.name[0].toUpperCase() : 'U'}
                 </div>
                 <span>{currentUser.name || 'Traveler'}</span>
@@ -107,25 +107,25 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="text-stone-400 hover:text-rose-600 p-1.5 rounded-full hover:bg-rose-50 transition-colors"
+                className="text-[#64748B] hover:text-rose-600 p-1.5 rounded-full hover:bg-rose-50 transition-colors"
                 title="Log out"
               >
                 <LogOut className="w-4 h-4" />
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-3 pl-2 border-l border-stone-200">
+            <div className="flex items-center gap-3 pl-3 border-l border-[#EADBCE]">
               <Link
                 href="/login"
-                className="text-xs font-bold text-stone-700 hover:text-emerald-700 px-3 py-2 rounded-xl transition-colors"
+                className="text-xs font-bold text-[#475569] hover:text-[#193451] px-3 py-1.5 rounded-xl transition-colors"
               >
-                Login
+                Sign In
               </Link>
               <Link
                 href="/register"
-                className="text-xs font-bold text-white bg-[#0B192C] hover:bg-[#1E293B] px-4 py-2 rounded-xl shadow-sm hover:shadow transition-all"
+                className="text-xs font-bold text-white bg-[#246BCE] hover:bg-[#1A56A8] px-4 py-2 rounded-xl transition-all shadow-sm hover:shadow-md hover:shadow-[#246BCE]/20"
               >
-                Create Account
+                Get Started
               </Link>
             </div>
           )}
@@ -136,14 +136,14 @@ export const Navbar: React.FC = () => {
           <Link
             href="/explore"
             aria-label="Search"
-            className="p-2 text-stone-600 hover:bg-stone-100 rounded-full"
+            className="p-2 text-[#64748B] hover:bg-black/5 rounded-full"
           >
             <Search className="w-5 h-5" />
           </Link>
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-stone-700 hover:bg-stone-100 rounded-xl"
+            className="p-2 text-[#193451] hover:bg-black/5 rounded-xl"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -153,7 +153,7 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-[#FDFBF7] border-b border-stone-200 px-4 pt-3 pb-6 space-y-3 shadow-xl animate-in slide-in-from-top-2">
+        <div className="md:hidden bg-[#FFF9F2] border-b border-[#EADBCE] px-4 pt-3 pb-6 space-y-3 shadow-xl animate-in slide-in-from-top-2">
           <nav className="flex flex-col space-y-1">
             {navLinks.map((link) => {
               const Icon = link.icon;
@@ -163,30 +163,30 @@ export const Navbar: React.FC = () => {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center justify-between p-3 rounded-xl font-semibold text-sm ${
-                    isActive ? 'bg-emerald-50 text-emerald-800' : 'text-stone-700 hover:bg-stone-100'
+                  className={`flex items-center justify-between p-3 rounded-xl font-bold text-sm ${
+                    isActive ? 'bg-[#246BCE]/10 text-[#246BCE] border border-[#246BCE]/20' : 'text-[#475569] hover:bg-white hover:text-[#193451]'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className={`w-5 h-5 ${isActive ? 'text-emerald-600' : 'text-stone-400'}`} />
+                    <Icon className={`w-5 h-5 ${isActive ? 'text-[#246BCE]' : 'text-[#64748B]'}`} />
                     <span>{link.label}</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-stone-400" />
+                  <ChevronRight className="w-4 h-4 text-[#64748B]" />
                 </Link>
               );
             })}
           </nav>
 
-          <div className="pt-3 border-t border-stone-200">
+          <div className="pt-3 border-t border-[#EADBCE]">
             {currentUser ? (
               <div className="flex items-center justify-between pt-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">
+                  <div className="w-8 h-8 rounded-full bg-[#246BCE] text-white flex items-center justify-center text-xs font-black">
                     {currentUser.name ? currentUser.name[0].toUpperCase() : 'U'}
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-stone-800">{currentUser.name}</div>
-                    <div className="text-[10px] text-stone-500">{currentUser.email}</div>
+                    <div className="text-xs font-bold text-[#193451]">{currentUser.name}</div>
+                    <div className="text-[10px] text-[#64748B]">{currentUser.email}</div>
                   </div>
                 </div>
                 <button
@@ -205,16 +205,16 @@ export const Navbar: React.FC = () => {
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-center py-2.5 px-4 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-xl"
+                  className="text-center py-2.5 px-4 text-xs font-bold text-[#193451] bg-white hover:bg-[#F7EFE4] border border-[#EADBCE] rounded-xl"
                 >
-                  Login
+                  Sign In
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-center py-2.5 px-4 text-xs font-bold text-white bg-[#0B192C] hover:bg-[#1E293B] rounded-xl"
+                  className="text-center py-2.5 px-4 text-xs font-bold text-white bg-[#246BCE] hover:bg-[#1A56A8] rounded-xl"
                 >
-                  Sign Up
+                  Get Started
                 </Link>
               </div>
             )}

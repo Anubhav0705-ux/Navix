@@ -165,22 +165,13 @@ def list_destinations(
 @destinations_router.get("/{slug}", response_model=DestinationDetailResponse)
 def get_destination_detail(slug: str, db: Session = Depends(get_db)):
     """Retrieve full destination details including attractions, food, and stays."""
-    dest = db.scalar(select(DemoDestination).where(DemoDestination.slug == slug.lower()))
-    if not dest:
-        # Fallback search by ID or city
-        dest = db.scalar(
-            select(DemoDestination).where(
-                or_(
-                    DemoDestination.id == slug,
-                    func.lower(DemoDestination.city) == slug.lower()
-                )
-            )
-        )
+    dest = _find_destination(db, slug)
     if not dest:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Destination '{slug}' not found"
         )
+
 
     attractions = db.scalars(
         select(DemoAttraction).where(DemoAttraction.destination_id == dest.id).order_by(DemoAttraction.recommended_score.desc())
@@ -203,7 +194,13 @@ def get_destination_detail(slug: str, db: Session = Depends(get_db)):
     )
 
 
+from app.core.destinations import resolve_canonical_destination
+
+
 def _find_destination(db: Session, slug: str) -> Optional[DemoDestination]:
+    canon = resolve_canonical_destination(db, slug)
+    if canon:
+        return canon
     slug_clean = slug.strip().lower().replace(" ", "-")
     dest = db.scalar(select(DemoDestination).where(DemoDestination.slug == slug_clean))
     if not dest:
@@ -219,6 +216,7 @@ def _find_destination(db: Session, slug: str) -> Optional[DemoDestination]:
             )
         )
     return dest
+
 
 
 @destinations_router.get("/{slug}/attractions", response_model=List[AttractionItem])

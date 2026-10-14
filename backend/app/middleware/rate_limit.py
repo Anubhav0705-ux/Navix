@@ -4,6 +4,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response, JSONResponse
 
+from app.core.config import settings
 from app.core.rate_limiter import rate_limiter, POLICIES, extract_client_ip
 from app.core.metrics import metrics
 
@@ -16,6 +17,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     Applies endpoint-specific policies, headers, and fail-open/fail-closed controls.
     """
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
+        if not settings.RATE_LIMIT_ENABLED:
+            return await call_next(request)
+
         path = request.url.path
 
         # Resolve policy based on endpoint path

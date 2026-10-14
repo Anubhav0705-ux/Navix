@@ -8,7 +8,6 @@ import { loginUser } from '@/services/auth';
 import { APIError } from '@/services/api';
 import { ArrowRight, Lock, Mail, AlertTriangle, Sparkles } from 'lucide-react';
 
-
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('demo@navix.com');
@@ -44,89 +43,88 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FDFBF7] text-[#0B192C]">
+    <div className="min-h-screen flex flex-col bg-[#FFF9F2] text-[#193451] selection:bg-[#246BCE]/15 selection:text-[#193451]">
       <Navbar />
 
       <main className="flex-1 max-w-md mx-auto w-full px-4 py-16 flex flex-col justify-center">
-        <div className="bg-white border border-stone-200 rounded-3xl p-8 space-y-6 shadow-xl">
-          <div className="space-y-1 text-center">
-            <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider block">
+        <div className="bg-white border border-[#EADBCE] rounded-3xl p-8 space-y-6 shadow-xl">
+          <div className="space-y-1.5 text-center">
+            <span className="text-xs font-bold text-[#F46F58] uppercase tracking-wider block">
               NAVIX Account
             </span>
-            <h1 className="text-2xl font-black text-[#0B192C]">Sign In to Your Journey</h1>
-            <p className="text-xs text-stone-500">
+            <h1 className="text-3xl font-black font-editorial text-[#193451]">Sign In to Your Journey</h1>
+            <p className="text-xs text-[#64748B]">
               Access your saved multi-modal itineraries, routes, and budget plans.
             </p>
           </div>
 
           {/* Quick 1-Click Demo Presentation Account */}
-          <div className="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl text-xs space-y-2">
+          <div className="p-4 bg-[#F7EFE4] border border-[#EADBCE] rounded-2xl text-xs space-y-2">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-emerald-900 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="font-bold text-[#193451] flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#F46F58]" />
                 Presentation Demo Account
               </span>
               <button
                 type="button"
                 onClick={fillDemoAccount}
-                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded-lg transition-colors"
+                className="px-3 py-1 bg-[#246BCE] hover:bg-[#1A56A8] text-white text-[11px] font-bold rounded-lg transition-colors cursor-pointer shadow-xs"
               >
-                Auto-Fill
+                Autofill Presentation Demo Account
               </button>
             </div>
-            <p className="text-stone-600 text-[11px] font-mono leading-relaxed">
+            <p className="text-[#64748B] text-[11px] font-mono leading-relaxed">
               demo@navix.com &bull; DemoExplorer2026!
             </p>
           </div>
 
           {errorMessage && (
             <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+              <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0" />
               <span>{errorMessage}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-stone-700 mb-1.5 flex items-center gap-1">
-                <Mail className="w-3.5 h-3.5 text-emerald-600" /> Email Address
+              <label className="block text-xs font-bold text-[#64748B] mb-1.5 flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5 text-[#246BCE]" /> Email Address
               </label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-sm text-[#0B192C] font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                className="w-full bg-[#FFF9F2] border border-[#EADBCE] rounded-xl px-4 py-3 text-sm text-[#193451] font-bold focus:outline-none focus:ring-2 focus:ring-[#246BCE]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-stone-700 mb-1.5 flex items-center gap-1">
-                <Lock className="w-3.5 h-3.5 text-emerald-600" /> Password
+              <label className="block text-xs font-bold text-[#64748B] mb-1.5 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-[#246BCE]" /> Password
               </label>
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-sm text-[#0B192C] font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                className="w-full bg-[#FFF9F2] border border-[#EADBCE] rounded-xl px-4 py-3 text-sm text-[#193451] font-bold focus:outline-none focus:ring-2 focus:ring-[#246BCE]"
               />
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-emerald-600/30 text-sm disabled:opacity-50"
+              className="w-full py-4 bg-[#246BCE] hover:bg-[#1A56A8] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-[#246BCE]/25 flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>{isSubmitting ? 'Signing In...' : 'Sign In'}</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>{isSubmitting ? 'Authenticating...' : 'Sign In →'}</span>
             </button>
           </form>
 
-          <div className="pt-2 border-t border-stone-100 text-center text-xs text-stone-500">
-            Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-emerald-700 font-bold hover:underline">
-              Create Free Account
+          <div className="text-center text-xs text-[#64748B] pt-2 border-t border-[#EADBCE]">
+            <span>Do not have an account? </span>
+            <Link href="/register" className="font-bold text-[#246BCE] hover:underline">
+              Create an account
             </Link>
           </div>
         </div>

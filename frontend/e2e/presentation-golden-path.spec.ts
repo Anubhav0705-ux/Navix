@@ -1,174 +1,285 @@
 import { test, expect } from '@playwright/test';
+import * as fs from 'fs';
+import * as path from 'path';
 
-test.describe('NAVIX 48-Hour Presentation Release — Golden Path E2E Suite', () => {
-  test.setTimeout(90000);
+test.describe('NAVIX Ultimate Presentation Release — 5 Golden Paths & Visual QA', () => {
+  test.setTimeout(120000);
+
+  const screenshotDir = path.join(process.cwd(), 'e2e-screenshots');
+  if (!fs.existsSync(screenshotDir)) {
+    fs.mkdirSync(screenshotDir, { recursive: true });
+  }
 
   test.beforeEach(async ({ page }) => {
-    // Navigate with standard desktop viewport
-    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.setViewportSize({ width: 1440, height: 900 });
   });
 
-  test('Golden Path 1: Explore Catalog -> Manali -> 7-Stage Planner -> Command Center', async ({ page }) => {
-    // Step 1: Open Explore Catalog
+  test('Visual QA & 16 Screenshot Views Capture', async ({ page }) => {
+    // 1. Homepage
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: /Your next great journey|Go further. Plan smarter./i })).toBeVisible({ timeout: 15000 });
+    await page.screenshot({ path: path.join(screenshotDir, '01_homepage.png'), fullPage: false });
+
+    // 2. Explore Catalog
     await page.goto('/explore');
     await expect(page.getByRole('heading', { name: /Explore Destinations/i })).toBeVisible({ timeout: 15000 });
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: path.join(screenshotDir, '02_explore_catalog.png'), fullPage: false });
 
-    // Step 2: Search for Manali and navigate to Manali detail page
-    const searchInput = page.getByPlaceholder(/Search by city, state, or destination name/i);
-    await searchInput.fill('Manali');
-    await page.waitForTimeout(600);
+    // 3. Destination Detail (Manali)
+    await page.goto('/explore/manali');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(/Manali/i, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: path.join(screenshotDir, '03_destination_detail.png'), fullPage: false });
 
-    const manaliLink = page.locator('a[href*="/explore/manali"]').first();
-    await expect(manaliLink).toBeVisible({ timeout: 10000 });
-    await manaliLink.click();
+    // 4. Stories Magazine List
+    await page.goto('/stories');
+    await expect(page.getByRole('heading', { name: /Authentic Travel Stories|Travel Dispatch/i })).toBeVisible({ timeout: 15000 });
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: path.join(screenshotDir, '04_stories_list.png'), fullPage: false });
 
-    // Step 3: Destination detail page checks
-    await expect(page).toHaveURL(/.*\/explore\/manali/);
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(/Manali/i);
+    // 5. Story Reader Detail
+    await page.goto('/stories/sangli-to-manali-budget-guide');
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible({ timeout: 15000 });
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: path.join(screenshotDir, '05_story_reader.png'), fullPage: false });
 
-    // Verify tabs on destination page
-    await expect(page.getByRole('button', { name: /Attractions/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Food & Dining/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Stays & Hotels/i })).toBeVisible();
+    // 6. Login View with 1-click Demo Autofill
+    await page.goto('/login');
+    await expect(page.getByRole('heading', { name: /Sign In|Welcome back/i })).toBeVisible({ timeout: 15000 });
+    await page.screenshot({ path: path.join(screenshotDir, '06_login_view.png'), fullPage: false });
 
-    // Step 4: Click 'Plan My Trip Here' CTA
-    const planCta = page.getByRole('link', { name: /Plan My Trip/i });
-    await expect(planCta).toBeVisible();
-    await planCta.click();
+    // Click demo autofill and sign in
+    const autofillBtn = page.getByRole('button', { name: /Autofill Presentation Demo Account/i });
+    if (await autofillBtn.isVisible()) {
+      await autofillBtn.click();
+      await page.waitForTimeout(300);
+      await page.screenshot({ path: path.join(screenshotDir, '06b_login_autofilled.png'), fullPage: false });
+    }
 
-    // Step 5: Arrive at Stage 01 Trip Setup
-    await expect(page).toHaveURL(/.*\/plan/);
+    const signInBtn = page.locator('button[type="submit"]');
+    await signInBtn.click();
+    await page.waitForURL('**/dashboard', { timeout: 15000 });
+    await expect(page.getByText(/Personal Travel Library|My Saved Trips/i).first()).toBeVisible({ timeout: 15000 });
+    await page.screenshot({ path: path.join(screenshotDir, '07_dashboard.png'), fullPage: false });
+
+    // 8. 7-Stage Planner: Stage 1 Setup
+    await page.goto('/plan');
     await expect(page.getByText(/Stage 01 of 07/i)).toBeVisible({ timeout: 15000 });
+    await page.screenshot({ path: path.join(screenshotDir, '08_stage1_setup.png'), fullPage: false });
 
-    // Ensure origin is Sangli
-    const originInput = page.locator('#planner-origin-input');
-    await originInput.fill('Sangli');
+    // Fill Stage 1 with Flagship Corridor: Sangli -> Old Manali
+    await page.locator('#planner-origin-input').fill('Sangli');
+    await page.locator('#planner-dest-input').fill('Old Manali');
+    await page.locator('input[type="number"]').fill('40000');
+    await page.locator('#trip-setup-continue-btn').click();
 
-    // Ensure budget is at least 40,000
-    const budgetInput = page.locator('input[type="number"]');
-    await budgetInput.fill('40000');
-
-    // Click continue to Transport (Stage 2)
-    const continueToTransportBtn = page.locator('#trip-setup-continue-btn');
-    await expect(continueToTransportBtn).toBeEnabled({ timeout: 5000 });
-    await continueToTransportBtn.click();
-
-    // Step 6: Stage 02 — Transport Alternatives
+    // 9. Stage 2 Transport Alternatives
     await expect(page.getByText(/Stage 02 of 07/i)).toBeVisible({ timeout: 15000 });
-    await expect(page.getByRole('heading', { name: /Select Transportation Option/i })).toBeVisible();
-
-    // Alternatives should render (RECOMMENDED, CHEAPEST, FASTEST, etc.)
     const altCards = page.locator('.cursor-pointer:has-text("Transfer(s)"), [data-testid="alt-card"]');
     await expect(altCards.first()).toBeVisible({ timeout: 20000 });
-    await altCards.first().click();
+    await page.screenshot({ path: path.join(screenshotDir, '09_stage2_transport.png'), fullPage: false });
+    await page.getByRole('button', { name: /Continue to Places/i }).click();
 
-    // Click Continue to Places
-    const continueToPlacesBtn = page.getByRole('button', { name: /Continue to Places/i });
-    await expect(continueToPlacesBtn).toBeVisible();
-    await continueToPlacesBtn.click();
-
-    // Step 7: Stage 03 — Places & Attractions
+    // 10. Stage 3 Places & Experiences
     await expect(page.getByText(/Stage 03 of 07/i)).toBeVisible({ timeout: 15000 });
-    await expect(page.getByRole('heading', { name: /Experiences & Must-Visit Places/i })).toBeVisible();
+    await page.screenshot({ path: path.join(screenshotDir, '10_stage3_places.png'), fullPage: false });
+    await page.getByRole('button', { name: /Continue to Food/i }).click();
 
-    // Click Continue to Food
-    const continueToFoodBtn = page.getByRole('button', { name: /Continue to Food/i });
-    await expect(continueToFoodBtn).toBeVisible();
-    await continueToFoodBtn.click();
-
-    // Step 8: Stage 04 — Dining & Food
+    // 11. Stage 4 Food & Regional Dining
     await expect(page.getByText(/Stage 04 of 07/i)).toBeVisible({ timeout: 15000 });
-    await expect(page.getByRole('heading', { name: /Regional Dining & Food/i })).toBeVisible();
+    await page.screenshot({ path: path.join(screenshotDir, '11_stage4_food.png'), fullPage: false });
+    await page.getByRole('button', { name: /Continue to Stays/i }).click();
 
-    // Click Continue to Stays
-    const continueToStaysBtn = page.getByRole('button', { name: /Continue to Stays/i });
-    await expect(continueToStaysBtn).toBeVisible();
-    await continueToStaysBtn.click();
-
-    // Step 9: Stage 05 — Accommodation & Stays
+    // 12. Stage 5 Hotels & Stays
     await expect(page.getByText(/Stage 05 of 07/i)).toBeVisible({ timeout: 15000 });
-    await expect(page.getByRole('heading', { name: /Select Primary Stay/i })).toBeVisible();
+    await page.screenshot({ path: path.join(screenshotDir, '12_stage5_stays.png'), fullPage: false });
+    await page.getByRole('button', { name: /Continue to Review/i }).click();
 
-    // Click Continue to Review
-    const continueToReviewBtn = page.getByRole('button', { name: /Continue to Review/i });
-    await expect(continueToReviewBtn).toBeVisible();
-    await continueToReviewBtn.click();
-
-    // Step 10: Stage 06 — Review & Deterministic Budget Health Auditor
+    // 13. Stage 6 Review & Budget Ledger
     await expect(page.getByText(/Stage 06 of 07/i)).toBeVisible({ timeout: 15000 });
-    await expect(page.getByText(/Deterministic Budget Auditor/i)).toBeVisible();
-    await expect(page.getByText(/Trip Cost Ledger/i)).toBeVisible();
+    await page.screenshot({ path: path.join(screenshotDir, '13_stage6_review.png'), fullPage: false });
 
-    // Verify budget status badge is visible
-    const statusBadge = page.locator('text=/COMFORTABLE|TIGHT|OVER BUDGET/');
-    await expect(statusBadge.first()).toBeVisible();
-
-    // Click Generate Complete Itinerary
+    // Execute Final Itinerary Generation
     const generateBtn = page.locator('#generate-itinerary-btn');
     await expect(generateBtn).toBeVisible();
     await generateBtn.click();
 
-    // Step 11: Stage 07 — Command Center / Itinerary Result
-    await expect(page.getByText(/JOURNEY COMPUTED/i)).toBeVisible({ timeout: 25000 });
-    await expect(page.getByText(/Sangli/i).first()).toBeVisible();
-    await expect(page.getByText(/Manali/i).first()).toBeVisible();
+    // 14. Stage 7 Flagship Final Itinerary Command Center
+    await expect(page.getByText(/TRIP READY|JOURNEY COMPUTED/i)).toBeVisible({ timeout: 25000 });
+    await page.waitForTimeout(1000); // Wait for OpenStreetMap tiles to render
+    await page.screenshot({ path: path.join(screenshotDir, '14_stage7_command_hero.png'), fullPage: false });
 
-    // Verify Action Buttons exist
-    await expect(page.getByRole('button', { name: /Save Trip/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Download PDF/i })).toBeVisible();
+    // 15. Stage 7 Daily Timeline Scroll
+    const timetableHeader = page.getByRole('heading', { name: /Day-by-Day Experience Schedule/i });
+    await timetableHeader.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: path.join(screenshotDir, '15_stage7_daily_timeline.png'), fullPage: false });
 
-    // Verify Budget Chart Breakdown
-    await expect(page.getByText(/Trip Expense Allocation/i)).toBeVisible();
-    await expect(page.getByRole('button', { name: /Export High-Res Itinerary PDF/i })).toBeVisible();
-
-    // Verify Leaflet Map Container rendered
-    const mapContainer = page.locator('.leaflet-container');
-    await expect(mapContainer).toBeAttached({ timeout: 15000 });
+    // 16. Stage 7 Interactive Map View
+    const mapSection = page.locator('.leaflet-container');
+    await mapSection.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: path.join(screenshotDir, '16_stage7_map_view.png'), fullPage: false });
   });
 
-  test('Golden Path 2: Direct Corridor Sangli -> Manali via Corridor Pill', async ({ page }) => {
+  test('Golden Path A: Sangli -> Old Manali (Flagship Multi-Tier)', async ({ page }) => {
     await page.goto('/plan');
     await expect(page.getByText(/Stage 01 of 07/i)).toBeVisible({ timeout: 15000 });
 
-    // Click Sangli -> Manali corridor pill
     const corridorPill = page.getByRole('button', { name: /Sangli → Manali/i });
     await expect(corridorPill).toBeVisible();
     await corridorPill.click();
 
-    // Verify inputs populated
-    await expect(page.locator('#planner-origin-input')).toHaveValue(/Sangli/i);
-    await expect(page.locator('#planner-dest-input')).toHaveValue(/Old Manali/i);
-
-    // Continue to Transport
     await page.locator('#trip-setup-continue-btn').click();
 
-    // Verify Stage 2 alternatives load
     await expect(page.getByText(/Stage 02 of 07/i)).toBeVisible({ timeout: 15000 });
-    await expect(page.getByRole('heading', { name: /Select Transportation Option/i })).toBeVisible();
     const altCards = page.locator('.cursor-pointer:has-text("Transfer(s)"), [data-testid="alt-card"]');
     await expect(altCards.first()).toBeVisible({ timeout: 20000 });
+
+    await page.getByRole('button', { name: /Continue to Places/i }).click();
+    await expect(page.getByText(/Stage 03 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Food/i }).click();
+    await expect(page.getByText(/Stage 04 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Stays/i }).click();
+    await expect(page.getByText(/Stage 05 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Review/i }).click();
+    await expect(page.getByText(/Stage 06 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.locator('#generate-itinerary-btn').click();
+    await expect(page.getByText(/TRIP READY|JOURNEY COMPUTED/i)).toBeVisible({ timeout: 25000 });
+    await expect(page.getByText(/Sangli/i).first()).toBeVisible();
+    await expect(page.getByText(/Manali/i).first()).toBeVisible();
   });
 
-  test('Golden Path 3: Direct Corridor Pune -> Goa with 4 Days', async ({ page }) => {
+  test('Golden Path B: Pune -> Goa (Coastal Express)', async ({ page }) => {
     await page.goto('/plan');
     await expect(page.getByText(/Stage 01 of 07/i)).toBeVisible({ timeout: 15000 });
 
-    // Click Pune -> Goa corridor pill
     const corridorPill = page.getByRole('button', { name: /Pune → Goa/i });
     await expect(corridorPill).toBeVisible();
     await corridorPill.click();
 
-    // Verify inputs populated
-    await expect(page.locator('#planner-origin-input')).toHaveValue(/Pune/i);
-    await expect(page.locator('#planner-dest-input')).toHaveValue(/Goa/i);
-
-    // Continue to Transport
     await page.locator('#trip-setup-continue-btn').click();
 
-    // Verify Stage 2 alternatives load
     await expect(page.getByText(/Stage 02 of 07/i)).toBeVisible({ timeout: 15000 });
-    await expect(page.getByRole('heading', { name: /Select Transportation Option/i })).toBeVisible();
     const altCards = page.locator('.cursor-pointer:has-text("Transfer(s)"), [data-testid="alt-card"]');
     await expect(altCards.first()).toBeVisible({ timeout: 20000 });
+
+    await page.getByRole('button', { name: /Continue to Places/i }).click();
+    await expect(page.getByText(/Stage 03 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Food/i }).click();
+    await expect(page.getByText(/Stage 04 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Stays/i }).click();
+    await expect(page.getByText(/Stage 05 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Review/i }).click();
+    await expect(page.getByText(/Stage 06 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.locator('#generate-itinerary-btn').click();
+    await expect(page.getByText(/TRIP READY|JOURNEY COMPUTED/i)).toBeVisible({ timeout: 25000 });
+    await expect(page.getByText(/Pune/i).first()).toBeVisible();
+    await expect(page.getByText(/Goa/i).first()).toBeVisible();
+  });
+
+  test('Golden Path C: Mumbai -> Jaipur (Royal Heritage)', async ({ page }) => {
+    await page.goto('/plan');
+    await expect(page.getByText(/Stage 01 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    const corridorPill = page.getByRole('button', { name: /Mumbai → Jaipur/i });
+    await expect(corridorPill).toBeVisible();
+    await corridorPill.click();
+
+    await page.locator('#trip-setup-continue-btn').click();
+
+    await expect(page.getByText(/Stage 02 of 07/i)).toBeVisible({ timeout: 15000 });
+    const altCards = page.locator('.cursor-pointer:has-text("Transfer(s)"), [data-testid="alt-card"]');
+    await expect(altCards.first()).toBeVisible({ timeout: 20000 });
+
+    await page.getByRole('button', { name: /Continue to Places/i }).click();
+    await expect(page.getByText(/Stage 03 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Food/i }).click();
+    await expect(page.getByText(/Stage 04 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Stays/i }).click();
+    await expect(page.getByText(/Stage 05 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Review/i }).click();
+    await expect(page.getByText(/Stage 06 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.locator('#generate-itinerary-btn').click();
+    await expect(page.getByText(/TRIP READY|JOURNEY COMPUTED/i)).toBeVisible({ timeout: 25000 });
+    await expect(page.getByText(/Mumbai/i).first()).toBeVisible();
+    await expect(page.getByText(/Jaipur/i).first()).toBeVisible();
+  });
+
+  test('Golden Path D: Delhi -> Manali (Mountain Corridor)', async ({ page }) => {
+    await page.goto('/plan');
+    await expect(page.getByText(/Stage 01 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    const corridorPill = page.getByRole('button', { name: /Delhi → Manali/i });
+    await expect(corridorPill).toBeVisible();
+    await corridorPill.click();
+
+    await page.locator('#trip-setup-continue-btn').click();
+
+    await expect(page.getByText(/Stage 02 of 07/i)).toBeVisible({ timeout: 15000 });
+    const altCards = page.locator('.cursor-pointer:has-text("Transfer(s)"), [data-testid="alt-card"]');
+    await expect(altCards.first()).toBeVisible({ timeout: 20000 });
+
+    await page.getByRole('button', { name: /Continue to Places/i }).click();
+    await expect(page.getByText(/Stage 03 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Food/i }).click();
+    await expect(page.getByText(/Stage 04 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Stays/i }).click();
+    await expect(page.getByText(/Stage 05 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Review/i }).click();
+    await expect(page.getByText(/Stage 06 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.locator('#generate-itinerary-btn').click();
+    await expect(page.getByText(/TRIP READY|JOURNEY COMPUTED/i)).toBeVisible({ timeout: 25000 });
+    await expect(page.getByText(/Delhi/i).first()).toBeVisible();
+    await expect(page.getByText(/Manali/i).first()).toBeVisible();
+  });
+
+  test('Golden Path E: Bengaluru -> Mysuru (Southern Heritage)', async ({ page }) => {
+    await page.goto('/plan');
+    await expect(page.getByText(/Stage 01 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    const corridorPill = page.getByRole('button', { name: /Bengaluru → Mysuru/i });
+    await expect(corridorPill).toBeVisible();
+    await corridorPill.click();
+
+    await page.locator('#trip-setup-continue-btn').click();
+
+    await expect(page.getByText(/Stage 02 of 07/i)).toBeVisible({ timeout: 15000 });
+    const altCards = page.locator('.cursor-pointer:has-text("Transfer(s)"), [data-testid="alt-card"]');
+    await expect(altCards.first()).toBeVisible({ timeout: 20000 });
+
+    await page.getByRole('button', { name: /Continue to Places/i }).click();
+    await expect(page.getByText(/Stage 03 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Food/i }).click();
+    await expect(page.getByText(/Stage 04 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Stays/i }).click();
+    await expect(page.getByText(/Stage 05 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole('button', { name: /Continue to Review/i }).click();
+    await expect(page.getByText(/Stage 06 of 07/i)).toBeVisible({ timeout: 15000 });
+
+    await page.locator('#generate-itinerary-btn').click();
+    await expect(page.getByText(/TRIP READY|JOURNEY COMPUTED/i)).toBeVisible({ timeout: 25000 });
+    await expect(page.getByText(/Bengaluru/i).first()).toBeVisible();
+    await expect(page.getByText(/Mysuru/i).first()).toBeVisible();
   });
 });

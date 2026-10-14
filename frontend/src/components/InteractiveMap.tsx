@@ -1,42 +1,41 @@
 'use client';
 
-import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import React, { useEffect, useMemo } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { ALL_DESTINATION_COORDS, getDestinationCoords } from '@/lib/destinations-data';
 
-// Fix default Leaflet icon paths in Next.js
-const defaultIcon = L.icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+// Custom SVG Icons with vibrant Sunlit palette
+function createCustomPin(color: string, label: string) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 32" width="28" height="36" filter="drop-shadow(0px 2px 4px rgba(25, 52, 81, 0.2))">
+    <path fill="${color}" stroke="#FFFFFF" stroke-width="1.5" d="M12 0C5.37 0 0 5.37 0 12c0 8.5 12 20 12 20s12-11.5 12-20c0-6.63-5.37-12-12-12z"/>
+    <circle fill="#FFFFFF" cx="12" cy="11" r="5"/>
+    <text x="12" y="14" font-size="8" font-family="sans-serif" font-weight="bold" fill="${color}" text-anchor="middle">${label}</text>
+  </svg>`;
+  return L.divIcon({
+    html: svg,
+    className: 'custom-map-pin',
+    iconSize: [28, 36],
+    iconAnchor: [14, 36],
+    popupAnchor: [0, -34]
+  });
+}
 
-L.Marker.prototype.options.icon = defaultIcon;
+const originIcon = createCustomPin('#246BCE', 'A');
+const destIcon = createCustomPin('#F46F58', 'B');
+const transitIcon = createCustomPin('#F7C963', 'T');
+const attractionIcon = createCustomPin('#246BCE', '★');
+const foodIcon = createCustomPin('#F46F58', '🍴');
+const hotelIcon = createCustomPin('#8B5CF6', '🏨');
 
 interface NodePoint {
   id: string;
   name: string;
   lat: number;
   lng: number;
+  type: 'origin' | 'dest' | 'transit' | 'attraction' | 'food' | 'hotel';
 }
-
-const KNOWN_COORDS: Record<string, [number, number]> = {
-  'Sangli': [16.8524, 74.5815],
-  'Miraj': [16.8202, 74.6468],
-  'Miraj Junction': [16.8202, 74.6468],
-  'Pune': [18.5204, 73.8567],
-  'Mumbai': [18.9400, 72.8354],
-  'Delhi': [28.6430, 77.2194],
-  'Delhi ISBT': [28.6675, 77.2285],
-  'Chandigarh': [30.7046, 76.8013],
-  'Manali': [32.2396, 77.1887],
-  'Old Manali': [32.2548, 77.1751],
-};
 
 export interface InteractiveMapProps {
   origin?: string;
@@ -70,6 +69,34 @@ export interface InteractiveMapProps {
   };
 }
 
+// Controller to auto-invalidate size and fit bounds
+function MapViewController({ points }: { points: NodePoint[] }) {
+  const map = useMap();
+
+  useEffect(() => {
+    const t1 = setTimeout(() => {
+      map.invalidateSize();
+      if (points.length > 1) {
+        const bounds = L.latLngBounds(points.map((p) => [p.lat, p.lng]));
+        map.fitBounds(bounds, { padding: [36, 36], maxZoom: 13 });
+      } else if (points.length === 1) {
+        map.setView([points[0].lat, points[0].lng], 11);
+      }
+    }, 150);
+
+    const t2 = setTimeout(() => {
+      map.invalidateSize();
+    }, 500);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [map, points]);
+
+  return null;
+}
+
 export default function InteractiveMap({
   origin,
   destination,
@@ -81,67 +108,89 @@ export default function InteractiveMap({
   foodPlaces = [],
   hotel
 }: InteractiveMapProps) {
-  const points: NodePoint[] = [];
-  const polylineCoords: [number, number][] = [];
+  const { points, polylineCoords } = useMemo(() => {
+    const pts: NodePoint[] = [];
+    const poly: [number, number][] = [];
 
-  if (segments.length > 0) {
-    segments.forEach((seg, idx) => {
-      const srcCoord = KNOWN_COORDS[seg.source_city] || KNOWN_COORDS[seg.source_node_name] || [16.8524, 74.5815];
-      const destCoord = KNOWN_COORDS[seg.dest_city] || KNOWN_COORDS[seg.dest_node_name] || [32.2548, 77.1751];
+    if (segments.length > 0) {
+      segments.forEach((seg, idx) => {
+        const srcCoord = ALL_DESTINATION_COORDS[seg.source_city] || ALL_DESTINATION_COORDS[seg.source_node_name] || getDestinationCoords(seg.source_city);
+        const destCoord = ALL_DESTINATION_COORDS[seg.dest_city] || ALL_DESTINATION_COORDS[seg.dest_node_name] || getDestinationCoords(seg.dest_city);
 
-      if (idx === 0) {
-        points.push({ id: `src-${idx}`, name: `${seg.source_city} (${seg.source_node_name})`, lat: srcCoord[0], lng: srcCoord[1] });
-        polylineCoords.push(srcCoord);
+        if (idx === 0) {
+          pts.push({
+            id: `src-${idx}`,
+            name: `${seg.source_city} (${seg.source_node_name})`,
+            lat: srcCoord[0],
+            lng: srcCoord[1],
+            type: 'origin'
+          });
+          poly.push(srcCoord);
+        }
+        pts.push({
+          id: `dest-${idx}`,
+          name: `${seg.dest_city} (${seg.dest_node_name})`,
+          lat: destCoord[0],
+          lng: destCoord[1],
+          type: idx === segments.length - 1 ? 'dest' : 'transit'
+        });
+        poly.push(destCoord);
+      });
+    } else if (origin || destination) {
+      const oCoord = getDestinationCoords(origin);
+      const dCoord = getDestinationCoords(destination);
+      poly.push(oCoord, dCoord);
+      if (origin) {
+        pts.push({ id: 'origin', name: origin, lat: oCoord[0], lng: oCoord[1], type: 'origin' });
       }
-      points.push({ id: `dest-${idx}`, name: `${seg.dest_city} (${seg.dest_node_name})`, lat: destCoord[0], lng: destCoord[1] });
-      polylineCoords.push(destCoord);
-    });
-  } else if (origin || destination) {
-    const oCoord = (origin && KNOWN_COORDS[origin]) || [16.8524, 74.5815];
-    const dCoord = (destination && KNOWN_COORDS[destination]) || [32.2548, 77.1751];
-    polylineCoords.push(oCoord, dCoord);
-    if (origin) points.push({ id: 'origin', name: origin, lat: oCoord[0], lng: oCoord[1] });
-    if (destination) points.push({ id: 'dest', name: destination, lat: dCoord[0], lng: dCoord[1] });
-  } else {
-    // Default Corridor Demo Points: Sangli -> Miraj -> Delhi -> Manali -> Old Manali
-    polylineCoords.push([16.8524, 74.5815], [16.8202, 74.6468], [28.6430, 77.2194], [32.2396, 77.1887], [32.2548, 77.1751]);
-    points.push(
-      { id: '1', name: 'Sangli Hub', lat: 16.8524, lng: 74.5815 },
-      { id: '2', name: 'Miraj Junction', lat: 16.8202, lng: 74.6468 },
-      { id: '3', name: 'Delhi ISBT Hub', lat: 28.6675, lng: 77.2285 },
-      { id: '4', name: 'Old Manali', lat: 32.2548, lng: 77.1751 }
-    );
-  }
+      if (destination) {
+        pts.push({ id: 'dest', name: destination, lat: dCoord[0], lng: dCoord[1], type: 'dest' });
+      }
+    } else {
+      const sCoord = getDestinationCoords('Sangli');
+      const mCoord = getDestinationCoords('Old Manali');
+      poly.push(sCoord, mCoord);
+      pts.push(
+        { id: '1', name: 'Sangli Hub', lat: sCoord[0], lng: sCoord[1], type: 'origin' },
+        { id: '2', name: 'Old Manali', lat: mCoord[0], lng: mCoord[1], type: 'dest' }
+      );
+    }
 
-  // Plot custom attraction points if available
-  attractions.forEach((a, i) => {
-    points.push({
-      id: `att-${i}`,
-      name: `★ ${a.name} (${a.category || 'Attraction'})`,
-      lat: a.latitude,
-      lng: a.longitude
+    // Plot attractions
+    attractions.forEach((a, i) => {
+      pts.push({
+        id: `att-${i}`,
+        name: `★ ${a.name} (${a.category || 'Attraction'})`,
+        lat: a.latitude,
+        lng: a.longitude,
+        type: 'attraction'
+      });
     });
-  });
 
-  // Plot custom food points if available
-  foodPlaces.forEach((f, i) => {
-    points.push({
-      id: `food-${i}`,
-      name: `🍴 ${f.name} (${f.speciality || 'Food'})`,
-      lat: f.latitude,
-      lng: f.longitude
+    // Plot food places
+    foodPlaces.forEach((f, i) => {
+      pts.push({
+        id: `food-${i}`,
+        name: `🍴 ${f.name} (${f.speciality || 'Food'})`,
+        lat: f.latitude,
+        lng: f.longitude,
+        type: 'food'
+      });
     });
-  });
 
-  // Plot hotel if available
-  if (hotel) {
-    points.push({
-      id: 'hotel',
-      name: `🏨 ${hotel.name}`,
-      lat: hotel.latitude,
-      lng: hotel.longitude
-    });
-  }
+    // Plot hotel
+    if (hotel) {
+      pts.push({
+        id: 'hotel',
+        name: `🏨 ${hotel.name}`,
+        lat: hotel.latitude,
+        lng: hotel.longitude,
+        type: 'hotel'
+      });
+    }
+
+    return { points: pts, polylineCoords: poly };
+  }, [segments, origin, destination, attractions, foodPlaces, hotel]);
 
   const effectiveLat = customCenterLat !== undefined
     ? customCenterLat
@@ -155,8 +204,20 @@ export default function InteractiveMap({
     ? polylineCoords[Math.floor(polylineCoords.length / 2)][1]
     : 76.0;
 
+  const getPinIcon = (type: NodePoint['type']) => {
+    switch (type) {
+      case 'origin': return originIcon;
+      case 'dest': return destIcon;
+      case 'transit': return transitIcon;
+      case 'attraction': return attractionIcon;
+      case 'food': return foodIcon;
+      case 'hotel': return hotelIcon;
+      default: return attractionIcon;
+    }
+  };
+
   return (
-    <div className="w-full h-[450px] sm:h-full min-h-[400px] rounded-2xl overflow-hidden border border-[#E7E5E0] shadow-sm relative z-0">
+    <div className="w-full h-[380px] sm:h-[450px] min-h-[360px] rounded-3xl overflow-hidden border border-[#EADBCE] shadow-sm relative z-0 bg-[#FFF9F2]">
       <MapContainer
         center={[effectiveLat, effectiveLng]}
         zoom={zoom}
@@ -168,19 +229,23 @@ export default function InteractiveMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
+        <MapViewController points={points} />
+
         {polylineCoords.length > 1 && (
           <Polyline
             positions={polylineCoords}
-            pathOptions={{ color: '#0E9F7A', weight: 4, opacity: 0.8, dashArray: '6, 6' }}
+            pathOptions={{ color: '#246BCE', weight: 4, opacity: 0.85, dashArray: '6, 6' }}
           />
         )}
 
         {points.map((pt) => (
-          <Marker key={pt.id} position={[pt.lat, pt.lng]}>
+          <Marker key={pt.id} position={[pt.lat, pt.lng]} icon={getPinIcon(pt.type)}>
             <Popup>
-              <div className="text-xs font-sans">
-                <strong className="block text-[#0B1320]">{pt.name}</strong>
-                <span className="text-[#667085] text-[11px]">Lat: {pt.lat.toFixed(4)}, Lng: {pt.lng.toFixed(4)}</span>
+              <div className="text-xs font-sans p-1">
+                <strong className="block text-[#193451] font-bold text-xs">{pt.name}</strong>
+                <span className="text-[#64748B] text-[10px] font-mono">
+                  {pt.lat.toFixed(4)}, {pt.lng.toFixed(4)}
+                </span>
               </div>
             </Popup>
           </Marker>
@@ -189,4 +254,3 @@ export default function InteractiveMap({
     </div>
   );
 }
-
