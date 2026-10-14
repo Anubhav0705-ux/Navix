@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -30,7 +30,7 @@ test.describe('NAVIX Phase 1 — Nationwide Trip Planner Verification & Recovery
   }
 
   // Helper to complete stages 2 -> 6 and click generate
-  async function completePlannerStages(page: any) {
+  async function completePlannerStages(page: Page) {
     // Stage 2: Transport Alternatives
     await expect(page.getByText(/Stage 02 of 07/i)).toBeVisible({ timeout: 20000 });
     const altCards = page.locator('.cursor-pointer:has-text("Transfer(s)"), [data-testid="alt-card"]');
@@ -60,7 +60,7 @@ test.describe('NAVIX Phase 1 — Nationwide Trip Planner Verification & Recovery
   test('Scenario 1: Homepage → Planner → Sangli → Manali → Complete Trip', async ({ page }) => {
     // Start at Homepage
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Your next great journey|Go further. Plan smarter./i })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: /India is yours|Your next great journey|Go further. Plan smarter./i })).toBeVisible({ timeout: 15000 });
 
     // Navigate to Planner via hero CTA
     const planLink = page.getByRole('link', { name: /Plan a Journey|Plan my trip|Start Planning|Plan Trip/i }).first();

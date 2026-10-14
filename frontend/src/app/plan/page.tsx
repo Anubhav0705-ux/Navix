@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
-  Footer, PlannerTopNav,
+  Footer, PlannerTopNav, PlannerContextBar,
   TripSetupStage, TransportStage, PlacesStage, FoodStage, StayStage,
   ReviewStage, AutoPlanStage
 } from '@/components';
@@ -110,14 +110,15 @@ function InnerPlannerWorkspace() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF9F2] text-[#193451] flex flex-col font-sans relative selection:bg-[#246BCE]/20 selection:text-[#246BCE]">
+    <div className="min-h-screen bg-[#FBF7F1] text-[#142A38] flex flex-col font-sans relative selection:bg-[#1F6E78]/20 selection:text-[#1F6E78]">
       {/* Persistent Stage Header Navigation Bar */}
       <div className="relative z-20">
         <PlannerTopNav />
+        <PlannerContextBar />
       </div>
 
       {/* Main Workspace Body */}
-      <main className="flex-1 relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* API Error Notification */}
         {errorInfo && (
           <div className="mb-6 p-5 bg-rose-50 border border-rose-200 rounded-3xl text-rose-900 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in duration-300">

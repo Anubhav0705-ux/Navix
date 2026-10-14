@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -17,7 +17,7 @@ test.describe('NAVIX Phase 2: Sunlit India — 20 High-Res Screenshots Capture',
     }
   });
 
-  async function takeDualScreenshot(page: any, filename: string, options?: any) {
+  async function takeDualScreenshot(page: Page, filename: string, options?: Parameters<Page['screenshot']>[0]) {
     const localPath = path.join(localScreenshotDir, filename);
     const artifactPath = path.join(artifactScreenshotDir, filename);
     await page.screenshot({ path: localPath, ...options });
@@ -29,8 +29,8 @@ test.describe('NAVIX Phase 2: Sunlit India — 20 High-Res Screenshots Capture',
     await page.setViewportSize({ width: 1440, height: 900 });
 
     // 1. Homepage Hero
-    await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Your next great journey|Go further. Plan smarter./i })).toBeVisible({ timeout: 15000 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByRole('heading', { name: /India is yours|Your next great journey|Go further. Plan smarter./i })).toBeVisible({ timeout: 15000 });
     await page.waitForTimeout(500);
     await takeDualScreenshot(page, '01_homepage.png');
 
@@ -159,8 +159,8 @@ test.describe('NAVIX Phase 2: Sunlit India — 20 High-Res Screenshots Capture',
     await page.setViewportSize({ width: 390, height: 844 });
 
     // 18. Mobile Homepage
-    await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Your next great journey|Go further. Plan smarter./i })).toBeVisible({ timeout: 15000 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByRole('heading', { name: /India is yours|Your next great journey|Go further. Plan smarter./i })).toBeVisible({ timeout: 15000 });
     await page.waitForTimeout(600);
     await takeDualScreenshot(page, '18_mobile_homepage.png');
 
@@ -175,7 +175,7 @@ test.describe('NAVIX Phase 2: Sunlit India — 20 High-Res Screenshots Capture',
       try {
         localStorage.clear();
         sessionStorage.clear();
-      } catch (e) {}
+      } catch {}
     });
     await page.goto('/plan');
     await expect(page.getByText(/Stage 01 of 07/i)).toBeVisible({ timeout: 15000 });

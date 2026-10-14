@@ -5,42 +5,43 @@
     --font-sans: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     --font-serif: var(--font-serif), Georgia, serif;
     
-    /* NAVIX Sunlit India Palette Tokens */
-    --bg-main: #FFF9F2;       /* Warm sunlit linen/cream */
-    --bg-surface: #FFFFFF;    /* Crisp white elevated card surface */
-    --bg-subtle: #F7EFE4;     /* Warm neutral for secondary containers */
-    --bg-muted: #F1E5D5;      /* Subtle border & badge fill */
+    /* NAVIX Bright Editorial Travel Palette Tokens */
+    --bg-main: #FBF7F1;       /* Warm sunlit editorial canvas */
+    --bg-surface: #FFFDFC;    /* Soft warm white elevated card surface */
+    --bg-subtle: #F5EBE1;     /* Warm sand for secondary containers */
+    --bg-muted: #EBDCC7;      /* Clean sand border & badge fill */
 
     /* Typography: Deep ink & readable slates */
-    --ink-primary: #193451;   /* Deep ink for headings & high-contrast titles */
-    --ink-secondary: #475569; /* Slate gray for readable body text */
-    --ink-muted: #64748B;     /* Muted slate for metadata */
-    --ink-light: #94A3B8;     /* Inactive elements */
+    --ink-primary: #142A38;   /* Deep text for headings & editorial contrast */
+    --ink-secondary: #66757F; /* Secondary text for readable body */
+    --ink-muted: #8E9BA4;     /* Muted metadata */
+    --ink-light: #B2BDC5;     /* Inactive elements */
 
     /* Vibrant Brand Accents */
-    --primary-blue: #246BCE;  /* Ocean azure for CTAs, active controls & links */
-    --primary-hover: #1A56A8;
-    --coral-accent: #F46F58;  /* Warm coral for highlights & energy */
-    --coral-hover: #E05841;
-    --sunshine-yellow: #F7C963; /* Sunshine gold for stars & warmth */
-    --mint-accent: #BFE8D6;   /* Mint green for nature tags */
+    --primary-teal: #1F6E78;  /* Primary brand teal for CTAs & active states */
+    --primary-dark: #15525A;  /* Hover / active dark teal */
+    --ocean-blue: #287FB8;    /* Ocean blue for transit paths & map links */
+    --coral-accent: #E96E55;  /* Warm coral for highlights & energy */
+    --warm-gold: #D8A64B;     /* Warm gold for accents & ratings */
+    --forest-green: #3E7C67;  /* Forest green for nature tags & positive delta */
+    --photo-overlay: #0C1820; /* Dark photographic overlay */
 
     /* Warm Borders & Shadows */
-    --border-light: #EADBCE;
-    --border-card: #E5DDD2;
+    --border-light: #EBDCC7;
+    --border-card: #E2D3BE;
   }
 
   body {
-    background-color: #FFF9F2;
-    color: #193451;
+    background-color: #FBF7F1;
+    color: #142A38;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
 
   ::selection {
-    background-color: rgba(36, 107, 206, 0.18);
-    color: #193451;
+    background-color: rgba(31, 110, 120, 0.2);
+    color: #142A38;
   }
 }
 
@@ -55,11 +56,11 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #FFF9F2;
+  background: #FBF7F1;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #EADBCE;
+  background: #EBDCC7;
   border-radius: 9999px;
 }
 
@@ -67,36 +68,61 @@
   background: #D8C7B5;
 }
 
-/* Sunlit Card & Elevation Styles */
-.sunlit-card {
-  background-color: #FFFFFF;
-  border: 1px solid #EADBCE;
+/* Editorial Card & Elevation Styles */
+.sunlit-card, .editorial-card {
+  background-color: #FFFDFC;
+  border: 1px solid #EBDCC7;
   border-radius: 1.5rem;
-  box-shadow: 0 4px 20px -2px rgba(25, 52, 81, 0.05), 0 2px 6px -1px rgba(25, 52, 81, 0.02);
+  box-shadow: 0 4px 20px -2px rgba(20, 42, 56, 0.04), 0 2px 6px -1px rgba(20, 42, 56, 0.02);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.sunlit-card:hover {
-  border-color: #246BCE;
-  box-shadow: 0 16px 36px -6px rgba(25, 52, 81, 0.09), 0 4px 12px -2px rgba(25, 52, 81, 0.04);
+.sunlit-card:hover, .editorial-card:hover {
+  border-color: #1F6E78;
+  box-shadow: 0 16px 36px -6px rgba(20, 42, 56, 0.08), 0 4px 12px -2px rgba(20, 42, 56, 0.03);
 }
 
-.sunlit-card-static {
-  background-color: #FFFFFF;
-  border: 1px solid #EADBCE;
+.sunlit-card-static, .editorial-card-static {
+  background-color: #FFFDFC;
+  border: 1px solid #EBDCC7;
   border-radius: 1.5rem;
-  box-shadow: 0 4px 20px -2px rgba(25, 52, 81, 0.05), 0 2px 6px -1px rgba(25, 52, 81, 0.02);
+  box-shadow: 0 4px 20px -2px rgba(20, 42, 56, 0.04), 0 2px 6px -1px rgba(20, 42, 56, 0.02);
 }
 
-/* Photo card hover effect */
+/* Photo card hover effect with subtle 1.03 scale zoom */
 .photo-card-hover {
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
 }
 
 .photo-card-hover:hover {
   transform: translateY(-4px);
-  border-color: #246BCE;
-  box-shadow: 0 20px 40px -10px rgba(25, 52, 81, 0.12), 0 4px 14px -2px rgba(36, 107, 206, 0.08);
+  border-color: #1F6E78;
+  box-shadow: 0 20px 40px -10px rgba(20, 42, 56, 0.10), 0 4px 14px -2px rgba(31, 110, 120, 0.06);
+}
+
+.photo-card-hover:hover img {
+  transform: scale(1.03);
+}
+
+/* Button CTA icon shift micro-interaction */
+.group:hover .btn-icon-shift {
+  transform: translateX(3px);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Route timeline line drawing animation */
+@keyframes routeDrawAnim {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-route-draw {
+  stroke-dasharray: 100;
+  animation: routeDrawAnim 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Subtle Hero Zoom */
@@ -105,12 +131,25 @@
     transform: scale(1);
   }
   100% {
-    transform: scale(1.04);
+    transform: scale(1.03);
   }
 }
 
 .animate-hero-zoom {
   animation: heroZoom 24s ease-out infinite alternate;
+}
+
+/* Respect Accessibility & Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-hero-zoom {
+    animation: none !important;
+  }
 }
 
 /* Smooth Scrolling */

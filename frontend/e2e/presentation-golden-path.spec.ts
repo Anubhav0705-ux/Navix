@@ -17,7 +17,7 @@ test.describe('NAVIX Ultimate Presentation Release — 5 Golden Paths & Visual Q
   test('Visual QA & 16 Screenshot Views Capture', async ({ page }) => {
     // 1. Homepage
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Your next great journey|Go further. Plan smarter./i })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: /India is yours|Your next great journey|Go further. Plan smarter./i })).toBeVisible({ timeout: 15000 });
     await page.screenshot({ path: path.join(screenshotDir, '01_homepage.png'), fullPage: false });
 
     // 2. Explore Catalog

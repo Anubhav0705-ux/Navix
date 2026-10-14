@@ -43,37 +43,37 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FFF9F2] text-[#193451] selection:bg-[#246BCE]/15 selection:text-[#193451]">
+    <div className="min-h-screen flex flex-col bg-[#FBF7F1] text-[#142A38] selection:bg-[#1F6E78]/15 selection:text-[#142A38]">
       <Navbar />
 
       <main className="flex-1 max-w-md mx-auto w-full px-4 py-16 flex flex-col justify-center">
-        <div className="bg-white border border-[#EADBCE] rounded-3xl p-8 space-y-6 shadow-xl">
+        <div className="bg-white border border-[#EBDCC7] rounded-3xl p-8 space-y-6 shadow-xl">
           <div className="space-y-1.5 text-center">
-            <span className="text-xs font-bold text-[#F46F58] uppercase tracking-wider block">
+            <span className="text-xs font-bold text-[#E96E55] uppercase tracking-wider block">
               NAVIX Account
             </span>
-            <h1 className="text-3xl font-black font-editorial text-[#193451]">Sign In to Your Journey</h1>
-            <p className="text-xs text-[#64748B]">
+            <h1 className="text-3xl font-black font-editorial text-[#142A38]">Sign In to Your Journey</h1>
+            <p className="text-xs text-[#66757F]">
               Access your saved multi-modal itineraries, routes, and budget plans.
             </p>
           </div>
 
           {/* Quick 1-Click Demo Presentation Account */}
-          <div className="p-4 bg-[#F7EFE4] border border-[#EADBCE] rounded-2xl text-xs space-y-2">
+          <div className="p-4 bg-[#F5EBE1] border border-[#EBDCC7] rounded-2xl text-xs space-y-2">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-[#193451] flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#F46F58]" />
+              <span className="font-bold text-[#142A38] flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#E96E55]" />
                 Presentation Demo Account
               </span>
               <button
                 type="button"
                 onClick={fillDemoAccount}
-                className="px-3 py-1 bg-[#246BCE] hover:bg-[#1A56A8] text-white text-[11px] font-bold rounded-lg transition-colors cursor-pointer shadow-xs"
+                className="px-3 py-1 bg-[#1F6E78] hover:bg-[#15525A] text-white text-[11px] font-bold rounded-lg transition-colors cursor-pointer shadow-xs"
               >
                 Autofill Presentation Demo Account
               </button>
             </div>
-            <p className="text-[#64748B] text-[11px] font-mono leading-relaxed">
+            <p className="text-[#66757F] text-[11px] font-mono leading-relaxed">
               demo@navix.com &bull; DemoExplorer2026!
             </p>
           </div>
@@ -87,43 +87,43 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-[#64748B] mb-1.5 flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 text-[#246BCE]" /> Email Address
+              <label className="block text-xs font-bold text-[#66757F] mb-1.5 flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5 text-[#1F6E78]" /> Email Address
               </label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#FFF9F2] border border-[#EADBCE] rounded-xl px-4 py-3 text-sm text-[#193451] font-bold focus:outline-none focus:ring-2 focus:ring-[#246BCE]"
+                className="w-full bg-[#FBF7F1] border border-[#EBDCC7] rounded-xl px-4 py-3 text-sm text-[#142A38] font-bold focus:outline-none focus:ring-2 focus:ring-[#1F6E78]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#64748B] mb-1.5 flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-[#246BCE]" /> Password
+              <label className="block text-xs font-bold text-[#66757F] mb-1.5 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-[#1F6E78]" /> Password
               </label>
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#FFF9F2] border border-[#EADBCE] rounded-xl px-4 py-3 text-sm text-[#193451] font-bold focus:outline-none focus:ring-2 focus:ring-[#246BCE]"
+                className="w-full bg-[#FBF7F1] border border-[#EBDCC7] rounded-xl px-4 py-3 text-sm text-[#142A38] font-bold focus:outline-none focus:ring-2 focus:ring-[#1F6E78]"
               />
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-4 bg-[#246BCE] hover:bg-[#1A56A8] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-[#246BCE]/25 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-4 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-[#1F6E78]/25 flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>{isSubmitting ? 'Authenticating...' : 'Sign In →'}</span>
             </button>
           </form>
 
-          <div className="text-center text-xs text-[#64748B] pt-2 border-t border-[#EADBCE]">
+          <div className="text-center text-xs text-[#66757F] pt-2 border-t border-[#EBDCC7]">
             <span>Do not have an account? </span>
-            <Link href="/register" className="font-bold text-[#246BCE] hover:underline">
+            <Link href="/register" className="font-bold text-[#1F6E78] hover:underline">
               Create an account
             </Link>
           </div>

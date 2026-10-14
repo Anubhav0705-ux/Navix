@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -17,7 +17,7 @@ test.describe('NAVIX Phase 3: Ultimate Content Enrichment, Polish & Presentation
     }
   });
 
-  async function captureDualScreenshot(page: any, filename: string, options?: any) {
+  async function captureDualScreenshot(page: Page, filename: string, options?: Parameters<Page['screenshot']>[0]) {
     const localPath = path.join(localScreenshotDir, filename);
     const artifactPath = path.join(artifactScreenshotDir, filename);
     await page.screenshot({ path: localPath, ...options });
@@ -32,7 +32,7 @@ test.describe('NAVIX Phase 3: Ultimate Content Enrichment, Polish & Presentation
 
     // 1. Homepage Desktop
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Your next great journey|Go further. Plan smarter./i })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: /India is yours|Your next great journey|Go further. Plan smarter./i })).toBeVisible({ timeout: 15000 });
     await page.waitForTimeout(600);
     await captureDualScreenshot(page, '01_homepage.png');
 
@@ -185,7 +185,7 @@ test.describe('NAVIX Phase 3: Ultimate Content Enrichment, Polish & Presentation
     await page.evaluate(() => {
       try {
         sessionStorage.clear();
-      } catch (e) {}
+      } catch {}
     });
     await page.goto('/plan?origin=Mumbai&destination=Udaipur&budget=25000&travellers=2');
     await expect(page.getByText(/Stage 01 of 07/i)).toBeVisible({ timeout: 15000 });
@@ -222,7 +222,7 @@ test.describe('NAVIX Phase 3: Ultimate Content Enrichment, Polish & Presentation
     await page.evaluate(() => {
       try {
         sessionStorage.clear();
-      } catch (e) {}
+      } catch {}
     });
     await page.goto('/plan?origin=Kochi&destination=Munnar&budget=18000&travellers=2');
     await expect(page.getByText(/Stage 01 of 07/i)).toBeVisible({ timeout: 15000 });

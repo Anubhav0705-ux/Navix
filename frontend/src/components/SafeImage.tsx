@@ -1,21 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Compass } from 'lucide-react';
+import { Compass, ImageOff } from 'lucide-react';
 
 interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackSrc?: string;
   category?: string;
 }
-
-const DEFAULT_FALLBACKS: Record<string, string> = {
-  Mountains: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop',
-  Beach: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=1200&auto=format&fit=crop',
-  Heritage: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1200&auto=format&fit=crop',
-  Nature: 'https://images.unsplash.com/photo-1511497584788-87676104235f?q=80&w=1200&auto=format&fit=crop',
-  City: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=1200&auto=format&fit=crop',
-  default: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=1200&auto=format&fit=crop'
-};
 
 export const SafeImage: React.FC<SafeImageProps> = ({
   src,
@@ -28,30 +19,49 @@ export const SafeImage: React.FC<SafeImageProps> = ({
   const [hasError, setHasError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const fallback = fallbackSrc || (category ? DEFAULT_FALLBACKS[category] || DEFAULT_FALLBACKS.default : DEFAULT_FALLBACKS.default);
-  const currentSrc = hasError || !src ? fallback : src;
+  // If explicit fallbackSrc provided, use it, otherwise show intentional neutral UI
+  if (hasError || !src) {
+    if (fallbackSrc) {
+      return (
+        <div className={`relative overflow-hidden bg-[#F5EBE1] ${className}`}>
+          <img
+            src={fallbackSrc}
+            alt={alt}
+            className="w-full h-full object-cover"
+            {...props}
+          />
+        </div>
+      );
+    }
+    return (
+      <div
+        className={`relative overflow-hidden bg-[#F5EBE1] border border-[#EBDCC7] flex flex-col items-center justify-center text-[#8E9BA4] p-4 text-center ${className}`}
+        aria-label={`${alt} - Photo unavailable`}
+      >
+        <ImageOff className="w-6 h-6 mb-1 text-[#8E9BA4]/80 stroke-[1.5]" />
+        <span className="text-[11px] font-mono uppercase tracking-wider text-[#66757F]/80">
+          Photo unavailable
+        </span>
+      </div>
+    );
+  }
 
   return (
-    <div className={`relative overflow-hidden bg-stone-100 ${className}`}>
+    <div className={`relative overflow-hidden bg-[#F5EBE1] ${className}`}>
       {/* Skeleton loader until loaded */}
-      {!isLoaded && !hasError && (
-        <div className="absolute inset-0 bg-stone-200 animate-pulse flex items-center justify-center">
-          <Compass className="w-6 h-6 text-stone-400 animate-spin" />
+      {!isLoaded && (
+        <div className="absolute inset-0 bg-[#F5EBE1] animate-pulse flex items-center justify-center">
+          <Compass className="w-5 h-5 text-[#8E9BA4] animate-spin" />
         </div>
       )}
-      
-      {/* Image */}
+
+      {/* Primary Image */}
       <img
-        src={currentSrc}
+        src={src}
         alt={alt}
         className={`w-full h-full object-cover transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
         onLoad={() => setIsLoaded(true)}
-        onError={() => {
-          if (!hasError) {
-            setHasError(true);
-            setIsLoaded(true);
-          }
-        }}
+        onError={() => setHasError(true)}
         {...props}
       />
     </div>

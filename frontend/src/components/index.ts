@@ -9,3 +9,4 @@ export * from './ReviewStage';
 export * from './LocationAutocomplete';
 export * from './PlaceAutocomplete';
 export * from './SafeImage';
+export * from './DestinationScene';
