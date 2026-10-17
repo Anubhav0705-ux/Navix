@@ -28,7 +28,7 @@ export default function TripResultPage() {
     return (
       <div className="min-h-screen flex flex-col bg-[#FBF7F1] text-[#142A38]">
         <Navbar />
-        <main className="flex-1 max-w-4xl mx-auto px-4 py-20 text-center space-y-6">
+        <main className="flex-1 max-w-4xl mx-auto px-4 pt-24 sm:pt-28 pb-20 text-center space-y-6">
           <div className="w-16 h-16 rounded-2xl bg-[#1F6E78]/10 border border-[#1F6E78]/20 flex items-center justify-center mx-auto text-[#1F6E78]">
             <Compass className="w-8 h-8" />
           </div>
@@ -52,7 +52,7 @@ export default function TripResultPage() {
     <div className="min-h-screen flex flex-col bg-[#FBF7F1] text-[#142A38] font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-12">
         <AutoPlanStage
           planResult={plan}
           onReOptimize={() => router.push('/plan')}

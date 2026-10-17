@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Navbar, Footer, SafeImage } from '@/components';
+import { Navbar, Footer, SafeImage, PassportStamp, DottedRouteAccent, CoordinatesTag } from '@/components';
 import { Search, Star, Compass } from 'lucide-react';
 import { getDestinations, DestinationSummary } from '@/services/destinations';
 
@@ -116,11 +116,26 @@ export default function ExplorePage() {
       <Navbar />
 
       {/* Header Banner */}
-      <section className="bg-[#F5EBE1]/80 border-b border-[#EBDCC7] pt-14 pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-[#E96E55] bg-white px-3.5 py-1 rounded-full border border-[#EBDCC7] shadow-xs">
-            <Compass className="w-3.5 h-3.5" />
-            <span>Discover India</span>
+      <section className="relative overflow-hidden bg-[#F5EBE1]/80 border-b border-[#EBDCC7] pt-24 sm:pt-28 pb-12 px-4 sm:px-6 lg:px-8">
+        <div className="absolute top-8 right-16 opacity-15 pointer-events-none hidden lg:block">
+          <DottedRouteAccent variant="curve-up" color="#1F6E78" />
+        </div>
+        <div className="absolute top-12 right-6 opacity-20 pointer-events-none hidden sm:block">
+          <PassportStamp city="BHARAT" code="DISCOVER" date="2026" color="teal" rotation={8} />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-[#E96E55] bg-white px-3.5 py-1 rounded-full border border-[#EBDCC7] shadow-xs">
+              <Compass className="w-3.5 h-3.5" />
+              <span>Discover India</span>
+            </div>
+            <CoordinatesTag
+              location="PAN-INDIA NETWORK"
+              lat="113 DESTINATIONS"
+              lng="TIER 1-3"
+              className="hidden sm:inline-flex"
+            />
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-editorial text-[#142A38]">

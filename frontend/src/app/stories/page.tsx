@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Navbar, Footer, SafeImage } from '@/components';
+import { Navbar, Footer, SafeImage, PassportStamp, PostageStampSnippet, CoordinatesTag } from '@/components';
 import { getStories, StoryItem } from '@/services/stories';
 import {
   Clock, MapPin, ArrowRight, Sparkles, Filter,
@@ -75,13 +75,28 @@ export default function StoriesPage() {
       <Navbar />
 
       {/* --- HERO BANNER --- */}
-      <section className="bg-[#F5EBE1]/80 border-b border-[#EBDCC7] py-14 sm:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <section className="relative overflow-hidden bg-[#F5EBE1]/80 border-b border-[#EBDCC7] pt-24 sm:pt-28 pb-14 sm:pb-20">
+        <div className="absolute top-10 right-24 opacity-15 pointer-events-none hidden lg:block">
+          <PostageStampSnippet label="JOURNAL" sublabel="DISPATCH" price="INDIA" rotation={-5} />
+        </div>
+        <div className="absolute top-8 right-6 opacity-20 pointer-events-none hidden sm:block">
+          <PassportStamp city="STORIES" code="NAVIX" date="2026" color="terracotta" rotation={-10} />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-[#EBDCC7] text-[#E96E55] text-xs font-bold tracking-wider uppercase shadow-xs">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Travel Dispatch &amp; Editorial Guides</span>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-[#EBDCC7] text-[#E96E55] text-xs font-bold tracking-wider uppercase shadow-xs">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Travel Dispatch &amp; Editorial Guides</span>
+                </div>
+                <CoordinatesTag
+                  location="FIELD NOTES"
+                  lat="AUTHENTIC"
+                  lng="FIELD TESTED"
+                  className="hidden sm:inline-flex"
+                />
               </div>
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-editorial text-[#142A38] tracking-tight">
                 Authentic Travel Stories
