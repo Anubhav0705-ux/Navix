@@ -169,6 +169,7 @@ export default function StoriesPage() {
                     <SafeImage
                       src={story.hero_image}
                       alt={story.title}
+                      category={story.category}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
 

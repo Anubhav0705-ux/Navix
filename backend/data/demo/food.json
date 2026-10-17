@@ -1650,7 +1650,7 @@
     "latitude": 15.2843,
     "longitude": 74.109,
     "speciality": "Local institution hidden in Assagao serving legendary Goan Fish Thalis with kingfish fry and sol kadi.",
-    "image": "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/goa_fish_curry.webp",
     "meal_suggestion": "Kingfish Rava Fry & Fish Curry Thali",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -1668,7 +1668,7 @@
     "latitude": 15.2893,
     "longitude": 74.114,
     "speciality": "Heritage restaurant dedicated to preserving heirloom Goan Christian and Hindu recipes.",
-    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/goa_kingfish_rava_fry.webp",
     "meal_suggestion": "Pork Vindaloo & Poi Bread",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -1686,7 +1686,7 @@
     "latitude": 15.2943,
     "longitude": 74.119,
     "speciality": "Riverside restaurant overlooking fishing trawlers on river Sal, famous for crab xec xec and prawn balchao.",
-    "image": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/goa_prawn_balchao.webp",
     "meal_suggestion": "Crab Xec Xec & Steamed Rice",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -1704,7 +1704,7 @@
     "latitude": 15.2993,
     "longitude": 74.124,
     "speciality": "Open-air mango grove cafe serving artisanal coffee, shakshuka, fresh hummus, and mango cheesecakes.",
-    "image": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/goa_hummus_mezze.webp",
     "meal_suggestion": "Hummus Plate & Organic Cold Brew",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -1722,7 +1722,7 @@
     "latitude": 15.3043,
     "longitude": 74.129,
     "speciality": "Quaint old Portuguese house courtyard serving Malabar parottas, Kerala beef fry, and Pandi curry.",
-    "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/goa_appam_stew.webp",
     "meal_suggestion": "Kerala Beef Fry & Appam",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -1740,7 +1740,7 @@
     "latitude": 15.3093,
     "longitude": 74.134,
     "speciality": "Charming alleyway restaurant in the Latin quarter serving authentic prawn curry rice and bebinca.",
-    "image": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/goa_bebinca_dessert.webp",
     "meal_suggestion": "Prawn Curry Rice & Bebinca",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -1758,7 +1758,7 @@
     "latitude": 15.3143,
     "longitude": 74.139,
     "speciality": "Waterfront Greek restaurant perched on Siolim waterfront known for souvlaki and sunset cocktails.",
-    "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/goa_souvlaki_mezze.webp",
     "meal_suggestion": "Chicken Souvlaki & Baklava",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2532,7 +2532,7 @@
     "latitude": 26.8974,
     "longitude": 75.7723,
     "speciality": "Legendary Johari Bazaar institution famed for authentic Dal Baati Churma and Ghewar sweetmeats.",
-    "image": "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/jaipur_dal_baati_churma.webp",
     "meal_suggestion": "Rajasthani Royal Thali",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2550,7 +2550,7 @@
     "latitude": 26.9024,
     "longitude": 75.7773,
     "speciality": "Iconic Station Road breakfast stop renowned across North India for flaky, piping-hot Pyaaz Kachori and Mirchi Vada.",
-    "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/jaipur_pyaaz_kachori.webp",
     "meal_suggestion": "Crisp Pyaaz Kachori & Jalebi",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2568,7 +2568,7 @@
     "latitude": 26.9074,
     "longitude": 75.7823,
     "speciality": "Fine dining inside the historic ramparts of Amber Fort serving heirloom royal recipes in silver thalis.",
-    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/jaipur_laal_maas.webp",
     "meal_suggestion": "Laal Maas & Saffron Biryani",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2586,7 +2586,7 @@
     "latitude": 26.9124,
     "longitude": 75.7873,
     "speciality": "Relaxed Gopalbari rooftop terrace with mural walls, live evening sitar, and wholesome North Indian curries.",
-    "image": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/jaipur_ker_sangri.webp",
     "meal_suggestion": "Paneer Lababdar & Tandoori Roti",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2604,7 +2604,7 @@
     "latitude": 26.9174,
     "longitude": 75.7923,
     "speciality": "Central Park rooftop favorite serving artisanal cutting chai, bun maska, and fusion street snacks overlooking city greens.",
-    "image": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/jaipur_cutting_chai.webp",
     "meal_suggestion": "Masala Chai & Bun Maska",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2622,7 +2622,7 @@
     "latitude": 26.9224,
     "longitude": 75.7973,
     "speciality": "Historic restaurant famous for slow-simmered handi meat and clay-oven kebabs along MI Road.",
-    "image": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/jaipur_seekh_kebabs.webp",
     "meal_suggestion": "Mutton Handi & Roomali Roti",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2640,7 +2640,7 @@
     "latitude": 26.9274,
     "longitude": 75.8023,
     "speciality": "Old-city corner shop bustling with morning travelers enjoying samosas, rabri lassi, and fresh jalebis.",
-    "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/jaipur_samosa_jalebi.webp",
     "meal_suggestion": "Morning Samosa & Sweet Lassi",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4044,7 +4044,7 @@
     "latitude": 32.2246,
     "longitude": 77.1737,
     "speciality": "Waterfront stone cafe by Manalsu river serving wood-fired pizzas, trout, and craft ciders.",
-    "image": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/manali_woodfired_pizza.webp",
     "meal_suggestion": "Trout Fish & Quattro Formaggi Pizza",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4062,7 +4062,7 @@
     "latitude": 32.2296,
     "longitude": 77.1787,
     "speciality": "Cozy wooden cafe in Old Manali famous for waffle breakfasts, board games, and acoustic jam sessions.",
-    "image": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/manali_shakshuka.webp",
     "meal_suggestion": "Belgian Waffles & French Press Coffee",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4080,7 +4080,7 @@
     "latitude": 32.2346,
     "longitude": 77.1837,
     "speciality": "Historic cedar garden serving legendary pan-fried Himalayan river trout with almond butter sauce.",
-    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/manali_trout_fish.webp",
     "meal_suggestion": "Pan-fried Trout with Mashed Potatoes",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4098,7 +4098,7 @@
     "latitude": 32.2396,
     "longitude": 77.1887,
     "speciality": "Bustling central restaurant serving authentic steamed mutton momos, gyathuk, and spiced thenthuk.",
-    "image": "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/manali_thukpa_momos.webp",
     "meal_suggestion": "Mutton Kothe Momos & Thenthuk",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4116,7 +4116,7 @@
     "latitude": 32.2446,
     "longitude": 77.1937,
     "speciality": "Riverside deck overlooking roaring mountain stream with live evening blues and grilled platters.",
-    "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/manali_cafe_platter.webp",
     "meal_suggestion": "Grilled Chicken & Mountain Beer",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4134,7 +4134,7 @@
     "latitude": 32.2496,
     "longitude": 77.1987,
     "speciality": "Famous Old Manali spot serving freshly roasted artisanal mountain coffee and warm chocolate chip cookies.",
-    "image": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/manali_cinnamon_cookies.webp",
     "meal_suggestion": "Artisan Coffee & Warm Cookies",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4152,7 +4152,7 @@
     "latitude": 32.2546,
     "longitude": 77.2037,
     "speciality": "Timeless North Indian dhaba serving rich butter chicken, dal makhani, and garlic naans.",
-    "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/manali_himachali_siddu.webp",
     "meal_suggestion": "Butter Chicken & Tandoori Roti",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -5178,7 +5178,7 @@
     "latitude": 30.0719,
     "longitude": 78.2526,
     "speciality": "Historic pilgrimage eatery serving traditional satvik thalis, Garhwali rajma, and tandoori rotis.",
-    "image": "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/rishikesh_sattvic_thali.webp",
     "meal_suggestion": "Garhwali Thali & Rabri",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -5196,7 +5196,7 @@
     "latitude": 30.0769,
     "longitude": 78.2576,
     "speciality": "Treehouse-style multi-level wooden cafe overlooking the Ganges rapids, serving fresh salads and falafel.",
-    "image": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/rishikesh_falafel_plate.webp",
     "meal_suggestion": "Falafel Platter & Mint Lassi",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -5214,7 +5214,7 @@
     "latitude": 30.0819,
     "longitude": 78.2626,
     "speciality": "Retro music-themed terrace cafe on Tapovan cliff serving artisanal vegan pasta and pour-over coffee.",
-    "image": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/rishikesh_smoothie_bowl.webp",
     "meal_suggestion": "Vegan Pesto Bowl & Herbal Latte",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -5232,7 +5232,7 @@
     "latitude": 30.0869,
     "longitude": 78.2676,
     "speciality": "Open-air low-seating riverside terrace in Laxman Jhula with river soundscapes and wood-fired pizza.",
-    "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/rishikesh_aloo_puri.webp",
     "meal_suggestion": "Woodfired Margherita & Ginger Chai",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -5250,7 +5250,7 @@
     "latitude": 30.0919,
     "longitude": 78.2726,
     "speciality": "Modern organic kitchen overlooking Himalayan pine ridges serving gluten-free dishes and local greens.",
-    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/rishikesh_ayurvedic_bowl.webp",
     "meal_suggestion": "Avocado Toast & Organic Thali",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -5268,7 +5268,7 @@
     "latitude": 30.0969,
     "longitude": 78.2776,
     "speciality": "Quick breakfast counter serving piping-hot ghee roast dosas, idli sambar, and filter coffee.",
-    "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/rishikesh_masala_dosa.webp",
     "meal_suggestion": "Mysore Masala Dosa & Filter Coffee",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -5286,7 +5286,7 @@
     "latitude": 30.1019,
     "longitude": 78.2826,
     "speciality": "Waterfront balcony right at Lakshman Jhula serving apple strudel, fresh baked cheesecake, and herbal teas.",
-    "image": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/rishikesh_apple_strudel.webp",
     "meal_suggestion": "Warm Apple Strudel & Black Coffee",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -9462,7 +9462,7 @@
     "latitude": 12.2808,
     "longitude": 76.6244,
     "speciality": "Legendary hole-in-the-wall tiffin institution celebrated across South India for cloud-soft butter dosas.",
-    "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/mysuru_mylari_dosa.webp",
     "meal_suggestion": "Original Mylari Butter Dosa",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -9480,7 +9480,7 @@
     "latitude": 12.2858,
     "longitude": 76.6294,
     "speciality": "Historic sweet shop run by descendants of royal sweetmaker Kakasura Madappa, inventor of Mysore Pak.",
-    "image": "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/mysuru_mysore_pak.webp",
     "meal_suggestion": "Authentic Ghee Mysore Pak",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -9498,7 +9498,7 @@
     "latitude": 12.2908,
     "longitude": 76.6344,
     "speciality": "Beloved local institution serving fiery Andhra chilli chicken and chicken biryani on fresh banana leaves.",
-    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/mysuru_banana_leaf_biryani.webp",
     "meal_suggestion": "Chilli Chicken & Biryani Meals",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -9516,7 +9516,7 @@
     "latitude": 12.2958,
     "longitude": 76.6394,
     "speciality": "Quirky underground cave-themed restaurant serving Peshawari kebabs, biryani, and rich curries.",
-    "image": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/mysuru_tandoori_platter.webp",
     "meal_suggestion": "Murgh Malai Kebab & Dal Makhani",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -9534,7 +9534,7 @@
     "latitude": 12.3008,
     "longitude": 76.6444,
     "speciality": "Famous competitor serving steaming soft benne dosas stuffed with spiced onion sagu and coconut chutney.",
-    "image": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/mysuru_filter_coffee.webp",
     "meal_suggestion": "Benne Dosa with Onion Sagu",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -9552,7 +9552,7 @@
     "latitude": 12.3058,
     "longitude": 76.6494,
     "speciality": "Clean family restaurant dishing out bisibelebath, rava idlis, and South Indian thalis.",
-    "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/mysuru_bisi_bele_bath.webp",
     "meal_suggestion": "Bisibelebath & Filter Coffee",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -9570,7 +9570,7 @@
     "latitude": 12.3108,
     "longitude": 76.6544,
     "speciality": "Palatial dining hall with crystal chandeliers serving royal three-course Karnataka meals.",
-    "image": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=600&auto=format&fit=crop",
+    "image": "/media/food/mysuru_karnataka_thali.webp",
     "meal_suggestion": "Royal Wodeyar Thali",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"

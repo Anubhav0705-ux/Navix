@@ -20,16 +20,22 @@ export function getCurrentUser(): UserResponse | null {
   }
 }
 
+export function isAuthenticated(): boolean {
+  return !!getToken() && !!getCurrentUser();
+}
+
 export function setSession(token: string, user: UserResponse): void {
   if (typeof window === 'undefined') return;
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(USER_KEY, JSON.stringify(user));
+  window.dispatchEvent(new Event('navix-auth-change'));
 }
 
 export function logoutSession(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+  window.dispatchEvent(new Event('navix-auth-change'));
 }
 
 export async function loginUser(email: string, password: string): Promise<TokenResponse> {

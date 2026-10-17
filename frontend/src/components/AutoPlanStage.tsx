@@ -8,6 +8,7 @@ import { getCurrentUser } from '@/services/auth';
 import { saveTrip } from '@/services/trips';
 import { exportTripPlanPDF } from '@/lib/pdf-export';
 import { getDestinationCoords } from '@/lib/destinations-data';
+import { resolveDestinationPhoto } from '@/lib/mediaResolver';
 import { SafeImage } from './SafeImage';
 import {
   Sparkles, Calendar, Download, Bookmark,
@@ -32,9 +33,9 @@ const DESTINATION_HERO_IMAGES: Record<string, string> = {
   udaipur: 'https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?q=80&w=1600&auto=format&fit=crop',
   jaipur: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1600&auto=format&fit=crop',
   munnar: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=80&w=1600&auto=format&fit=crop',
-  rishikesh: 'https://images.unsplash.com/photo-1600681978345-311667a788ad?q=80&w=1600&auto=format&fit=crop',
+  rishikesh: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1600&auto=format&fit=crop',
   darjeeling: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1600&auto=format&fit=crop',
-  hampi: 'https://images.unsplash.com/photo-1600100397608-f010f4433d7b?q=80&w=1600&auto=format&fit=crop',
+  hampi: 'https://images.unsplash.com/photo-1620766182966-c6eb5ed2b788?q=80&w=1600&auto=format&fit=crop',
   mysuru: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=1600&auto=format&fit=crop',
   bengaluru: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=1600&auto=format&fit=crop',
   mumbai: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?q=80&w=1600&auto=format&fit=crop',
@@ -44,7 +45,7 @@ const DESTINATION_HERO_IMAGES: Record<string, string> = {
   kochi: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?q=80&w=1600&auto=format&fit=crop',
   shimla: 'https://images.unsplash.com/photo-1562670652-e5947bddb335?q=80&w=1600&auto=format&fit=crop',
   ooty: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?q=80&w=1600&auto=format&fit=crop',
-  shillong: 'https://images.unsplash.com/photo-1616489953149-8d7607a3875f?q=80&w=1600&auto=format&fit=crop'
+  shillong: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?q=80&w=1600&auto=format&fit=crop'
 };
 
 function getHeroImageForDestination(destName: string): string {
@@ -54,7 +55,7 @@ function getHeroImageForDestination(destName: string): string {
       return url;
     }
   }
-  return 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1600&auto=format&fit=crop';
+  return resolveDestinationPhoto(destName);
 }
 
 interface AutoPlanStageProps {
@@ -273,22 +274,22 @@ export const AutoPlanStage: React.FC<AutoPlanStageProps> = ({
         <div className="p-6 bg-white border-t border-[#EBDCC7]">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
             <div className="bg-[#FBF7F1] p-4 rounded-2xl border border-[#EBDCC7]">
-              <span className="text-[#64748B] block text-[10px] uppercase font-bold tracking-wider">TOTAL TRIP COST</span>
+              <span className="text-[#64748B] block text-xs uppercase font-bold tracking-wider">TOTAL TRIP COST</span>
               <span className="font-serif font-black text-xl text-[#1F6E78]">₹{cb.total_trip_cost.toLocaleString()}</span>
             </div>
 
             <div className="bg-[#FBF7F1] p-4 rounded-2xl border border-[#EBDCC7]">
-              <span className="text-[#64748B] block text-[10px] uppercase font-bold tracking-wider">BUDGET CAP</span>
+              <span className="text-[#64748B] block text-xs uppercase font-bold tracking-wider">BUDGET CAP</span>
               <span className="font-serif font-bold text-xl text-[#142A38]">₹{cb.maximum_budget.toLocaleString()}</span>
             </div>
 
             <div className="bg-[#FBF7F1] p-4 rounded-2xl border border-[#EBDCC7]">
-              <span className="text-[#64748B] block text-[10px] uppercase font-bold tracking-wider">REMAINING BALANCE</span>
+              <span className="text-[#64748B] block text-xs uppercase font-bold tracking-wider">REMAINING BALANCE</span>
               <span className="font-serif font-bold text-xl text-emerald-600">₹{cb.remaining_budget.toLocaleString()}</span>
             </div>
 
             <div className="bg-[#FBF7F1] p-4 rounded-2xl border border-[#EBDCC7]">
-              <span className="text-[#64748B] block text-[10px] uppercase font-bold tracking-wider">MUST-VISITS</span>
+              <span className="text-[#64748B] block text-xs uppercase font-bold tracking-wider">MUST-VISITS</span>
               <span className="font-serif font-bold text-xl text-[#E96E55]">100% Scheduled</span>
             </div>
           </div>
@@ -360,18 +361,18 @@ export const AutoPlanStage: React.FC<AutoPlanStageProps> = ({
                           {/* Event Card */}
                           <div className="bg-[#FBF7F1] hover:bg-white border border-[#EBDCC7] rounded-2xl p-4 space-y-2 transition-all hover:shadow-md text-xs">
                             <div className="flex items-center justify-between">
-                              <span className="font-mono font-bold text-[#142A38] text-[11px]">
+                              <span className="font-mono font-bold text-[#142A38] text-xs">
                                 {ev.start_time} - {ev.end_time}
                               </span>
-                              <span className={`px-2 py-0.5 rounded-md font-mono text-[10px] font-bold border ${style.bg}`}>
+                              <span className={`px-2 py-0.5 rounded-md font-mono text-xs font-bold border ${style.bg}`}>
                                 {style.label}
                               </span>
                             </div>
 
                             <h5 className="font-bold text-[#142A38] text-sm">{ev.title}</h5>
-                            <p className="text-[#64748B] leading-relaxed text-[11px]">{ev.description}</p>
+                            <p className="text-[#64748B] leading-relaxed text-xs">{ev.description}</p>
 
-                            <div className="flex items-center justify-between pt-1 text-[11px] font-mono text-[#64748B]">
+                            <div className="flex items-center justify-between pt-1 text-xs font-mono text-[#64748B]">
                               <span>Cost: ₹{ev.cost}</span>
                               {ev.location && <span>{ev.location}</span>}
                             </div>
@@ -387,7 +388,7 @@ export const AutoPlanStage: React.FC<AutoPlanStageProps> = ({
                         </div>
                         <div className="bg-[#FBF7F1] border border-[#EBDCC7] rounded-2xl p-4 space-y-1 text-xs">
                           <h5 className="font-bold text-[#142A38] text-sm">{evStr}</h5>
-                          <span className="text-[10px] text-[#64748B] font-mono">Curated Activity</span>
+                          <span className="text-xs text-[#64748B] font-mono">Curated Activity</span>
                         </div>
                       </div>
                     ))
@@ -447,22 +448,22 @@ export const AutoPlanStage: React.FC<AutoPlanStageProps> = ({
             {/* Legend Grid */}
             <div className="grid grid-cols-2 gap-2 text-xs font-mono pt-1">
               <div className="p-2.5 bg-[#FBF7F1] rounded-xl border border-[#EBDCC7]">
-                <span className="text-[#1F6E78] block text-[10px] font-bold">● Transit</span>
+                <span className="text-[#1F6E78] block text-xs font-bold">● Transit</span>
                 <span className="font-bold text-[#142A38]">₹{cb.transport_cost.toLocaleString()}</span>
               </div>
 
               <div className="p-2.5 bg-[#FBF7F1] rounded-xl border border-[#EBDCC7]">
-                <span className="text-purple-600 block text-[10px] font-bold">● Lodging</span>
+                <span className="text-purple-600 block text-xs font-bold">● Lodging</span>
                 <span className="font-bold text-[#142A38]">₹{cb.accommodation_cost.toLocaleString()}</span>
               </div>
 
               <div className="p-2.5 bg-[#FBF7F1] rounded-xl border border-[#EBDCC7]">
-                <span className="text-amber-600 block text-[10px] font-bold">● Dining</span>
+                <span className="text-amber-600 block text-xs font-bold">● Dining</span>
                 <span className="font-bold text-[#142A38]">₹{cb.food_cost.toLocaleString()}</span>
               </div>
 
               <div className="p-2.5 bg-[#FBF7F1] rounded-xl border border-[#EBDCC7]">
-                <span className="text-emerald-600 block text-[10px] font-bold">● Activities</span>
+                <span className="text-emerald-600 block text-xs font-bold">● Activities</span>
                 <span className="font-bold text-[#142A38]">₹{cb.activities_cost.toLocaleString()}</span>
               </div>
             </div>

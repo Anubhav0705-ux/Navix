@@ -72,6 +72,7 @@ class Settings(BaseSettings):
     HOTELBEDS_API_KEY: Optional[str] = Field(default=None, description="Hotelbeds Evaluation API Key")
     HOTELBEDS_SECRET: Optional[str] = Field(default=None, description="Hotelbeds Evaluation Shared Secret")
     HOTELBEDS_BASE_URL: Optional[str] = Field(default="https://api.test.hotelbeds.com", description="Hotelbeds API Base URL")
+    UNSPLASH_ACCESS_KEY: Optional[str] = Field(default=None, description="Unsplash API Access Key")
     # Data Source Mode (demo | hybrid | live) - 48-Hour Presentation Release
     NAVIX_DATA_MODE: str = Field(default="demo", description="Data mode: demo | hybrid | live")
 

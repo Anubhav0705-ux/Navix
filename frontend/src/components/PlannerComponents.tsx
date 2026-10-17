@@ -6,6 +6,7 @@ import { usePlanner, PlannerStage } from '@/context/PlannerContext';
 import { Logo } from './Logo';
 import { SafeImage } from './SafeImage';
 import { ALL_DESTINATION_HUBS } from '@/lib/destinations-data';
+import { computeBudgetLedger, calculateMinimumFeasibleBudget } from '@/lib/budgetCalculator';
 
 import {
   getTransportAlternatives,
@@ -20,8 +21,8 @@ import {
 import {
   MapPin, Wallet, Calendar, Users, Check, ArrowLeft,
   Sparkles, Navigation, Plus, Minus, Utensils, Coffee,
-  Clock, Star, AlertCircle, RefreshCw, CheckCircle2,
-  Train, Bus, Plane, Car, ChevronDown, ChevronUp, ArrowRight,
+  Clock, Star, AlertCircle, RefreshCw,
+  Train, Bus, Plane, Car, ChevronDown, ChevronUp,
   Edit2, X, AlertTriangle
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -53,14 +54,14 @@ export const BudgetEditModal: React.FC<{
 }> = ({ isOpen, onClose }) => {
   const { state, dispatch } = usePlanner();
   const [budgetString, setBudgetString] = useState(String(state.maximumBudget));
-  const [previousBudget, setPreviousBudget] = useState(state.maximumBudget);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      setBudgetString(String(state.maximumBudget));
-      setPreviousBudget(state.maximumBudget);
-      setErrorMsg(null);
+      queueMicrotask(() => {
+        setBudgetString(String(state.maximumBudget));
+        setErrorMsg(null);
+      });
     }
   }, [isOpen, state.maximumBudget]);
 
@@ -71,15 +72,24 @@ export const BudgetEditModal: React.FC<{
   const placesCost = state.selectedAttractionItems.reduce((acc, a) => acc + (a.entry_fee || 0), 0) * state.travellers;
   const dep = new Date(state.departureDate);
   const ret = new Date(state.returnDate);
-  const nights = Math.max(1, Math.round((ret.getTime() - dep.getTime()) / (1000 * 3600 * 24)) - 1);
+  const diffDays = Math.max(1, Math.round((ret.getTime() - dep.getTime()) / (1000 * 3600 * 24)));
+  const nights = Math.max(0, diffDays - 1);
   const hotelCost = (state.selectedHotelItem?.price_per_night || 1200) * nights;
   const foodRatePerDay = state.foodPreference === 'BASIC' ? 300 : state.foodPreference === 'FLEXIBLE' ? 1200 : 700;
-  const foodCost = foodRatePerDay * (nights + 1) * state.travellers;
-  const currentExpenditure = transportCost + placesCost + hotelCost + foodCost;
-
+  const foodCost = foodRatePerDay * diffDays * state.travellers;
+  const localTransferCost = Math.round(150 * diffDays * state.travellers);
+  const currentExpenditure = transportCost + placesCost + hotelCost + foodCost + localTransferCost;
   const parsedVal = Number(budgetString.replace(/[^0-9]/g, '')) || 0;
-  const previewRemaining = parsedVal - currentExpenditure;
-  const isShortfall = parsedVal > 0 && parsedVal < currentExpenditure;
+  const modalLedger = computeBudgetLedger({
+    transportCost,
+    stayCost: hotelCost,
+    foodCost,
+    activitiesCost: placesCost,
+    localTransferCost,
+    maximumBudget: parsedVal
+  });
+  const previewRemaining = modalLedger.remainingBudget;
+  const isShortfall = parsedVal > 0 && modalLedger.isShortfall;
 
   const handleApply = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -180,8 +190,12 @@ export const BudgetEditModal: React.FC<{
           {/* Live Recalculation Impact Preview */}
           <div className="bg-[#FBF7F1] p-4 rounded-2xl border border-[#EBDCC7] space-y-2 text-xs font-mono">
             <div className="flex items-center justify-between text-[#66757F]">
-              <span>Current Selections Cost:</span>
+              <span>Direct Selections Cost:</span>
               <span className="font-bold text-[#142A38]">₹{currentExpenditure.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center justify-between text-[#66757F]">
+              <span>Contingency Buffer (8%):</span>
+              <span className="font-bold text-[#1F6E78]">₹{modalLedger.contingencyReserve.toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between text-[#66757F]">
               <span>Proposed Budget Cap:</span>
@@ -190,7 +204,7 @@ export const BudgetEditModal: React.FC<{
             <div className="pt-2 border-t border-[#EBDCC7] flex items-center justify-between font-bold">
               <span>Remaining Balance:</span>
               <span className={previewRemaining >= 0 ? 'text-emerald-700 font-bold' : 'text-rose-600 font-bold'}>
-                {previewRemaining >= 0 ? `+₹${previewRemaining.toLocaleString()}` : `-₹${Math.abs(previewRemaining).toLocaleString()} (Shortfall)`}
+                {previewRemaining >= 0 ? `+₹${previewRemaining.toLocaleString()}` : `-₹${modalLedger.shortfallAmount.toLocaleString()} (Shortfall)`}
               </span>
             </div>
           </div>
@@ -199,11 +213,18 @@ export const BudgetEditModal: React.FC<{
           {isShortfall && (
             <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs flex items-start gap-2.5">
               <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <div className="space-y-0.5">
-                <span className="font-bold block">Selections exceed this budget</span>
+              <div className="space-y-1">
+                <span className="font-bold block">Selections exceed feasible budget</span>
                 <span className="text-[11px] text-amber-800 leading-normal block">
-                  Your current selections exceed the new budget by ₹{(currentExpenditure - parsedVal).toLocaleString()}. Selections are preserved so you can adjust them in Review or Stays.
+                  With 8% contingency (₹{modalLedger.contingencyReserve.toLocaleString()}), total trip cost is ₹{modalLedger.totalCost.toLocaleString()}. Minimum budget required is ₹{modalLedger.minimumRequiredBudget.toLocaleString()}.
                 </span>
+                <button
+                  type="button"
+                  onClick={() => setBudgetString(String(modalLedger.minimumRequiredBudget))}
+                  className="mt-1 text-[11px] font-bold text-[#1F6E78] underline hover:text-[#15525A] cursor-pointer"
+                >
+                  Set to ₹{modalLedger.minimumRequiredBudget.toLocaleString()} (Exact Feasible Budget)
+                </button>
               </div>
             </div>
           )}
@@ -361,11 +382,12 @@ export const PlannerContextBar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: estimatedSpent });
+                  const minReq = calculateMinimumFeasibleBudget(estimatedSpent);
+                  dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: minReq });
                 }}
-                className="px-3 py-1 bg-[#1F6E78] hover:bg-[#15525A] text-white text-[11px] font-bold rounded-lg transition-colors cursor-pointer"
+                className="px-3.5 py-1.5 bg-[#1F6E78] hover:bg-[#15525A] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
               >
-                Match Spend (₹{estimatedSpent.toLocaleString()})
+                Adjust to Feasible Budget (₹{calculateMinimumFeasibleBudget(estimatedSpent).toLocaleString()})
               </button>
               {previousBudget > state.maximumBudget && (
                 <button
@@ -576,7 +598,7 @@ export const TripSetupStage: React.FC = () => {
         <div className="bg-white border border-[#EBDCC7] rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
           <div className="space-y-1">
             <span className="text-xs font-mono font-bold text-[#1F6E78] uppercase tracking-wider block">
-              Stage 01 of 07 &bull; Trip Setup
+              Stage 01 of 07 &bull; Real Trip Setup
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#142A38]">
               Where &amp; when are you traveling?
@@ -938,10 +960,12 @@ export const TransportStage: React.FC<{ onExecutePlan?: () => void }> = () => {
 
   const badgeColorMap: Record<string, string> = {
     'RECOMMENDED': 'bg-[#1F6E78] text-white',
+    'RECOMMENDED • CHEAPEST': 'bg-gradient-to-r from-[#1F6E78] to-[#D8A64B] text-white shadow-xs',
     'CHEAPEST': 'bg-[#D8A64B] text-[#142A38]',
     'FASTEST': 'bg-[#E96E55] text-white',
     'COMFORT': 'bg-[#142A38] text-white',
-    'LOWEST TRANSFERS': 'bg-[#288C78] text-white'
+    'LOWEST TRANSFERS': 'bg-[#288C78] text-white',
+    'BALANCED': 'bg-[#64748B] text-white'
   };
 
   return (
@@ -989,42 +1013,46 @@ export const TransportStage: React.FC<{ onExecutePlan?: () => void }> = () => {
         </div>
       ) : (
         <div className="space-y-5">
-          {alternatives.map((alt) => {
-            const isSelected = state.selectedTransportAlternative?.id === alt.id || state.selectedTransportAlternative?.label === alt.label;
-            const remainingBudget = state.maximumBudget - (alt.total_cost * state.travellers);
-            const totalHours = Math.round(alt.duration_minutes / 60);
-            const isExpanded = expandedAltId === alt.id;
+          {(() => {
+            const minCost = alternatives.length > 0 ? Math.min(...alternatives.map((a) => a.total_cost)) : 0;
+            return alternatives.map((alt) => {
+              const isSelected = state.selectedTransportAlternative?.id === alt.id || state.selectedTransportAlternative?.label === alt.label;
+              const remainingBudget = state.maximumBudget - (alt.total_cost * state.travellers);
+              const totalHours = Math.floor(alt.duration_minutes / 60);
+              const isExpanded = expandedAltId === alt.id;
+              const isCheapest = alt.total_cost === minCost;
+              const displayLabel = (alt.label === 'RECOMMENDED' && isCheapest) ? 'RECOMMENDED • CHEAPEST' : alt.label;
 
-            const firstSegment = alt.segments[0];
-            const lastSegment = alt.segments[alt.segments.length - 1];
+              const firstSegment = alt.segments[0];
+              const lastSegment = alt.segments[alt.segments.length - 1];
 
-            return (
-              <div
-                key={alt.id}
-                data-testid="alt-card"
-                role="button"
-                tabIndex={0}
-                onClick={() => dispatch({ type: 'SET_SELECTED_TRANSPORT', payload: alt })}
-                className={`cursor-pointer bg-white border rounded-3xl p-6 sm:p-8 transition-all space-y-6 shadow-xs relative overflow-hidden ${
-                  isSelected
-                    ? 'border-[#1F6E78] ring-1 ring-[#1F6E78]/40 bg-[#1F6E78]/[0.02] shadow-md'
-                    : 'border-[#EBDCC7] hover:border-[#1F6E78]/40 hover:bg-[#FBF7F1]/40'
-                }`}
-              >
-                {/* Selected Progressive Accent Line */}
-                {isSelected && (
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#1F6E78] via-[#38BDF8] to-[#288C78] animate-in fade-in duration-500" />
-                )}
+              return (
+                <div
+                  key={alt.id}
+                  data-testid="alt-card"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => dispatch({ type: 'SET_SELECTED_TRANSPORT', payload: alt })}
+                  className={`cursor-pointer bg-white border rounded-3xl p-6 sm:p-8 transition-all space-y-6 shadow-xs relative overflow-hidden ${
+                    isSelected
+                      ? 'border-[#1F6E78] ring-1 ring-[#1F6E78]/40 bg-[#1F6E78]/[0.02] shadow-md'
+                      : 'border-[#EBDCC7] hover:border-[#1F6E78]/40 hover:bg-[#FBF7F1]/40'
+                  }`}
+                >
+                  {/* Selected Progressive Accent Line */}
+                  {isSelected && (
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#1F6E78] via-[#38BDF8] to-[#288C78] animate-in fade-in duration-500" />
+                  )}
 
-                {/* Top Info Bar: Category, Duration, Fares */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#EBDCC7]">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeColorMap[alt.label] || 'bg-[#142A38] text-white'}`}>
-                      {alt.label}
-                    </span>
-                    <span className="text-xs text-[#64748B] font-medium flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-[#1F6E78]" />
-                      <strong>{totalHours}h {alt.duration_minutes % 60}m</strong>
+                  {/* Top Info Bar: Category, Duration, Fares */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#EBDCC7]">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeColorMap[displayLabel] || badgeColorMap[alt.label] || 'bg-[#142A38] text-white'}`}>
+                        {displayLabel}
+                      </span>
+                      <span className="text-xs text-[#64748B] font-medium flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-[#1F6E78]" />
+                        <strong>{totalHours}h {alt.duration_minutes % 60}m</strong>
                       <span>&bull;</span>
                       <span>{alt.transfers === 0 ? 'Direct Route' : `${alt.transfers} Transfer(s)`}</span>
                     </span>
@@ -1051,8 +1079,8 @@ export const TransportStage: React.FC<{ onExecutePlan?: () => void }> = () => {
                       </div>
                       <div>
                         <div className="text-sm font-bold text-[#142A38]">{firstSegment?.source_city || originName}</div>
-                        <div className="text-[11px] text-[#64748B] truncate max-w-[140px]">{firstSegment?.source_node_name || 'Station'}</div>
-                        <div className="text-[10px] font-bold text-[#1F6E78]">{firstSegment?.departure_time || '06:00'}</div>
+                        <div className="text-xs text-[#64748B] truncate max-w-[140px]">{firstSegment?.source_node_name || 'Station'}</div>
+                        <div className="text-xs font-bold text-[#1F6E78]">{firstSegment?.departure_time || '06:00'}</div>
                       </div>
                     </div>
 
@@ -1066,22 +1094,22 @@ export const TransportStage: React.FC<{ onExecutePlan?: () => void }> = () => {
                             <div className="flex-1 w-full flex flex-col items-center gap-1">
                               <div className="w-full flex items-center gap-2">
                                 <div className="h-0.5 flex-1 bg-[#CBD5E1]" />
-                                <div className="px-2.5 py-1 bg-white border border-[#CBD5E1] rounded-full text-[10px] font-bold text-[#142A38] flex items-center gap-1.5 shadow-2xs whitespace-nowrap">
+                                <div className="px-2.5 py-1 bg-white border border-[#CBD5E1] rounded-full text-xs font-bold text-[#142A38] flex items-center gap-1.5 shadow-2xs whitespace-nowrap">
                                   <ModeIcon className="w-3.5 h-3.5 text-[#1F6E78]" />
                                   <span>{seg.transport_mode}</span>
                                 </div>
                                 <div className="h-0.5 flex-1 bg-[#CBD5E1]" />
                               </div>
-                              <span className="text-[10px] text-[#64748B] truncate max-w-[160px]">{seg.provider}</span>
+                              <span className="text-xs text-[#64748B] truncate max-w-[160px]">{seg.provider}</span>
                             </div>
 
                             {/* Transfer Layover Node if not last segment */}
                             {sIdx < alt.segments.length - 1 && (
-                              <div className="flex items-center gap-2 px-2 py-1 bg-white border border-[#E96E55]/30 rounded-xl text-[10px] text-[#142A38] shrink-0 shadow-2xs">
+                              <div className="flex items-center gap-2 px-2.5 py-1 bg-white border border-[#E96E55]/30 rounded-xl text-xs text-[#142A38] shrink-0 shadow-2xs">
                                 <span className="w-2 h-2 rounded-full bg-[#E96E55]" />
                                 <div>
-                                  <strong className="block text-[10px]">{seg.dest_city}</strong>
-                                  <span className="text-[#64748B] text-[9px]">Layover {seg.layover_before_minutes || 45}m</span>
+                                  <strong className="block text-xs">{seg.dest_city}</strong>
+                                  <span className="text-[#64748B] text-[11px] font-mono">Layover {seg.layover_before_minutes || 45}m</span>
                                 </div>
                               </div>
                             )}
@@ -1097,8 +1125,8 @@ export const TransportStage: React.FC<{ onExecutePlan?: () => void }> = () => {
                       </div>
                       <div>
                         <div className="text-sm font-bold text-[#142A38]">{lastSegment?.dest_city || destName}</div>
-                        <div className="text-[11px] text-[#64748B] truncate max-w-[140px]">{lastSegment?.dest_node_name || 'Terminal'}</div>
-                        <div className="text-[10px] font-bold text-[#1F6E78]">{lastSegment?.arrival_time || '18:30'}</div>
+                        <div className="text-xs text-[#64748B] truncate max-w-[140px]">{lastSegment?.dest_node_name || 'Terminal'}</div>
+                        <div className="text-xs font-bold text-[#1F6E78]">{lastSegment?.arrival_time || '18:30'}</div>
                       </div>
                     </div>
                   </div>
@@ -1180,7 +1208,8 @@ export const TransportStage: React.FC<{ onExecutePlan?: () => void }> = () => {
                 </div>
               </div>
             );
-          })}
+          });
+        })()}
         </div>
       )}
 
@@ -1330,6 +1359,7 @@ export const PlacesStage: React.FC = () => {
                   <SafeImage
                     src={place.image}
                     alt={place.name}
+                    category={place.category}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 left-3 bg-[#142A38]/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-white border border-white/10">
@@ -1606,6 +1636,7 @@ export const FoodStage: React.FC = () => {
                     <SafeImage
                       src={place.image}
                       alt={place.name}
+                      category="food"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute top-3 left-3 bg-[#142A38]/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-white border border-white/10">
@@ -1799,6 +1830,7 @@ export const StayStage: React.FC<{ onExecutePlan?: () => void }> = () => {
                   <SafeImage
                     src={hotel.image}
                     alt={hotel.name}
+                    category="hotel"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 left-3 bg-[#142A38]/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-white uppercase border border-white/10">

@@ -5,13 +5,19 @@ from app.database.session import get_db
 from app.schemas.trip_planner import TripPlanRequest, TripPlanResult
 from app.algorithms import SearchError
 from app.services.trip_planner_service import generate_complete_trip_plan
+from app.models.user import User
+from app.core.security import get_current_user
 from app.core.metrics import metrics
 
 trips_router = APIRouter(prefix="/trips", tags=["Trip Planning"])
 
 
 @trips_router.post("/plan", response_model=TripPlanResult)
-def plan_trip(request: TripPlanRequest, db: Session = Depends(get_db)):
+def plan_trip(
+    request: TripPlanRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
     Complete Whole-Trip Planner Endpoint.
     Combines A* route search, transfer validation, stay & food optimization,

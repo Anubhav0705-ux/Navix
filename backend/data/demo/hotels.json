@@ -1976,7 +1976,7 @@
       "Cafe",
       "Common Lounge"
     ],
-    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/goa_fort_tiracol.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -1997,7 +1997,7 @@
       "Breakfast",
       "Balcony"
     ],
-    "image": "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=800&auto=format&fit=crop",
+    "image": "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=1080&auto=format&fit=crop",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2018,7 +2018,7 @@
       "Free WiFi",
       "AC"
     ],
-    "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/goa_panjim_inn.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2040,7 +2040,7 @@
       "Mountain/City View",
       "Free Parking"
     ],
-    "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/goa_taj_exotica.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2061,7 +2061,7 @@
       "Courtyard",
       "Room Service"
     ],
-    "image": "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/goa_hosteller_candolim.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2083,7 +2083,7 @@
       "Multi-Cuisine Dining",
       "Valet"
     ],
-    "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=800&auto=format&fit=crop",
+    "image": "https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=1080&auto=format&fit=crop",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2105,7 +2105,7 @@
       "Fine Dining",
       "Airport Shuttle"
     ],
-    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&auto=format&fit=crop",
+    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1080&auto=format&fit=crop",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3033,7 +3033,7 @@
       "Cafe",
       "Common Lounge"
     ],
-    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/jaipur_umaid_bhawan.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3097,7 +3097,7 @@
       "Mountain/City View",
       "Free Parking"
     ],
-    "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/jaipur_itc_rajputana.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3118,7 +3118,7 @@
       "Courtyard",
       "Room Service"
     ],
-    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/jaipur_alsisar_haveli.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4844,7 +4844,7 @@
       "Cafe",
       "Games Room"
     ],
-    "image": "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/manali_zostel_old_manali.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4865,7 +4865,7 @@
       "Breakfast",
       "Balcony"
     ],
-    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/manali_the_himalayan.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4928,7 +4928,7 @@
       "Courtyard",
       "Room Service"
     ],
-    "image": "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/manali_hosteller.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -6223,7 +6223,7 @@
       "Breakfast",
       "Balcony"
     ],
-    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/rishikesh_ganga_kinare.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -6287,7 +6287,7 @@
       "Courtyard",
       "Room Service"
     ],
-    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/rishikesh_aloha_ganges.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -11336,7 +11336,7 @@
       "Cafe",
       "Common Lounge"
     ],
-    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/mysuru_lalitha_mahal.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -11378,7 +11378,7 @@
       "Free WiFi",
       "AC"
     ],
-    "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/stays/mysuru_royal_orchid.webp",
     "availability": "Available",
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"

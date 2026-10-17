@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Navbar, Footer, SafeImage } from '@/components';
+import { getCurrentUser } from '@/services/auth';
+import { saveTripDraft } from '@/lib';
 import {
   Calendar, Wallet, Star, Clock, ArrowRight,
   CheckCircle2, Utensils, Bed, Ticket
@@ -21,12 +23,28 @@ const InteractiveMap = dynamic(() => import('@/components/InteractiveMap'), {
 });
 
 export default function DestinationDetailPage() {
+  const router = useRouter();
   const params = useParams();
   const slug = params?.slug as string;
 
   const [destination, setDestination] = useState<DestinationDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'attractions' | 'food' | 'stays'>('attractions');
+
+  const handlePlanDestination = () => {
+    if (!destination) return;
+    const targetUrl = `/plan?destination=${encodeURIComponent(destination.name)}`;
+    const user = getCurrentUser();
+    if (user) {
+      router.push(targetUrl);
+    } else {
+      saveTripDraft({
+        destination: destination.name,
+        returnTo: targetUrl,
+      });
+      router.push(`/login?returnTo=${encodeURIComponent(targetUrl)}&intent=plan`);
+    }
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -93,9 +111,9 @@ export default function DestinationDetailPage() {
           src={destination.hero_image}
           alt={destination.name}
           category={destination.categories?.[0]}
-          className="w-full h-full object-cover filter brightness-[0.70]"
+          className="w-full h-full object-cover filter brightness-[0.88]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent pointer-events-none" />
 
         <div className="absolute bottom-0 left-0 right-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-white space-y-4">
           <div className="flex flex-wrap items-center gap-2">
@@ -185,13 +203,14 @@ export default function DestinationDetailPage() {
               </p>
             </div>
 
-            <Link
-              href={`/plan?destination=${encodeURIComponent(destination.name)}`}
+            <button
+              type="button"
+              onClick={handlePlanDestination}
               className="w-full py-4 px-4 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold text-xs uppercase tracking-wider rounded-2xl shadow-md shadow-[#1F6E78]/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <span>Build Trip Itinerary</span>
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </button>
 
             <div className="text-xs text-[#66757F] space-y-2 pt-3 border-t border-[#EBDCC7]">
               <div className="flex items-center gap-2">
@@ -256,7 +275,7 @@ export default function DestinationDetailPage() {
                   className="bg-white rounded-3xl overflow-hidden border border-[#EBDCC7] hover:border-[#1F6E78] transition-all flex flex-col photo-card-hover shadow-sm"
                 >
                   <div className="relative h-52 w-full">
-                    <SafeImage src={attr.image} alt={attr.name} className="w-full h-full object-cover" />
+                    <SafeImage src={attr.image} alt={attr.name} category={attr.category} className="w-full h-full object-cover" />
                     <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-[#142A38] shadow-xs">
                       {attr.category}
                     </div>
@@ -299,7 +318,7 @@ export default function DestinationDetailPage() {
                   className="bg-white rounded-3xl overflow-hidden border border-[#EBDCC7] hover:border-[#1F6E78] transition-all flex flex-col photo-card-hover shadow-sm"
                 >
                   <div className="relative h-52 w-full">
-                    <SafeImage src={food.image} alt={food.name} className="w-full h-full object-cover" />
+                    <SafeImage src={food.image} alt={food.name} category="food" className="w-full h-full object-cover" />
                     <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-[#142A38] shadow-xs">
                       {food.cuisine}
                     </div>
@@ -342,7 +361,7 @@ export default function DestinationDetailPage() {
                   className="bg-white rounded-3xl overflow-hidden border border-[#EBDCC7] hover:border-[#1F6E78] transition-all flex flex-col photo-card-hover shadow-sm"
                 >
                   <div className="relative h-52 w-full">
-                    <SafeImage src={hotel.image} alt={hotel.name} className="w-full h-full object-cover" />
+                    <SafeImage src={hotel.image} alt={hotel.name} category="hotel" className="w-full h-full object-cover" />
                     <div className="absolute top-3 left-3 bg-[#142A38] text-white px-3 py-1 rounded-full text-[10px] font-bold">
                       {hotel.category}
                     </div>

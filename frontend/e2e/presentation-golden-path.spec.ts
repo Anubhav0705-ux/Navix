@@ -49,13 +49,11 @@ test.describe('NAVIX Ultimate Presentation Release — 5 Golden Paths & Visual Q
     await expect(page.getByRole('heading', { name: /Sign In|Welcome back/i })).toBeVisible({ timeout: 15000 });
     await page.screenshot({ path: path.join(screenshotDir, '06_login_view.png'), fullPage: false });
 
-    // Click demo autofill and sign in
-    const autofillBtn = page.getByRole('button', { name: /Autofill Presentation Demo Account/i });
-    if (await autofillBtn.isVisible()) {
-      await autofillBtn.click();
-      await page.waitForTimeout(300);
-      await page.screenshot({ path: path.join(screenshotDir, '06b_login_autofilled.png'), fullPage: false });
-    }
+    // Enter credentials directly (authentic clean login)
+    await page.fill('input[type="email"]', 'demo@navix.com');
+    await page.fill('input[type="password"]', 'DemoExplorer2026!');
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: path.join(screenshotDir, '06b_login_filled.png'), fullPage: false });
 
     const signInBtn = page.locator('button[type="submit"]');
     await signInBtn.click();

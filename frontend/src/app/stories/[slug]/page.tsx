@@ -215,6 +215,7 @@ export default function StoryDetailPage() {
             <SafeImage
               src={story.hero_image}
               alt={story.title}
+              category={story.category}
               className="w-full h-full object-cover"
             />
           </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import {
   Footer, PlannerTopNav, PlannerContextBar,
   TripSetupStage, TransportStage, PlacesStage, FoodStage, StayStage,
@@ -9,7 +9,8 @@ import {
 } from '@/components';
 import { PlannerProvider, usePlanner } from '@/context/PlannerContext';
 import { requestTripPlan, APIError } from '@/services';
-import { saveTripPlan, getTripPlan, clearTripPlan } from '@/lib';
+import { saveTripPlan, getTripPlan, clearTripPlan, saveTripDraft, getTripDraft, clearTripDraft } from '@/lib';
+import { getCurrentUser } from '@/services/auth';
 import { TripPlanResult } from '@/types';
 import { Loader2, Check, AlertTriangle, Sparkles } from 'lucide-react';
 
@@ -22,16 +23,68 @@ const LOADING_CHECKLIST = [
 ];
 
 function InnerPlannerWorkspace() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { state, dispatch, getBackendPayload } = usePlanner();
 
+  const [isAuthenticatedUser] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return !!getCurrentUser();
+    }
+    return false;
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingStage, setLoadingStage] = useState(0);
   const [errorInfo, setErrorInfo] = useState<{ code: string; message: string } | null>(null);
   const [planResult, setPlanResult] = useState<TripPlanResult | null>(() => getTripPlan());
 
+  // Strict Authentication Guard & Draft Restoration
+  useEffect(() => {
+    if (!isAuthenticatedUser) {
+      // Unauthenticated guest: preserve draft intent safely before redirecting
+      const qOrigin = searchParams.get('origin') || '';
+      const qDest = searchParams.get('destination') || '';
+      const qBudget = searchParams.get('budget') || '';
+      const qTravellers = searchParams.get('travellers') || '';
+      const qDep = searchParams.get('departureDate') || '';
+      const qRet = searchParams.get('returnDate') || '';
+
+      const searchStr = searchParams.toString();
+      const returnPath = searchStr ? `/plan?${searchStr}` : '/plan';
+
+      if (qDest || qOrigin || qBudget) {
+        saveTripDraft({
+          origin: qOrigin,
+          destination: qDest,
+          budget: qBudget,
+          travellers: qTravellers,
+          departureDate: qDep,
+          returnDate: qRet,
+          returnTo: returnPath,
+        });
+      }
+
+      router.replace(`/login?returnTo=${encodeURIComponent(returnPath)}&intent=plan`);
+      return;
+    }
+
+    // If returning from login with a draft, restore draft fields
+    const draft = getTripDraft();
+    if (draft) {
+      if (draft.destination) dispatch({ type: 'SET_DESTINATION', payload: draft.destination });
+      if (draft.origin) dispatch({ type: 'SET_ORIGIN', payload: draft.origin });
+      if (draft.budget && !isNaN(Number(draft.budget))) dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: Number(draft.budget) });
+      if (draft.travellers && !isNaN(Number(draft.travellers))) dispatch({ type: 'SET_TRAVELLERS_COUNT', payload: Number(draft.travellers) });
+      if (draft.departureDate) dispatch({ type: 'SET_DEPARTURE_DATE', payload: draft.departureDate });
+      if (draft.returnDate) dispatch({ type: 'SET_RETURN_DATE', payload: draft.returnDate });
+      clearTripDraft();
+    }
+  }, [isAuthenticatedUser, router, searchParams, dispatch]);
+
   // Sync initial query params if present
   useEffect(() => {
+    if (!isAuthenticatedUser) return;
+
     const qOrigin = searchParams.get('origin');
     const qDest = searchParams.get('destination');
     const qBudget = searchParams.get('budget');
@@ -62,13 +115,12 @@ function InnerPlannerWorkspace() {
       }
     }
 
-
     if (qOrigin && qOrigin !== state.origin) {
       dispatch({ type: 'SET_ORIGIN', payload: qOrigin });
     }
     if (qBudget && !isNaN(Number(qBudget))) dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: Number(qBudget) });
     if (qTravellers && !isNaN(Number(qTravellers))) dispatch({ type: 'SET_TRAVELLERS_COUNT', payload: Number(qTravellers) });
-  }, [searchParams, dispatch]);
+  }, [isAuthenticatedUser, searchParams, dispatch, state.destination, state.origin, planResult]);
 
 
   // Loading checklist timer animation
@@ -108,6 +160,19 @@ function InnerPlannerWorkspace() {
       }
     }
   };
+
+  if (!isAuthenticatedUser) {
+    return (
+      <div className="min-h-screen bg-[#FBF7F1] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 text-[#1F6E78] animate-spin" />
+          <p className="text-xs font-bold uppercase tracking-wider text-[#66757F]">
+            Verifying Traveler Session...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FBF7F1] text-[#142A38] flex flex-col font-sans relative selection:bg-[#1F6E78]/20 selection:text-[#1F6E78]">

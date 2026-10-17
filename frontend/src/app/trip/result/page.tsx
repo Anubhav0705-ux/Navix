@@ -1,16 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Navbar, Footer, AutoPlanStage } from '@/components';
 import { getTripPlan } from '@/lib';
+import { getCurrentUser } from '@/services/auth';
 import { TripPlanResult } from '@/types';
-import { Compass, ArrowRight } from 'lucide-react';
+import { Compass } from 'lucide-react';
 
 export default function TripResultPage() {
   const router = useRouter();
+  const [currentUser] = useState(() => getCurrentUser());
   const [plan] = useState<TripPlanResult | null>(() => getTripPlan());
+
+  useEffect(() => {
+    if (!getCurrentUser()) {
+      router.replace('/login?returnTo=/trip/result');
+    }
+  }, [router]);
+
+  if (!currentUser) {
+    return null;
+  }
 
   if (!plan) {
     return (

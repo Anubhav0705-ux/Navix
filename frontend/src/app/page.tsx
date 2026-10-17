@@ -9,6 +9,8 @@ import {
   ChevronRight, Mountain, Palmtree, Landmark, Trees, Flame, Heart
 } from 'lucide-react';
 import { getDestinations, getStories, DestinationSummary, StoryItem } from '@/services';
+import { getCurrentUser } from '@/services/auth';
+import { saveTripDraft } from '@/lib';
 
 const TRAVEL_STYLES = [
   { name: 'Mountain Escapes', filter: 'Mountains', icon: Mountain, image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800&auto=format&fit=crop' },
@@ -16,13 +18,14 @@ const TRAVEL_STYLES = [
   { name: 'Heritage Trails', filter: 'Heritage', icon: Landmark, image: 'https://images.unsplash.com/photo-1603262110263-fb0112e7cc33?q=80&w=800&auto=format&fit=crop' },
   { name: 'Nature Sanctuaries', filter: 'Nature', icon: Trees, image: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=800&auto=format&fit=crop' },
   { name: 'City Escapes', filter: 'City', icon: Flame, image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=800&auto=format&fit=crop' },
-  { name: 'River & Spiritual', filter: 'Spiritual', icon: Heart, image: 'https://images.unsplash.com/photo-1600681978345-311667a788ad?q=80&w=800&auto=format&fit=crop' },
+  { name: 'River & Spiritual', filter: 'Spiritual', icon: Heart, image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=800&auto=format&fit=crop' },
 ];
 
 export default function Home() {
   const router = useRouter();
 
-  // Scroll scene state for dynamic photographic hero & storytelling sequence
+
+  // Active scene index for horizontal destination carousel (all 8 authentic local photos)
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
 
   // Composer Form State
@@ -32,7 +35,7 @@ export default function Home() {
     const d = new Date(Date.now() + 14 * 86400000);
     return d.toISOString().split('T')[0];
   });
-  const [returnDate, setReturnDate] = useState(() => {
+  const [returnDate] = useState(() => {
     const d = new Date(Date.now() + 20 * 86400000);
     return d.toISOString().split('T')[0];
   });
@@ -43,7 +46,7 @@ export default function Home() {
   const [trendingDestinations, setTrendingDestinations] = useState<DestinationSummary[]>([]);
   const [stories, setStories] = useState<StoryItem[]>([]);
 
-  // Section references for scroll scene observer
+  // Section references
   const heroRef = useRef<HTMLElement>(null);
   const composerRef = useRef<HTMLElement>(null);
   const discoverRef = useRef<HTMLElement>(null);
@@ -67,38 +70,6 @@ export default function Home() {
     loadContent();
   }, []);
 
-  // IntersectionObserver for scroll-driven destination storytelling across 6 authentic scenes
-  useEffect(() => {
-    const sections = [
-      { ref: heroRef, sceneIdx: 0 },      // Manali
-      { ref: composerRef, sceneIdx: 1 },  // Goa
-      { ref: discoverRef, sceneIdx: 2 },  // Udaipur
-      { ref: stylesRef, sceneIdx: 3 },    // Munnar
-      { ref: storiesRef, sceneIdx: 4 },   // Jaipur
-      { ref: ctaRef, sceneIdx: 5 },       // Rishikesh
-    ];
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const match = sections.find((s) => s.ref.current === entry.target);
-            if (match !== undefined) {
-              setActiveSceneIndex(match.sceneIdx);
-            }
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-
-    sections.forEach((s) => {
-      if (s.ref.current) observer.observe(s.ref.current);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
   const handlePlanSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const query = new URLSearchParams({
@@ -109,7 +80,31 @@ export default function Home() {
       travellers,
       budget
     }).toString();
-    router.push(`/plan?${query}`);
+
+    const user = getCurrentUser();
+    if (user) {
+      router.push(`/plan?${query}`);
+    } else {
+      saveTripDraft({
+        origin: origin.trim(),
+        destination: destination.trim(),
+        departureDate,
+        returnDate,
+        travellers,
+        budget,
+        returnTo: `/plan?${query}`,
+      });
+      router.push(`/login?returnTo=${encodeURIComponent(`/plan?${query}`)}&intent=plan`);
+    }
+  };
+
+  const handleHeroPlanClick = () => {
+    const user = getCurrentUser();
+    if (user) {
+      router.push('/plan');
+    } else {
+      router.push('/login?returnTo=/plan&intent=plan');
+    }
   };
 
   const currentScene = CINEMATIC_SCENES[activeSceneIndex] || CINEMATIC_SCENES[0];
@@ -119,44 +114,50 @@ export default function Home() {
       <Navbar transparentOnHero={true} />
 
       {/* ========================================================
-          1. CINEMATIC HERO SECTION
+          1. CINEMATIC HERO SECTION (8-DESTINATION HORIZONTAL BACKGROUND CAROUSEL)
           ======================================================== */}
       <section
         ref={heroRef}
-        className="relative min-h-[90vh] bg-[#0C1820] flex flex-col justify-between pt-24 pb-16 px-4 sm:px-6 lg:px-8 text-white overflow-hidden"
+        className="relative isolate overflow-hidden min-h-[84vh] sm:min-h-[88vh] bg-[#0C1820] flex flex-col justify-between pt-24 pb-16 px-4 sm:px-6 lg:px-8 text-white"
+        aria-label="Hero showcase"
       >
-        {/* Photographic Background Transition Engine */}
+        {/* Full-bleed Horizontal Sliding Background Carousel (strictly z-0, absolute inset-0) */}
         <DestinationScene
           activeIndex={activeSceneIndex}
-          className="absolute inset-0 z-0 h-full w-full"
+          onIndexChange={setActiveSceneIndex}
+          showControls={true}
+          showBadge={true}
         />
 
-        <div className="relative z-10 max-w-7xl mx-auto w-full flex-1 flex flex-col justify-center py-12">
+        {/* Hero Content (z-20 directly overlaid on top of photograph) */}
+        <div className="relative z-20 max-w-7xl mx-auto w-full flex-1 flex flex-col justify-center py-8 sm:py-12 pointer-events-auto">
           <div className="max-w-3xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wider uppercase text-white/95">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0C1820]/60 backdrop-blur-md border border-white/25 text-xs font-semibold tracking-wider uppercase text-white shadow-lg">
+              <span className="w-2 h-2 rounded-full bg-[#1F6E78] animate-pulse" />
               <span>{currentScene.name} &bull; {currentScene.tagline}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white font-editorial leading-[1.08] drop-shadow-md">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white font-editorial leading-[1.08] drop-shadow-xl">
               India is yours <br />
               <span className="italic font-normal text-[#D8A64B]">to explore.</span>
             </h1>
 
-            <p className="text-lg sm:text-xl text-white/90 max-w-2xl leading-relaxed font-normal drop-shadow">
+            <p className="text-base sm:text-xl text-white/95 max-w-2xl leading-relaxed font-normal drop-shadow">
               Build a journey around where you want to go, how you want to travel, and what you want to spend.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-4">
-              <Link
-                href="/plan"
-                className="px-8 py-4 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-lg shadow-[#1F6E78]/30 flex items-center gap-2 group cursor-pointer"
+              <button
+                type="button"
+                onClick={handleHeroPlanClick}
+                className="px-8 py-4 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold text-sm uppercase tracking-wider rounded-2xl transition-all shadow-xl shadow-[#1F6E78]/30 flex items-center gap-2 group cursor-pointer"
               >
                 <span>Plan a trip</span>
                 <ArrowRight className="w-4 h-4 btn-icon-shift" />
-              </Link>
+              </button>
               <Link
                 href="/explore"
-                className="px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border border-white/30 font-bold text-xs uppercase tracking-wider rounded-2xl transition-all"
+                className="px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border border-white/30 font-bold text-sm uppercase tracking-wider rounded-2xl transition-all shadow-lg cursor-pointer"
               >
                 Explore India
               </Link>
@@ -164,9 +165,9 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Scene Indicator Dots */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full flex items-center justify-between text-xs text-white/80 pt-6 border-t border-white/15">
-          <div className="flex items-center gap-2">
+        {/* Destination Dots Indicator & Carousel Navigation */}
+        <div className="relative z-20 max-w-7xl mx-auto w-full flex items-center justify-between text-xs text-white/90 pt-6 border-t border-white/20 pointer-events-auto">
+          <div className="flex items-center gap-2.5">
             {CINEMATIC_SCENES.map((scene, idx) => (
               <button
                 key={scene.id}
@@ -174,16 +175,17 @@ export default function Home() {
                 onClick={() => setActiveSceneIndex(idx)}
                 className={`transition-all duration-300 rounded-full cursor-pointer ${
                   idx === activeSceneIndex
-                    ? 'w-8 h-2 bg-[#D8A64B]'
-                    : 'w-2 h-2 bg-white/40 hover:bg-white/80'
+                    ? 'w-9 h-2.5 bg-[#D8A64B] shadow-md shadow-[#D8A64B]/40'
+                    : 'w-2.5 h-2.5 bg-white/50 hover:bg-white/90'
                 }`}
-                title={`View ${scene.name}`}
+                title={`View ${scene.name} (${scene.state})`}
+                aria-label={`Jump to ${scene.name}`}
               />
             ))}
           </div>
 
-          <div className="text-[11px] font-medium tracking-wide text-white/70">
-            Scroll to explore India &darr;
+          <div className="text-xs font-semibold tracking-wide text-white/80 hidden sm:block">
+            {activeSceneIndex + 1} of {CINEMATIC_SCENES.length} &bull; {currentScene.name}
           </div>
         </div>
       </section>
@@ -193,7 +195,7 @@ export default function Home() {
           ======================================================== */}
       <section
         ref={composerRef}
-        className="relative -mt-8 sm:-mt-12 z-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
+        className="relative -mt-8 sm:-mt-12 z-30 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
       >
         <div className="bg-[#FFFDFC] rounded-2xl sm:rounded-3xl shadow-xl border border-[#EBDCC7] p-5 sm:p-7">
           <form onSubmit={handlePlanSubmit} className="space-y-4">
@@ -305,7 +307,7 @@ export default function Home() {
 
               <button
                 type="submit"
-                className="w-full sm:w-auto px-7 py-2.5 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-[#1F6E78]/20 transition-all flex items-center justify-center gap-2 group cursor-pointer shrink-0"
+                className="w-full sm:w-auto px-8 py-3.5 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold text-sm uppercase tracking-wider rounded-xl shadow-md shadow-[#1F6E78]/20 transition-all flex items-center justify-center gap-2 group cursor-pointer shrink-0"
               >
                 <span>Plan my trip</span>
                 <ArrowRight className="w-4 h-4 btn-icon-shift" />
@@ -532,36 +534,37 @@ export default function Home() {
           ======================================================== */}
       <section
         ref={ctaRef}
-        className="relative py-24 text-white overflow-hidden"
+        className="relative py-28 text-white overflow-hidden"
       >
-        {/* Full-width authentic photography background */}
+        {/* Full-width authentic local photography background (Phase 6.8) */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="https://images.unsplash.com/photo-1600681978345-311667a788ad?q=80&w=2000&auto=format&fit=crop"
-          alt="Emerald waters of the sacred Ganga River in Rishikesh"
-          className="absolute inset-0 w-full h-full object-cover"
+          src="/home/rishikesh.webp"
+          alt="Majestic Ganga river valley and Himalayan foothills"
+          className="absolute inset-0 w-full h-full object-cover object-center transform scale-102"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0C1820]/95 via-[#0C1820]/80 to-[#0C1820]/90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0C1820]/85 via-[#0C1820]/65 to-[#0C1820]/80 pointer-events-none" />
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center space-y-6">
           <span className="text-xs font-bold uppercase tracking-wider text-[#D8A64B] font-mono">
             Your journey begins
           </span>
-          <h2 className="text-3xl sm:text-5xl font-bold font-editorial leading-tight text-white">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-editorial leading-tight text-white drop-shadow-md">
             Tell us your budget. <br />
             We build the journey.
           </h2>
-          <p className="text-sm sm:text-base text-white/85 max-w-xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto leading-relaxed">
             Every connecting train, bus, stay, and curated attraction across India — calculated strictly within your total spending cap.
           </p>
           <div className="pt-2">
-            <Link
-              href="/plan"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-xl shadow-[#1F6E78]/30 transition-all cursor-pointer group"
+            <button
+              type="button"
+              onClick={handleHeroPlanClick}
+              className="inline-flex items-center gap-2 px-8 py-4 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold text-sm uppercase tracking-wider rounded-2xl shadow-xl shadow-[#1F6E78]/30 transition-all cursor-pointer group"
             >
               <span>Launch Trip Planner</span>
               <ArrowRight className="w-4 h-4 btn-icon-shift" />
-            </Link>
+            </button>
           </div>
         </div>
       </section>

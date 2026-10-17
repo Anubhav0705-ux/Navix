@@ -2483,7 +2483,7 @@
     "opening_time": "09:00",
     "closing_time": "17:30",
     "description": "1605 UNESCO Baroque basilica holding the sacred mortal relics of St. Francis Xavier.",
-    "image": "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/goa_basilica_bom_jesus.webp",
     "recommended_score": 86,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2502,7 +2502,7 @@
     "opening_time": "08:00",
     "closing_time": "20:00",
     "description": "Preserved 18th-century Portuguese residential ward with colorful tiled houses and wrought-iron balconies.",
-    "image": "https://images.unsplash.com/photo-1587922546307-776227941871?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/goa_fontainhas.webp",
     "recommended_score": 87,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2521,7 +2521,7 @@
     "opening_time": "09:00",
     "closing_time": "18:00",
     "description": "1612 Portuguese fortress overlooking Mandovi river and the Arabian Sea with freshwater cisterns.",
-    "image": "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/goa_fort_aguada.webp",
     "recommended_score": 88,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2540,7 +2540,7 @@
     "opening_time": "06:00",
     "closing_time": "19:00",
     "description": "Four-tiered milky waterfall cascading 310 meters down Western Ghats mountain crags inside Bhagwan Mahavir park.",
-    "image": "https://images.unsplash.com/photo-1587922546307-776227941871?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/goa_dudhsagar_falls.webp",
     "recommended_score": 89,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2559,7 +2559,7 @@
     "opening_time": "10:00",
     "closing_time": "17:00",
     "description": "Legendary seaside marketplace established in the 1960s offering textiles, handicrafts, and coastal views.",
-    "image": "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/goa_anjuna_coast.webp",
     "recommended_score": 90,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2578,7 +2578,7 @@
     "opening_time": "10:30",
     "closing_time": "21:00",
     "description": "Red laterite hill fort overlooking Vagator Beach and Chapora river mouth, famous for dramatic sunsets.",
-    "image": "https://images.unsplash.com/photo-1587922546307-776227941871?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/goa_chapora_fort.webp",
     "recommended_score": 91,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2597,7 +2597,7 @@
     "opening_time": "08:00",
     "closing_time": "17:00",
     "description": "Gentle southern bay lined with coconut palms and colorful wooden beach shacks with dolphin-spotting boats.",
-    "image": "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/goa_palolem_beach.webp",
     "recommended_score": 92,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2616,7 +2616,7 @@
     "opening_time": "07:00",
     "closing_time": "19:00",
     "description": "One of the largest churches in Asia, famed for its Golden Bell and Portuguese-Manueline architecture.",
-    "image": "https://images.unsplash.com/photo-1587922546307-776227941871?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/goa_se_cathedral.webp",
     "recommended_score": 93,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2635,7 +2635,7 @@
     "opening_time": "09:00",
     "closing_time": "18:00",
     "description": "200-year-old eco-plantation introducing vanilla, pepper, nutmeg, and authentic Saraswat lunch.",
-    "image": "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/goa_savoi_spice.webp",
     "recommended_score": 94,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -2654,7 +2654,7 @@
     "opening_time": "10:00",
     "closing_time": "18:00",
     "description": "Freshwater lagoon nestled between cliffside banyan trees and the Arabian Sea sandy stretch.",
-    "image": "https://images.unsplash.com/photo-1587922546307-776227941871?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/goa_arambol_lake.webp",
     "recommended_score": 95,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3813,7 +3813,7 @@
     "opening_time": "09:00",
     "closing_time": "18:00",
     "description": "16th-century hilltop fortress with mirror-inlaid palaces, Maota Lake vistas, and monumental Rajput ramparts.",
-    "image": "https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/jaipur_amber_fort.webp",
     "recommended_score": 86,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3832,7 +3832,7 @@
     "opening_time": "06:00",
     "closing_time": "20:00",
     "description": "Iconic five-story pink sandstone facade with 953 jharokhas built for royal court women to observe street processions.",
-    "image": "https://images.unsplash.com/photo-1603288940316-4e43b1244036?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/jaipur_hawa_mahal.webp",
     "recommended_score": 87,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3851,7 +3851,7 @@
     "opening_time": "08:30",
     "closing_time": "18:30",
     "description": "Royal residence blending Rajasthani and Mughal architectural courtyards, textiles, and royal armories.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/jaipur_city_palace.webp",
     "recommended_score": 88,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3870,7 +3870,7 @@
     "opening_time": "06:00",
     "closing_time": "19:00",
     "description": "UNESCO World Heritage site containing 19 architectural astronomical instruments built by Maharaja Sawai Jai Singh II.",
-    "image": "https://images.unsplash.com/photo-1600100397608-f010e42f9b88?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/jaipur_jantar_mantar.webp",
     "recommended_score": 89,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3889,7 +3889,7 @@
     "opening_time": "10:00",
     "closing_time": "17:00",
     "description": "Aravalli hillside rampart offering panoramic sunset vistas across the illuminated pink city below.",
-    "image": "https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/jaipur_nahargarh_fort.webp",
     "recommended_score": 90,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3908,7 +3908,7 @@
     "opening_time": "10:30",
     "closing_time": "21:00",
     "description": "Indo-Saracenic museum housing Persian carpets, miniature paintings, metal sculptures, and historic coins.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/jaipur_albert_hall.webp",
     "recommended_score": 91,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3927,7 +3927,7 @@
     "opening_time": "08:00",
     "closing_time": "17:00",
     "description": "Water palace floating quietly in the center of Man Sagar Lake, framed by surrounding desert hills.",
-    "image": "https://images.unsplash.com/photo-1603288940316-4e43b1244036?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/jaipur_jal_mahal.webp",
     "recommended_score": 92,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3946,7 +3946,7 @@
     "opening_time": "07:00",
     "closing_time": "19:00",
     "description": "Lively old-walled lanes lined with authentic Kundan jewelry, bandhani block-prints, and brassware.",
-    "image": "https://images.unsplash.com/photo-1600100397608-f010e42f9b88?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/jaipur_johari_bazaar.webp",
     "recommended_score": 93,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3965,7 +3965,7 @@
     "opening_time": "09:00",
     "closing_time": "18:00",
     "description": "Ancient sacred pilgrimage site set into an Aravalli mountain crevice featuring natural spring water pools.",
-    "image": "https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/jaipur_galta_ji.webp",
     "recommended_score": 94,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -3984,7 +3984,7 @@
     "opening_time": "10:00",
     "closing_time": "18:00",
     "description": "Fortress overlooking Amber Fort housing the world's largest historic wheeled cannon, forged in 1720.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/jaipur_jaigarh_fort.webp",
     "recommended_score": 95,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4003,7 +4003,7 @@
     "opening_time": "09:00",
     "closing_time": "18:00",
     "description": "Granite and marble palace complex towering above Lake Pichola, featuring 11 smaller palaces built over four centuries.",
-    "image": "https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?q=80&w=800&auto=format&fit=crop",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/City_Palace_Udaipur_Rajasthan_India.jpg/1280px-City_Palace_Udaipur_Rajasthan_India.jpg",
     "recommended_score": 86,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4022,7 +4022,7 @@
     "opening_time": "06:00",
     "closing_time": "20:00",
     "description": "Boat ride gliding past Lake Palace, Jag Mandir, and bathing ghats as evening reflections shimmer across the lake.",
-    "image": "https://images.unsplash.com/photo-1585123388867-3bfe6dd4bdbf?q=80&w=800&auto=format&fit=crop",
+    "image": "https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?q=80&w=1200&auto=format&fit=crop",
     "recommended_score": 87,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4041,7 +4041,7 @@
     "opening_time": "08:30",
     "closing_time": "18:30",
     "description": "Yellow sandstone island retreat built in the 17th century with marble elephant statues guarding the landing pavilion.",
-    "image": "https://images.unsplash.com/photo-1592635196078-9fe32a26079d?q=80&w=800&auto=format&fit=crop",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Jag_Mandir_Palace_Udaipur.jpg/1280px-Jag_Mandir_Palace_Udaipur.jpg",
     "recommended_score": 88,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4060,7 +4060,7 @@
     "opening_time": "06:00",
     "closing_time": "19:00",
     "description": "1651 Indo-Aryan carved temple dedicated to Lord Vishnu, located outside the main royal palace gates.",
-    "image": "https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?q=80&w=800&auto=format&fit=crop",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Jagdish_Temple_Udaipur.jpg/1280px-Jagdish_Temple_Udaipur.jpg",
     "recommended_score": 89,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4079,7 +4079,7 @@
     "opening_time": "10:00",
     "closing_time": "17:00",
     "description": "Lush historical gardens engineered with marble pavilions, lotus pools, and gravity-fed brass fountains.",
-    "image": "https://images.unsplash.com/photo-1585123388867-3bfe6dd4bdbf?q=80&w=800&auto=format&fit=crop",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Saheliyon_ki_Bari_Fountains.jpg/1280px-Saheliyon_ki_Bari_Fountains.jpg",
     "recommended_score": 90,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4098,7 +4098,7 @@
     "opening_time": "10:30",
     "closing_time": "21:00",
     "description": "Hilltop castle perched high on Bansdara Peak offering vistas over the lakes and Aravalli mountain ranges.",
-    "image": "https://images.unsplash.com/photo-1592635196078-9fe32a26079d?q=80&w=800&auto=format&fit=crop",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Monsoon_Palace_Udaipur.jpg/1280px-Monsoon_Palace_Udaipur.jpg",
     "recommended_score": 91,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4117,7 +4117,7 @@
     "opening_time": "08:00",
     "closing_time": "17:00",
     "description": "Historic waterfront haveli on Gangaur Ghat hosting nightly Rajasthani folk dance and puppet performances.",
-    "image": "https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?q=80&w=800&auto=format&fit=crop",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bagore_Ki_Haveli_Gangaur_Ghat.jpg/1280px-Bagore_Ki_Haveli_Gangaur_Ghat.jpg",
     "recommended_score": 92,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4136,7 +4136,7 @@
     "opening_time": "07:00",
     "closing_time": "19:00",
     "description": "Second major lake in Udaipur bordered by Moti Magri hill, popular for sunset walks and pedal boating.",
-    "image": "https://images.unsplash.com/photo-1585123388867-3bfe6dd4bdbf?q=80&w=800&auto=format&fit=crop",
+    "image": "https://images.unsplash.com/photo-1585123388867-3bfe6dd4bdbf?q=80&w=1200&auto=format&fit=crop",
     "recommended_score": 93,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4155,7 +4155,7 @@
     "opening_time": "09:00",
     "closing_time": "18:00",
     "description": "Cultural institution and museum preserving Rajasthani rural puppetry, mask arts, and folk folklore traditions.",
-    "image": "https://images.unsplash.com/photo-1592635196078-9fe32a26079d?q=80&w=800&auto=format&fit=crop",
+    "image": "https://images.unsplash.com/photo-1592635196078-9fe32a26079d?q=80&w=1200&auto=format&fit=crop",
     "recommended_score": 94,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -4174,7 +4174,7 @@
     "opening_time": "10:00",
     "closing_time": "18:00",
     "description": "Peaceful lakeside promenade directly across from the illuminated City Palace and Lake Palace.",
-    "image": "https://images.unsplash.com/photo-1585123388867-3bfe6dd4bdbf?q=80&w=800&auto=format&fit=crop",
+    "image": "https://images.unsplash.com/photo-1603262110263-fb0112e7cc33?q=80&w=1200&auto=format&fit=crop",
     "recommended_score": 95,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -6093,7 +6093,7 @@
     "opening_time": "08:00",
     "closing_time": "18:00",
     "description": "1553 pagoda-style wooden temple built by Raja Bahadur Singh in dense deodar forest.",
-    "image": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/manali_hadimba_temple.webp",
     "recommended_score": 86,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -6112,7 +6112,7 @@
     "opening_time": "07:00",
     "closing_time": "20:00",
     "description": "Traditional Himachali stone houses, apple orchards, and the only historic temple dedicated to sage Manu.",
-    "image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/manali_manu_temple.webp",
     "recommended_score": 87,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -6131,7 +6131,7 @@
     "opening_time": "08:30",
     "closing_time": "17:30",
     "description": "Vibrant alpine arena famous for tandem paragliding, zorbing, and quad-bike snow rides.",
-    "image": "https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/manali_solang_valley.webp",
     "recommended_score": 88,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -6150,7 +6150,7 @@
     "opening_time": "07:00",
     "closing_time": "18:00",
     "description": "Refreshing mountain forest walking trail from Vashisht village ending at thunderous cascading drops.",
-    "image": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/manali_jogini_waterfall.webp",
     "recommended_score": 89,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -6169,7 +6169,7 @@
     "opening_time": "10:00",
     "closing_time": "17:00",
     "description": "Natural therapeutic hot water bath kunds carved from stone in a 4,000-year-old Vedic temple.",
-    "image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/manali_vashisht_temple.webp",
     "recommended_score": 90,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -6188,7 +6188,7 @@
     "opening_time": "10:30",
     "closing_time": "21:00",
     "description": "Engineering marvel at 3,000m leading into Lahaul valley with glacial waterfalls and hanging glaciers.",
-    "image": "https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/manali_atal_tunnel.webp",
     "recommended_score": 91,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -6207,7 +6207,7 @@
     "opening_time": "07:00",
     "closing_time": "20:00",
     "description": "1460 wooden Himalayan castle overlooking Beas river, featuring Russian painter Nicholas Roerich's gallery.",
-    "image": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/manali_naggar_castle.webp",
     "recommended_score": 92,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -6226,7 +6226,7 @@
     "opening_time": "07:00",
     "closing_time": "19:00",
     "description": "Towering cedar pine walk between Mall Road and Old Manali accompanied by river rapids.",
-    "image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/manali_beas_river.webp",
     "recommended_score": 93,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -6245,7 +6245,7 @@
     "opening_time": "09:00",
     "closing_time": "18:00",
     "description": "Vibrant 1960 Tibetan Buddhist monastery adorned with colorful frescoes and spinning prayer wheels.",
-    "image": "https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/manali_tibetan_monastery.webp",
     "recommended_score": 94,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -6264,7 +6264,7 @@
     "opening_time": "10:00",
     "closing_time": "18:00",
     "description": "Central paved promenade filled with woollen shawls, Kullu caps, dried apricots, and wooden toys.",
-    "image": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/manali_mall_road.webp",
     "recommended_score": 95,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -7803,7 +7803,7 @@
     "opening_time": "09:00",
     "closing_time": "18:00",
     "description": "Majestic riverside confluence where brass lamps and chanted hymns illuminate the Ganges at dusk.",
-    "image": "https://images.unsplash.com/photo-1588083949404-c4f1ed1323b3?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/rishikesh_triveni_ghat.webp",
     "recommended_score": 86,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -7822,7 +7822,7 @@
     "opening_time": "06:00",
     "closing_time": "20:00",
     "description": "Historic 450-foot iron suspension bridge spanning the emerald river rapids, flanked by temples.",
-    "image": "https://images.unsplash.com/photo-1609137144820-221087cfef42?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/rishikesh_lakshman_jhula.webp",
     "recommended_score": 87,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -7841,7 +7841,7 @@
     "opening_time": "08:30",
     "closing_time": "18:30",
     "description": "Transcendental meditation site where the Beatles stayed in 1968, filled with stone meditation domes.",
-    "image": "https://images.unsplash.com/photo-1588083949404-c4f1ed1323b3?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/rishikesh_beatles_ashram.webp",
     "recommended_score": 88,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -7860,7 +7860,7 @@
     "opening_time": "06:00",
     "closing_time": "19:00",
     "description": "Refreshing two-tier natural cascade accessed via a mountain walking trail through terraced foothills.",
-    "image": "https://images.unsplash.com/photo-1609137144820-221087cfef42?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/rishikesh_neer_garh_waterfall.webp",
     "recommended_score": 89,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -7879,7 +7879,7 @@
     "opening_time": "10:00",
     "closing_time": "17:00",
     "description": "Thrilling 16km Ganges river rafting expedition navigating Class III rapids.",
-    "image": "https://images.unsplash.com/photo-1588083949404-c4f1ed1323b3?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/rishikesh_river_rafting.webp",
     "recommended_score": 90,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -7898,7 +7898,7 @@
     "opening_time": "10:30",
     "closing_time": "21:00",
     "description": "Serene spiritual retreat by the river with clean courtyards, yoga halls, and riverside aarti.",
-    "image": "https://images.unsplash.com/photo-1609137144820-221087cfef42?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/rishikesh_parmarth_niketan.webp",
     "recommended_score": 91,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -7917,7 +7917,7 @@
     "opening_time": "08:00",
     "closing_time": "17:00",
     "description": "High ridge peak at 1,676m offering sunrise panoramas of the snow-clad Greater Himalayan peaks.",
-    "image": "https://images.unsplash.com/photo-1588083949404-c4f1ed1323b3?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/rishikesh_kunjapuri_temple.webp",
     "recommended_score": 92,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -7936,7 +7936,7 @@
     "opening_time": "07:00",
     "closing_time": "19:00",
     "description": "Spiritual pedestrian corridor connecting bustling bazaar lanes, bookshops, and ashrams.",
-    "image": "https://images.unsplash.com/photo-1609137144820-221087cfef42?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/rishikesh_ram_jhula.webp",
     "recommended_score": 93,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -7974,7 +7974,7 @@
     "opening_time": "10:00",
     "closing_time": "18:00",
     "description": "India's highest fixed cantilever bungee platform (83 meters) operated by certified adventure jumpmasters.",
-    "image": "https://images.unsplash.com/photo-1609137144820-221087cfef42?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/rishikesh_bungee_jumping.webp",
     "recommended_score": 95,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -14263,7 +14263,7 @@
     "opening_time": "09:00",
     "closing_time": "18:00",
     "description": "Indo-Saracenic royal palace of the Wodeyars featuring stained-glass peacock domes, durbar halls, and 97,000 light bulbs.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/mysuru_palace.webp",
     "recommended_score": 86,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -14282,7 +14282,7 @@
     "opening_time": "06:00",
     "closing_time": "20:00",
     "description": "1,000-meter hill peak crowned by an ancient temple dedicated to Goddess Durga and a giant monolithic Nandi bull.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/mysuru_chamundeshwari_temple.webp",
     "recommended_score": 87,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -14301,7 +14301,7 @@
     "opening_time": "08:30",
     "closing_time": "18:30",
     "description": "Terraced garden built across the Krishnarajasagara dam on Cauvery river with illuminated musical fountains.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/mysuru_brindavan_gardens.webp",
     "recommended_score": 88,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -14320,7 +14320,7 @@
     "opening_time": "06:00",
     "closing_time": "19:00",
     "description": "Twin-spired cathedral built in 1936 inspired by Germany's Cologne Cathedral with stained-glass biblical windows.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/mysuru_st_philomenas.webp",
     "recommended_score": 89,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -14339,7 +14339,7 @@
     "opening_time": "10:00",
     "closing_time": "17:00",
     "description": "Vibrant 100-year-old covered market packed with fragrant mounds of Mysore jasmine, sandalwood, and kumkum.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/mysuru_devaraja_market.webp",
     "recommended_score": 90,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -14358,7 +14358,7 @@
     "opening_time": "10:30",
     "closing_time": "21:00",
     "description": "Former royal residence housing precious Ravi Varma oil paintings and musical clocks.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/mysuru_jaganmohan_palace.webp",
     "recommended_score": 91,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -14377,7 +14377,7 @@
     "opening_time": "08:00",
     "closing_time": "17:00",
     "description": "Historic government distillery established in 1916 processing pure sandalwood oil and incense.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/mysuru_sandalwood_factory.webp",
     "recommended_score": 92,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -14396,7 +14396,7 @@
     "opening_time": "07:00",
     "closing_time": "19:00",
     "description": "Serene urban lake featuring India's largest walk-through aviary and tranquil butterfly parks.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/mysuru_karanji_lake.webp",
     "recommended_score": 93,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -14415,7 +14415,7 @@
     "opening_time": "09:00",
     "closing_time": "18:00",
     "description": "Historical island capital of Tipu Sultan 15km north featuring Ranganathaswamy Temple and Gumbaz mausoleum.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/mysuru_srirangapatna.webp",
     "recommended_score": 94,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"
@@ -14434,7 +14434,7 @@
     "opening_time": "10:00",
     "closing_time": "18:00",
     "description": "Charming outdoor heritage museum displaying vintage steam locomotives and royal Maharani saloon coaches.",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "image": "/media/places/mysuru_rail_museum.webp",
     "recommended_score": 95,
     "data_state": "DEMO_SEED",
     "price_state": "DEMO_ESTIMATE"

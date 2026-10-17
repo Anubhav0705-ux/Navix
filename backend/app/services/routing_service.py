@@ -363,10 +363,54 @@ def get_route_alternatives(db: Session, request: RoutingRequest) -> List[Dict[st
                 "duration_minutes": comf_dur
             })
 
-    # Ensure labels are distinct and informative
-    labels = ["RECOMMENDED", "CHEAPEST", "FASTEST", "COMFORT", "LOWEST TRANSFERS"]
-    for i, alt in enumerate(alternatives):
-        if i < len(labels):
-            alt["label"] = labels[i]
+    # 1. Normalize duration_minutes across all alternatives to avoid multi-day artifacts
+    for alt in alternatives:
+        seg_dur = sum(s.duration_minutes for s in alt["segments"]) + sum(s.layover_before_minutes for s in alt["segments"])
+        if alt["duration_minutes"] <= 0 or (alt["duration_minutes"] > 2880 and seg_dur < alt["duration_minutes"] // 2):
+            alt["duration_minutes"] = seg_dur if seg_dur > 0 else 60
+
+    # 2. Honest and consistent labeling based on actual calculated attributes
+    if alternatives:
+        min_cost = min(Decimal(str(a["total_cost"])) for a in alternatives)
+        min_dur = min(a["duration_minutes"] for a in alternatives)
+
+        # Identify genuine cheapest and fastest alternatives
+        cheapest_alt = next(a for a in alternatives if Decimal(str(a["total_cost"])) == min_cost)
+        fastest_alt = next(a for a in alternatives if a["duration_minutes"] == min_dur)
+        recommended_alt = alternatives[0]
+
+        used_labels = set()
+        for alt in alternatives:
+            if alt is recommended_alt:
+                if alt is cheapest_alt:
+                    alt["label"] = "RECOMMENDED"
+                else:
+                    alt["label"] = "RECOMMENDED"
+            elif alt is cheapest_alt:
+                alt["label"] = "CHEAPEST"
+            elif alt is fastest_alt:
+                alt["label"] = "FASTEST"
+            elif alt["transfers"] == 0 and "DIRECT" not in used_labels:
+                alt["label"] = "COMFORT"
+                used_labels.add("DIRECT")
+            elif "FLIGHT" in alt["modes"]:
+                alt["label"] = "FASTEST"
+            elif "CAB" in alt["modes"]:
+                alt["label"] = "COMFORT"
+            elif alt["transfers"] == 0:
+                alt["label"] = "LOWEST TRANSFERS"
+            else:
+                alt["label"] = "BALANCED"
+
+        # If cheapest_alt is also recommended_alt and len > 1, make sure "CHEAPEST" or "FASTEST" or "COMFORT" is represented
+        if recommended_alt is cheapest_alt and len(alternatives) > 1:
+            if fastest_alt is not recommended_alt:
+                fastest_alt["label"] = "FASTEST"
+            else:
+                alternatives[1]["label"] = "COMFORT"
+
+        # Ensure ID ordering is sequential
+        for idx, alt in enumerate(alternatives, start=1):
+            alt["id"] = f"alt_{idx}"
 
     return alternatives

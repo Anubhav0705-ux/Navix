@@ -134,6 +134,32 @@ class TestTransportAlternatives:
         api_data = res.json()
         assert len(api_data["alternatives"]) >= 3
 
+    def test_pune_goa_pricing_and_duration_integrity(self, db):
+        """Regression test: Pune -> Goa alternatives must have mathematically honest labels and realistic durations."""
+        res = client.post(
+            "/api/v1/routes/alternatives",
+            json={
+                "origin": "Pune",
+                "destination": "Goa",
+                "departure_time": "2026-10-26T06:00:00"
+            }
+        )
+        assert res.status_code == 200
+        data = res.json()
+        alts = data["alternatives"]
+        assert len(alts) >= 2, "Expected at least 2 alternatives for Pune -> Goa"
+
+        min_cost = min(float(a["total_cost"]) for a in alts)
+        cheapest_alts = [a for a in alts if a.get("label") == "CHEAPEST"]
+        if cheapest_alts:
+            for ch in cheapest_alts:
+                assert float(ch["total_cost"]) == min_cost, f"CHEAPEST label has cost {ch['total_cost']} but min_cost is {min_cost}"
+
+        for a in alts:
+            assert a["duration_minutes"] < 2880, f"Duration {a['duration_minutes']} mins exceeds 48 hours artifact"
+            assert a["duration_minutes"] > 0
+
+
 
 class TestGuaranteedCorridors:
     @pytest.mark.parametrize("origin,destination", [

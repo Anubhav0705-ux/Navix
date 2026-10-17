@@ -6,6 +6,7 @@ import {
   Star, Edit2
 } from 'lucide-react';
 import { BudgetEditModal } from './PlannerComponents';
+import { computeBudgetLedger } from '@/lib/budgetCalculator';
 
 interface ReviewStageProps {
   onExecutePlan: () => void;
@@ -32,18 +33,26 @@ export const ReviewStage: React.FC<ReviewStageProps> = ({
   const foodCost = foodRatePerDay * diffDays * state.travellers;
   const activitiesCost = state.selectedAttractionItems.reduce((acc, a) => acc + (a.entry_fee || 0), 0) * state.travellers;
   const localTransferCost = Math.round(150 * diffDays * state.travellers);
-  const contingencyBuffer = Math.round(state.maximumBudget * 0.08);
 
-  const totalCalculated = transportCost + stayCost + foodCost + activitiesCost + localTransferCost + contingencyBuffer;
-  const remainingBudget = state.maximumBudget - totalCalculated;
+  // Authoritative deterministic financial ledger with exact 8% contingency & 1-click shortfall resolution
+  const ledger = computeBudgetLedger({
+    transportCost,
+    stayCost,
+    foodCost,
+    activitiesCost,
+    localTransferCost,
+    maximumBudget: state.maximumBudget
+  });
 
-  // Budget status
-  let budgetStatus: 'COMFORTABLE' | 'TIGHT' | 'OVER BUDGET' = 'COMFORTABLE';
-  if (remainingBudget < 0) {
-    budgetStatus = 'OVER BUDGET';
-  } else if (remainingBudget < state.maximumBudget * 0.1) {
-    budgetStatus = 'TIGHT';
-  }
+  const {
+    contingencyReserve: contingencyBuffer,
+    totalCost: totalCalculated,
+    remainingBudget,
+    isShortfall,
+    shortfallAmount,
+    budgetStatus,
+    minimumRequiredBudget
+  } = ledger;
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -354,36 +363,37 @@ export const ReviewStage: React.FC<ReviewStageProps> = ({
               </div>
             </div>
 
-            {/* Over-Budget Advice Pill */}
-            {budgetStatus === 'OVER BUDGET' && (
+            {/* Over-Budget Advice Pill with 1-Click Deterministic Resolution */}
+            {isShortfall && (
               <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs space-y-3 text-rose-800 animate-in fade-in duration-300">
-                <div className="flex items-center gap-2 font-bold text-rose-800">
+                <div className="flex items-center gap-2 font-bold text-rose-800 text-sm">
                   <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
-                  <span>Budget Exceeded by ₹{Math.abs(remainingBudget).toLocaleString()}</span>
+                  <span>Budget Exceeded by ₹{shortfallAmount.toLocaleString()}</span>
                 </div>
-                <p className="text-[11px] text-rose-700 leading-relaxed">
-                  Your current selections exceed your maximum budget cap. You can either increase the budget or adjust individual selections.
+                <p className="text-xs text-rose-700 leading-relaxed">
+                  Your current selections exceed your budget cap. Click below to adjust to the minimum mathematically feasible budget (including 8% contingency) in one click.
                 </p>
                 <div className="space-y-2 pt-1">
                   <button
+                    id="auto-fix-budget-btn"
                     type="button"
-                    onClick={() => dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: totalCalculated })}
-                    className="w-full py-2 bg-[#1F6E78] hover:bg-[#15525A] text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                    onClick={() => dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: minimumRequiredBudget })}
+                    className="w-full py-2.5 bg-[#1F6E78] hover:bg-[#15525A] text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-sm hover:shadow-md cursor-pointer flex items-center justify-center gap-2"
                   >
-                    Increase Budget to ₹{totalCalculated.toLocaleString()}
+                    <span>Increase Budget to ₹{minimumRequiredBudget.toLocaleString()}</span>
                   </button>
-                  <div className="flex flex-col gap-1 text-[11px] pt-1">
+                  <div className="flex flex-col gap-1 text-xs pt-1">
                     <button
                       type="button"
                       onClick={() => dispatch({ type: 'SET_STAGE', payload: 2 })}
-                      className="text-left font-bold text-rose-800 hover:underline cursor-pointer"
+                      className="text-left font-semibold text-rose-800 hover:underline cursor-pointer"
                     >
                       &bull; Switch to CHEAPEST Transit alternative
                     </button>
                     <button
                       type="button"
                       onClick={() => dispatch({ type: 'SET_STAGE', payload: 5 })}
-                      className="text-left font-bold text-rose-800 hover:underline cursor-pointer"
+                      className="text-left font-semibold text-rose-800 hover:underline cursor-pointer"
                     >
                       &bull; Choose a Budget Homestay or Hostel
                     </button>

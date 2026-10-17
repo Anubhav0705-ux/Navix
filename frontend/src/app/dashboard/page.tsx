@@ -8,6 +8,7 @@ import { getCurrentUser } from '@/services/auth';
 import { getSavedTrips, deleteSavedTrip, SavedTripItem, saveTrip } from '@/services/trips';
 import { saveTripPlan } from '@/lib';
 import { UserResponse } from '@/types';
+import { resolveDestinationPhoto } from '@/lib/mediaResolver';
 import {
   Compass, Calendar, Trash2, ExternalLink, ArrowRight, Loader2,
   MapPin, Download, Copy, Sparkles, CheckCircle2, Plus
@@ -60,7 +61,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!currentUser) {
-      router.push('/login');
+      router.replace('/login?returnTo=/dashboard');
       return;
     }
 
@@ -73,6 +74,10 @@ export default function DashboardPage() {
         setLoading(false);
       });
   }, [currentUser, router]);
+
+  if (!currentUser) {
+    return null;
+  }
 
   const showToast = (msg: string) => {
     setFeedbackMsg(msg);
@@ -161,7 +166,16 @@ export default function DashboardPage() {
         {/* --- 1. UPCOMING / ACTIVE TRIP SPOTLIGHT --- */}
         {upcomingTrip && (
           <section className="bg-[#142A38] text-white rounded-3xl p-6 sm:p-10 shadow-xl space-y-6 relative overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+            {/* Ambient authentic destination photo */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={resolveDestinationPhoto(upcomingTrip.destination)}
+              alt={upcomingTrip.destination}
+              className="absolute inset-0 w-full h-full object-cover object-center opacity-25 pointer-events-none"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#142A38] via-[#142A38]/90 to-[#142A38]/60 pointer-events-none" />
+
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
               <span className="px-3.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-[#D8A64B]" />
                 Featured Active Journey
@@ -252,8 +266,26 @@ export default function DashboardPage() {
               {savedTrips.map((item) => (
                 <div
                   key={item.trip_id}
-                  className="bg-white border border-[#EBDCC7] rounded-3xl overflow-hidden shadow-sm hover:border-[#1F6E78] transition-all flex flex-col justify-between photo-card-hover"
+                  className="group bg-white border border-[#EBDCC7] rounded-3xl overflow-hidden shadow-sm hover:border-[#1F6E78] transition-all flex flex-col justify-between photo-card-hover"
                 >
+                  {/* Authentic Destination Cover Photo */}
+                  <div className="relative h-44 w-full overflow-hidden bg-[#F5EBE1]">
+                    <SafeImage
+                      src={resolveDestinationPhoto(item.destination)}
+                      alt={`Journey to ${item.destination}`}
+                      category="destination"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent pointer-events-none" />
+                    <span className="absolute bottom-3 left-4 text-xs font-bold text-white drop-shadow flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-[#D8A64B]" />
+                      <span>{item.destination}</span>
+                    </span>
+                    <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md text-white text-[10px] font-mono border border-white/20">
+                      #{item.trip_id.slice(-6)}
+                    </span>
+                  </div>
+
                   <div className="p-6 space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase border border-emerald-200">
@@ -353,6 +385,7 @@ export default function DashboardPage() {
                   <SafeImage
                     src={dest.image}
                     alt={dest.name}
+                    category={dest.tag}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-[#142A38] shadow-xs">
