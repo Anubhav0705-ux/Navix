@@ -10,10 +10,10 @@ export const Logo: React.FC<LogoProps> = ({ className = '', light = false }) => 
   return (
     <Link href="/" className={`inline-flex items-center gap-2.5 group ${className}`}>
       {/* Route node visual: dot - line - dot */}
-      <div className={`relative flex items-center justify-center w-7 h-7 rounded-lg ${
-        light ? 'bg-white/10 text-emerald-400' : 'bg-[#0E9F7A]/10 text-[#0E9F7A]'
-      } transition-smooth group-hover:scale-105`}>
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <div className={`relative flex items-center justify-center w-8 h-8 rounded-xl ${
+        light ? 'bg-white/15 text-white' : 'bg-[#246BCE]/10 text-[#246BCE]'
+      } transition-all duration-300 group-hover:scale-105 shadow-xs`}>
+        <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="5" cy="19" r="2.5" />
           <circle cx="19" cy="5" r="2.5" />
           <path d="M7 17L17 7" />
@@ -21,10 +21,10 @@ export const Logo: React.FC<LogoProps> = ({ className = '', light = false }) => 
         </svg>
       </div>
 
-      <span className={`text-xl font-bold tracking-tight font-sans ${
-        light ? 'text-white' : 'text-[#0B1320]'
+      <span className={`text-xl font-black tracking-tight font-sans ${
+        light ? 'text-white' : 'text-[#193451]'
       }`}>
-        NAVIX<span className="text-[#0E9F7A]">.</span>
+        NAVIX<span className="text-[#F46F58]">.</span>
       </span>
     </Link>
   );

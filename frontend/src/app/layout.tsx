@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
-import { Manrope, Playfair_Display } from "next/font/google";
+import { Plus_Jakarta_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 
-const manrope = Manrope({
-  variable: "--font-manrope",
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const fraunces = Fraunces({
+  variable: "--font-serif",
   subsets: ["latin"],
   display: "swap",
   style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
-  title: "NAVIX — Algorithmic Budget-First Multi-Modal Travel Planner",
-  description: "NAVIX connects trains, buses, metros and local transport from Tier-2/Tier-3 Indian cities subject to a strict total trip budget constraint.",
+  title: "NAVIX — India's Premier Multi-Modal Travel Platform",
+  description: "Discover destinations across India, compare trains, buses, and flights, and generate complete itineraries bounded by your total budget.",
 };
 
 export default function RootLayout({
@@ -28,9 +28,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${playfair.variable} h-full antialiased`}
+      className={`${jakarta.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-[#F7F5F0] text-[#0B1320]">
+      <body className="min-h-full flex flex-col font-sans bg-[#FFF9F2] text-[#193451] selection:bg-[#246BCE]/15 selection:text-[#193451]">
         {children}
       </body>
     </html>

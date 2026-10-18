@@ -3,13 +3,56 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Navbar, Footer } from '@/components';
+import {
+  Navbar, Footer, SafeImage,
+  PassportStamp, DottedRouteAccent, CoordinatesTag,
+  PostageStampSnippet, CompassRoseFragment
+} from '@/components';
 import { getCurrentUser } from '@/services/auth';
-import { getSavedTrips, deleteSavedTrip, SavedTripItem } from '@/services/trips';
+import { getSavedTrips, deleteSavedTrip, SavedTripItem, saveTrip } from '@/services/trips';
 import { saveTripPlan } from '@/lib';
 import { UserResponse } from '@/types';
-import { Compass, Calendar, Trash2, ExternalLink, ArrowRight, Loader2, MapPin, Download } from 'lucide-react';
+import { resolveDestinationPhoto } from '@/lib/mediaResolver';
+import {
+  Compass, Calendar, Trash2, ExternalLink, ArrowRight, Loader2,
+  MapPin, Download, Copy, Sparkles, CheckCircle2, Plus
+} from 'lucide-react';
 import { exportTripPlanPDF } from '@/lib/pdf-export';
+
+const RECOMMENDED_DESTINATIONS = [
+  {
+    name: 'Old Manali',
+    city: 'Manali',
+    state: 'Himachal Pradesh',
+    image: '/home/manali.webp',
+    tag: 'Mountain Pine Trails',
+    budget: '₹20,000'
+  },
+  {
+    name: 'North Goa',
+    city: 'Goa',
+    state: 'Goa',
+    image: '/home/goa.webp',
+    tag: 'Coastal Heritage & Cafes',
+    budget: '₹22,000'
+  },
+  {
+    name: 'Jaipur',
+    city: 'Jaipur',
+    state: 'Rajasthan',
+    image: '/home/jaipur.webp',
+    tag: 'Palaces & Forts',
+    budget: '₹16,000'
+  },
+  {
+    name: 'Munnar',
+    city: 'Munnar',
+    state: 'Kerala',
+    image: '/home/kerela.webp',
+    tag: 'Tea Plantations & Mist',
+    budget: '₹18,000'
+  }
+];
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -17,10 +60,12 @@ export default function DashboardPage() {
   const [savedTrips, setSavedTrips] = useState<SavedTripItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
+  const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   useEffect(() => {
     if (!currentUser) {
-      router.push('/login');
+      router.replace('/login?returnTo=/dashboard');
       return;
     }
 
@@ -34,9 +79,18 @@ export default function DashboardPage() {
       });
   }, [currentUser, router]);
 
+  if (!currentUser) {
+    return null;
+  }
+
+  const showToast = (msg: string) => {
+    setFeedbackMsg(msg);
+    setTimeout(() => setFeedbackMsg(null), 3500);
+  };
+
   const handleView = (item: SavedTripItem) => {
     saveTripPlan(item.plan);
-    router.push('/trip/result');
+    router.push('/plan?reopen=true');
   };
 
   const handleDelete = async (trip_id: string) => {
@@ -44,10 +98,27 @@ export default function DashboardPage() {
     try {
       await deleteSavedTrip(trip_id);
       setSavedTrips((prev) => prev.filter((t) => t.trip_id !== trip_id));
+      showToast('Trip removed successfully.');
     } catch {
-      // Error handling fallback
+      showToast('Could not delete trip.');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleDuplicate = async (item: SavedTripItem) => {
+    setDuplicatingId(item.trip_id);
+    try {
+      if (item.plan) {
+        await saveTrip(item.plan);
+        const refreshed = await getSavedTrips();
+        setSavedTrips(refreshed);
+        showToast('Trip cloned successfully!');
+      }
+    } catch {
+      showToast('Could not duplicate trip.');
+    } finally {
+      setDuplicatingId(null);
     }
   };
 
@@ -57,128 +128,338 @@ export default function DashboardPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex flex-col bg-[#0B1320] text-slate-100 font-sans relative selection:bg-[#0FA77A] selection:text-white">
-      {/* Background Travel Canvas Overlay */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center filter saturate-50 contrast-125" />
-      <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#0B1320]/90 via-[#0B1320]/95 to-[#0B1320]" />
+  const upcomingTrip = savedTrips.length > 0 ? savedTrips[0] : null;
 
+  return (
+    <div className="min-h-screen flex flex-col bg-[#FBF7F1] text-[#142A38] selection:bg-[#1F6E78]/15 selection:text-[#142A38] relative overflow-x-hidden">
       <Navbar />
 
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-8 relative z-10">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-16 space-y-12 relative">
         
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#101419]/90 border border-white/15 rounded-2xl p-6 shadow-xl backdrop-blur-xl">
-          <div className="space-y-1">
-            <span className="text-xs font-mono font-bold text-[#0FA77A] uppercase tracking-wider block">
-              Travel Command Center &bull; Dashboard
-            </span>
-            <h1 className="text-2xl font-extrabold text-white">
-              Saved Journeys &bull; {currentUser?.name}
-            </h1>
-            <p className="text-xs text-slate-400">
-              {currentUser?.email} &bull; Manage your multi-modal budget itineraries
-            </p>
+        {/* Toast Feedback */}
+        {feedbackMsg && (
+          <div className="fixed bottom-6 right-6 z-50 bg-[#142A38] text-white px-5 py-3 rounded-2xl shadow-xl text-xs flex items-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-200">
+            <CheckCircle2 className="w-4 h-4 text-[#D8A64B]" />
+            <span>{feedbackMsg}</span>
+          </div>
+        )}
+
+        {/* --- WELCOME HEADER --- */}
+        <div className="relative overflow-hidden bg-white border border-[#EBDCC7] rounded-3xl p-6 sm:p-8 shadow-xs">
+          {/* Subtle Decorative Background Accents */}
+          <div className="absolute top-2 right-12 opacity-15 pointer-events-none hidden lg:block">
+            <DottedRouteAccent variant="curve-up" color="#1F6E78" />
+          </div>
+          <div className="absolute -top-4 -right-4 opacity-15 pointer-events-none hidden sm:block">
+            <PassportStamp code="NAVIX" city="LIBRARY" date="2026" color="teal" rotation={-12} />
           </div>
 
-          <div>
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="text-xs font-bold text-[#E96E55] tracking-wider uppercase block">
+                Personal Travel Library
+              </span>
+              <h1 className="text-2xl sm:text-4xl font-black font-editorial text-[#142A38]">
+                Welcome back, {currentUser?.name || 'Explorer'}
+              </h1>
+              <p className="text-xs text-[#66757F]">
+                {currentUser?.email} &bull; Manage your multi-modal budget journeys and saved itineraries.
+              </p>
+            </div>
+
             <Link
               href="/plan"
-              className="inline-flex items-center gap-2 text-xs font-bold bg-[#0FA77A] hover:bg-[#0B8465] text-white px-6 py-3 rounded-xl transition-all shadow-lg uppercase tracking-wider"
+              className="inline-flex items-center gap-2 text-xs font-bold bg-[#1F6E78] hover:bg-[#15525A] text-white px-6 py-3.5 rounded-2xl transition-all shadow-md shadow-[#1F6E78]/20 whitespace-nowrap uppercase tracking-wider cursor-pointer"
             >
-              <span>Plan New Trip &rarr;</span>
+              <Plus className="w-4 h-4" />
+              <span>Plan New Journey</span>
             </Link>
           </div>
         </div>
 
-        {/* Trips List */}
-        {loading ? (
-          <div className="p-12 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-[#0FA77A]" />
-            Loading Saved Trips...
-          </div>
-        ) : savedTrips.length === 0 ? (
-          <div className="bg-[#101419] border border-white/15 rounded-2xl p-12 text-center space-y-4 shadow-xl">
-            <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto text-[#0FA77A]">
-              <Compass className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-extrabold text-white">No Saved Trips Yet</h3>
-            <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
-              Use the interactive trip planner to generate a budget-compliant journey, then click &quot;Save Trip to Profile&quot;.
-            </p>
-            <Link
-              href="/plan"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#0FA77A] hover:bg-[#0B8465] text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md"
-            >
-              <span>Start Planning &rarr;</span>
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {savedTrips.map((item) => (
-              <div key={item.trip_id} className="bg-[#101419]/90 border border-white/15 rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between transition-all hover:border-white/30">
-                <div className="space-y-3 p-6">
-                  <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#0FA77A]/15 text-[#0FA77A] text-[10px] font-mono font-bold uppercase border border-[#0FA77A]/30">
-                      {item.budget_status}
-                    </span>
-                    <span className="text-[11px] font-mono text-slate-400">ID: {item.trip_id}</span>
-                  </div>
+        {/* --- 1. UPCOMING / ACTIVE TRIP SPOTLIGHT --- */}
+        {upcomingTrip && (
+          <section className="group relative rounded-3xl overflow-hidden border border-[#D5C6B5] shadow-xl transition-all duration-300">
+            {/* 1. Full-bleed authentic destination photograph with smooth hover zoom */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={resolveDestinationPhoto(upcomingTrip.destination)}
+              alt={upcomingTrip.destination}
+              className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+            />
 
-                  <h3 className="text-xl font-extrabold text-white flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-[#0FA77A]" />
-                    {item.origin} &rarr; {item.destination}
-                  </h3>
+            {/* 2. Precision Multi-stop Gradient Scrim: Dark on left for 100% readable text, translucent on right to reveal the authentic photography */}
+            <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-[#0C1820]/95 via-[#0C1820]/80 sm:via-[#0C1820]/65 to-[#0C1820]/30 sm:to-transparent pointer-events-none" />
 
-                  <div className="grid grid-cols-2 gap-3 text-xs pt-1 font-mono">
-                    <div className="bg-[#161B22] p-3 rounded-xl border border-white/10">
-                      <span className="text-slate-400 block text-[10px]">PLANNED COST</span>
-                      <span className="font-bold text-[#0FA77A] text-sm">₹{item.total_cost.toLocaleString()}</span>
-                    </div>
+            {/* 3. Subtle ambient warm top vignette */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0C1820]/35 via-transparent to-[#0C1820]/50 pointer-events-none" />
 
-                    <div className="bg-[#161B22] p-3 rounded-xl border border-white/10">
-                      <span className="text-slate-400 block text-[10px]">MAX BUDGET</span>
-                      <span className="font-bold text-white text-sm">₹{item.budget_cap.toLocaleString()}</span>
-                    </div>
-                  </div>
+            {/* Inner Content Padding */}
+            <div className="relative z-10 p-6 sm:p-10 text-white space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/15 pb-4">
+                <span className="px-3.5 py-1.5 rounded-full bg-[#0C1820]/60 backdrop-blur-md border border-white/25 text-white text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-xs">
+                  <Sparkles className="w-3.5 h-3.5 text-[#D8A64B]" />
+                  <span>Featured Active Journey</span>
+                </span>
+                <span className="px-3 py-1 rounded-full bg-[#0C1820]/50 backdrop-blur-md border border-white/15 text-xs text-white/90 font-medium flex items-center gap-1.5 shadow-xs">
+                  <Calendar className="w-3.5 h-3.5 text-[#CBD5E1]" />
+                  <span>Departure: {upcomingTrip.travel_date}</span>
+                </span>
+              </div>
 
-                  <p className="text-xs text-slate-400 flex items-center gap-1.5 pt-1">
-                    <Calendar className="w-3.5 h-3.5 text-[#0FA77A]" /> Travel Date: {item.travel_date}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div className="lg:col-span-7 space-y-3">
+                  <h2 className="text-3xl sm:text-5xl font-black font-editorial tracking-tight text-white drop-shadow-md">
+                    {upcomingTrip.origin} <span className="text-[#E96E55] font-light">&rarr;</span> {upcomingTrip.destination}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-white/90 leading-relaxed max-w-xl drop-shadow-xs font-normal">
+                    Personalized itinerary computed within hard budget cap. Multi-modal connections and daily activities validated.
                   </p>
+
+                  <div className="flex flex-wrap items-center gap-3 pt-2 text-xs">
+                    <div className="bg-[#0C1820]/60 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20 shadow-sm">
+                      <span className="text-white/70 block text-[10px] font-mono uppercase font-bold tracking-wider">TOTAL EXPENSE</span>
+                      <span className="font-bold text-white text-base font-mono">₹{upcomingTrip.total_cost.toLocaleString()}</span>
+                    </div>
+                    <div className="bg-[#0C1820]/60 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20 shadow-sm">
+                      <span className="text-white/70 block text-[10px] font-mono uppercase font-bold tracking-wider">BUDGET CAP</span>
+                      <span className="font-bold text-[#D8A64B] text-base font-mono">₹{upcomingTrip.budget_cap.toLocaleString()}</span>
+                    </div>
+                    <div className="bg-[#0C1820]/60 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20 shadow-sm">
+                      <span className="text-white/70 block text-[10px] font-mono uppercase font-bold tracking-wider">STATUS</span>
+                      <span className="font-bold text-emerald-400 text-base flex items-center gap-1.5 font-mono">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        {upcomingTrip.budget_status}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="p-4 bg-[#161B22] border-t border-white/10 flex items-center justify-between text-xs">
+                <div className="lg:col-span-5 flex flex-wrap lg:justify-end gap-3">
                   <button
-                    onClick={() => handleView(item)}
-                    className="inline-flex items-center gap-1.5 font-bold text-[#0FA77A] hover:underline"
+                    onClick={() => handleView(upcomingTrip)}
+                    className="px-6 py-3.5 bg-[#1F6E78] hover:bg-[#16555E] text-white text-xs font-bold uppercase tracking-wider rounded-2xl transition-all shadow-lg shadow-[#1F6E78]/30 flex items-center gap-2 group/btn cursor-pointer"
                   >
-                    <span>Open Journey</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Open Full Itinerary</span>
+                    <ExternalLink className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
                   </button>
 
-                  <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handlePDF(upcomingTrip)}
+                    className="px-5 py-3.5 bg-white/20 hover:bg-white/30 text-white text-xs font-bold rounded-2xl transition-all border border-white/30 backdrop-blur-md flex items-center gap-2 cursor-pointer shadow-sm"
+                  >
+                    <Download className="w-4 h-4 text-[#D8A64B]" />
+                    <span>Download PDF</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* --- 2. SAVED TRIPS DIRECTORY --- */}
+        <section className="relative space-y-6">
+          <div className="absolute -top-6 right-8 opacity-10 pointer-events-none hidden md:block">
+            <CompassRoseFragment size={130} opacity={0.15} />
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl sm:text-3xl font-black font-editorial text-[#142A38] flex items-center gap-2.5">
+                <Compass className="w-6 h-6 text-[#1F6E78]" />
+                <span>Saved Journeys ({savedTrips.length})</span>
+              </h2>
+              <CoordinatesTag
+                location="TRAVEL VAULT"
+                lat="MULTI-MODAL"
+                lng="DETERMINISTIC"
+                className="hidden sm:inline-flex"
+              />
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="p-16 text-center text-xs text-[#66757F] bg-white rounded-3xl border border-[#EBDCC7] flex items-center justify-center gap-2 shadow-xs">
+              <Loader2 className="w-5 h-5 animate-spin text-[#1F6E78]" />
+              <span>Loading saved itineraries...</span>
+            </div>
+          ) : savedTrips.length === 0 ? (
+            <div className="bg-white border border-[#EBDCC7] rounded-3xl p-12 text-center space-y-4 shadow-sm max-w-lg mx-auto">
+              <div className="w-14 h-14 rounded-2xl bg-[#F5EBE1] border border-[#EBDCC7] flex items-center justify-center mx-auto text-[#1F6E78]">
+                <Compass className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold font-editorial text-[#142A38]">No Saved Journeys Yet</h3>
+              <p className="text-xs text-[#66757F] max-w-md mx-auto leading-relaxed">
+                Generate an algorithmic multi-modal itinerary using the planner, then click &quot;Save Trip&quot; to keep it in your permanent traveler account.
+              </p>
+              <Link
+                href="/plan"
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md shadow-[#1F6E78]/20"
+              >
+                <span>Start Planning Now &rarr;</span>
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {savedTrips.map((item) => (
+                <div
+                  key={item.trip_id}
+                  className="group bg-white border border-[#EBDCC7] rounded-3xl overflow-hidden shadow-sm hover:border-[#1F6E78] transition-all flex flex-col justify-between photo-card-hover"
+                >
+                  {/* Authentic Destination Cover Photo */}
+                  <div className="relative h-44 w-full overflow-hidden bg-[#F5EBE1]">
+                    <SafeImage
+                      src={resolveDestinationPhoto(item.destination)}
+                      alt={`Journey to ${item.destination}`}
+                      category="destination"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent pointer-events-none" />
+                    <span className="absolute bottom-3 left-4 text-xs font-bold text-white drop-shadow flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-[#D8A64B]" />
+                      <span>{item.destination}</span>
+                    </span>
+                    <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md text-white text-[10px] font-mono border border-white/20">
+                      #{item.trip_id.slice(-6)}
+                    </span>
+                  </div>
+
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase border border-emerald-200">
+                        {item.budget_status}
+                      </span>
+                      <span className="text-[11px] font-mono text-[#94A3B8]">#{item.trip_id.slice(-6)}</span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-xl font-bold font-editorial text-[#142A38] flex items-center gap-1.5">
+                        <MapPin className="w-4 h-4 text-[#1F6E78] shrink-0" />
+                        <span>{item.origin} &rarr; {item.destination}</span>
+                      </h3>
+                      <p className="text-xs text-[#66757F] flex items-center gap-1 mt-1">
+                        <Calendar className="w-3.5 h-3.5 text-[#94A3B8]" />
+                        <span>Travel Date: {item.travel_date}</span>
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 p-4 bg-[#FBF7F1] rounded-2xl border border-[#EBDCC7] text-xs">
+                      <div>
+                        <span className="text-[10px] text-[#94A3B8] font-bold uppercase block">TOTAL COST</span>
+                        <span className="font-bold text-[#142A38] text-base">₹{item.total_cost.toLocaleString()}</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-[#94A3B8] font-bold uppercase block">BUDGET CAP</span>
+                        <span className="font-bold text-[#1F6E78] text-base">₹{item.budget_cap.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-[#FBF7F1] border-t border-[#EBDCC7] flex items-center justify-between text-xs">
                     <button
-                      onClick={() => handlePDF(item)}
-                      className="p-2 text-slate-400 hover:text-white transition-all rounded-lg hover:bg-white/5"
-                      title="Download PDF"
+                      onClick={() => handleView(item)}
+                      className="font-bold text-[#1F6E78] hover:text-[#15525A] flex items-center gap-1 cursor-pointer"
                     >
-                      <Download className="w-4 h-4 text-[#0FA77A]" />
+                      <span>Open Plan</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
                     </button>
 
-                    <button
-                      onClick={() => handleDelete(item.trip_id)}
-                      disabled={deletingId === item.trip_id}
-                      className="p-2 text-slate-400 hover:text-rose-400 transition-all rounded-lg hover:bg-rose-950/40"
-                      title="Delete Trip"
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleDuplicate(item)}
+                        disabled={duplicatingId === item.trip_id}
+                        className="p-2 text-[#66757F] hover:text-[#142A38] hover:bg-white rounded-lg transition-all cursor-pointer"
+                        title="Duplicate Trip"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+
+                      <button
+                        onClick={() => handlePDF(item)}
+                        className="p-2 text-[#66757F] hover:text-[#1F6E78] hover:bg-white rounded-lg transition-all cursor-pointer"
+                        title="Download PDF"
+                      >
+                        <Download className="w-4 h-4" />
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(item.trip_id)}
+                        disabled={deletingId === item.trip_id}
+                        className="p-2 text-[#94A3B8] hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
+                        title="Delete Trip"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* --- 3. RECOMMENDED DESTINATIONS --- */}
+        <section className="space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl sm:text-3xl font-black font-editorial text-[#142A38]">
+                Recommended for Your Next Journey
+              </h2>
+              <PostageStampSnippet
+                label="EXPLORE"
+                sublabel="CURATED"
+                price="113 PLACES"
+                rotation={4}
+                className="hidden sm:inline-block opacity-75 hover:opacity-100"
+              />
+            </div>
+            <Link
+              href="/explore"
+              className="text-xs font-bold text-[#1F6E78] hover:underline flex items-center gap-1"
+            >
+              <span>Explore All 113 Destinations</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {RECOMMENDED_DESTINATIONS.map((dest) => (
+              <div
+                key={dest.name}
+                className="bg-white border border-[#EBDCC7] rounded-3xl overflow-hidden shadow-sm hover:border-[#1F6E78] transition-all group flex flex-col justify-between photo-card-hover"
+              >
+                <div className="relative h-44 overflow-hidden bg-[#F5EBE1]">
+                  <SafeImage
+                    src={dest.image}
+                    alt={dest.name}
+                    category={dest.tag}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-[#142A38] shadow-xs">
+                    {dest.tag}
+                  </div>
+                </div>
+
+                <div className="p-5 space-y-3">
+                  <div>
+                    <h3 className="text-lg font-bold font-editorial text-[#142A38]">{dest.name}</h3>
+                    <p className="text-xs text-[#66757F]">{dest.state}</p>
+                  </div>
+
+                  <div className="pt-2 border-t border-[#EBDCC7] flex items-center justify-between text-xs">
+                    <span className="text-[#66757F] font-medium">From {dest.budget}</span>
+                    <Link
+                      href={`/plan?destination=${encodeURIComponent(dest.name)}`}
+                      className="px-3.5 py-1.5 bg-[#1F6E78]/10 text-[#1F6E78] font-bold rounded-xl text-xs hover:bg-[#1F6E78] hover:text-white transition-colors"
                     >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                      Plan Trip &rarr;
+                    </Link>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        )}
+        </section>
 
       </main>
 
@@ -186,4 +467,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

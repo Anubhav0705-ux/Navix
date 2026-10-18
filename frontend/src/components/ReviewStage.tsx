@@ -1,472 +1,426 @@
-'use client';
-
 import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { usePlanner } from '@/context/PlannerContext';
-import { TripPlanResult, UserResponse } from '@/types';
-import { getCurrentUser } from '@/services/auth';
-import { saveTrip } from '@/services/trips';
-import { exportTripPlanPDF } from '@/lib/pdf-export';
 import {
-  Sparkles, Calendar, MapPin, CheckCircle2, Download, Bookmark, Check,
-  Share2, Navigation, ShieldCheck, Ticket, Bed, Utensils, Compass,
-  Zap
+  Sparkles, MapPin, ArrowRight, ArrowLeft,
+  Train, Bed, Utensils, AlertTriangle, ShieldCheck, Edit3,
+  Star, Edit2
 } from 'lucide-react';
-import dynamic from 'next/dynamic';
-
-const InteractiveMap = dynamic(() => import('@/components/InteractiveMap'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-[400px] bg-[#101419] border border-white/10 rounded-2xl flex items-center justify-center text-xs text-slate-400">
-      Loading Command Center Map...
-    </div>
-  )
-});
+import { BudgetEditModal } from './PlannerComponents';
+import { computeBudgetLedger } from '@/lib/budgetCalculator';
 
 interface ReviewStageProps {
-  planResult: TripPlanResult | null;
-  onBackToAutoPlan: () => void;
+  onExecutePlan: () => void;
+  isSubmitting?: boolean;
 }
 
-export const ReviewStage: React.FC<ReviewStageProps> = ({ planResult, onBackToAutoPlan }) => {
-  const router = useRouter();
-  const { state } = usePlanner();
-  const [currentUser] = useState<UserResponse | null>(() => getCurrentUser());
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [copiedShare, setCopiedShare] = useState(false);
-  const [selectedDayIdx, setSelectedDayIdx] = useState<number>(0);
+export const ReviewStage: React.FC<ReviewStageProps> = ({
+  onExecutePlan,
+  isSubmitting = false
+}) => {
+  const { state, dispatch } = usePlanner();
+  const [budgetModalOpen, setBudgetModalOpen] = useState(false);
 
-  if (!planResult) {
-    return (
-      <div className="bg-[#101419] border border-white/15 rounded-3xl p-8 sm:p-12 text-center space-y-6 shadow-2xl my-8">
-        <div className="w-16 h-16 rounded-2xl bg-[#0FA77A]/10 text-[#0FA77A] flex items-center justify-center mx-auto border border-[#0FA77A]/20">
-          <Compass className="w-8 h-8" />
-        </div>
-        <div className="max-w-md mx-auto space-y-2">
-          <h3 className="text-xl sm:text-2xl font-extrabold text-white">No Active Journey Calculated</h3>
-          <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-            Please run the solver from Stage 05 or Stage 06 to calculate your trip plan.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={onBackToAutoPlan}
-          className="px-8 py-3.5 bg-[#0FA77A] hover:bg-[#0B8465] text-white font-bold text-xs rounded-xl shadow-lg uppercase tracking-wider transition-all"
-        >
-          Go to Auto Plan &rarr;
-        </button>
-      </div>
-    );
-  }
+  // Duration
+  const dep = new Date(state.departureDate);
+  const ret = new Date(state.returnDate);
+  const diffDays = Math.max(1, Math.round((ret.getTime() - dep.getTime()) / (1000 * 3600 * 24)));
+  const nights = Math.max(0, diffDays - 1);
 
-  const cb = planResult.cost_breakdown;
-  const days = planResult.daily_itinerary || [];
-  const currentDay = days[selectedDayIdx] || days[0];
+  // Cost calculations
+  const transportCost = (state.selectedTransportAlternative?.total_cost || 0) * state.travellers;
+  const stayCost = (state.selectedHotelItem?.price_per_night || 1200) * nights;
+  const foodRatePerDay = state.foodPreference === 'BASIC' ? 300 : state.foodPreference === 'FLEXIBLE' ? 1200 : 700;
+  const foodCost = foodRatePerDay * diffDays * state.travellers;
+  const activitiesCost = state.selectedAttractionItems.reduce((acc, a) => acc + (a.entry_fee || 0), 0) * state.travellers;
+  const localTransferCost = Math.round(150 * diffDays * state.travellers);
 
-  const handleSave = async () => {
-    if (!currentUser) {
-      router.push('/login');
-      return;
-    }
-    setIsSaving(true);
-    setSaveError(null);
+  // Authoritative deterministic financial ledger with exact 8% contingency & 1-click shortfall resolution
+  const ledger = computeBudgetLedger({
+    transportCost,
+    stayCost,
+    foodCost,
+    activitiesCost,
+    localTransferCost,
+    maximumBudget: state.maximumBudget
+  });
 
-    try {
-      await saveTrip(planResult);
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 4000);
-    } catch (err: unknown) {
-      setSaveError(err instanceof Error ? err.message : 'Failed to save trip.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handlePDFDownload = () => {
-    exportTripPlanPDF(planResult);
-  };
-
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: `NAVIX Trip: ${planResult.origin} to ${planResult.destination}`,
-        text: `Check out my ${planResult.days}-day itinerary to ${planResult.destination} under ₹${cb.maximum_budget.toLocaleString()}!`,
-        url: window.location.href
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      setCopiedShare(true);
-      setTimeout(() => setCopiedShare(false), 3000);
-    }
-  };
-
-  // Proportional Receipt Width Calculation
-  const maxB = Number(cb.maximum_budget) || 1;
-  const tPct = Math.min(100, Math.round((Number(cb.transport_cost) / maxB) * 100));
-  const sPct = Math.min(100, Math.round((Number(cb.accommodation_cost) / maxB) * 100));
-  const fPct = Math.min(100, Math.round((Number(cb.food_cost) / maxB) * 100));
-  const aPct = Math.min(100, Math.round((Number(cb.activities_cost) / maxB) * 100));
-  const lPct = Math.min(100, Math.round((Number(cb.local_transport_cost) / maxB) * 100));
-  const bPct = Math.min(100, Math.round((Number(cb.contingency_buffer) / maxB) * 100));
+  const {
+    contingencyReserve: contingencyBuffer,
+    totalCost: totalCalculated,
+    remainingBudget,
+    isShortfall,
+    shortfallAmount,
+    budgetStatus,
+    minimumRequiredBudget
+  } = ledger;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10 selection:bg-[#0FA77A] selection:text-white">
-      
-      {/* 1. CINEMATIC JOURNEY HERO */}
-      <div className="relative rounded-3xl overflow-hidden border border-white/20 shadow-2xl bg-[#101419]">
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/travel/sangli_manali.jpg"
-            alt={planResult.destination}
-            className="w-full h-full object-cover filter brightness-50 saturate-125"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#101419] via-[#101419]/70 to-transparent" />
-        </div>
-
-        <div className="relative z-10 p-6 sm:p-10 lg:p-12 space-y-6 text-white">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className="px-3.5 py-1 rounded-full bg-[#0FA77A] text-white text-xs font-mono font-bold uppercase tracking-wider shadow-md">
-              ✓ YOUR JOURNEY IS READY &bull; {cb.budget_status}
-            </span>
-            <span className="text-xs font-mono text-slate-300 bg-black/60 backdrop-blur-md px-3 py-1 rounded-xl border border-white/15">
-              Data Source: Demo Transit Dataset
-            </span>
-          </div>
-
-          <div className="space-y-2">
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
-              {planResult.origin} <span className="text-[#0FA77A] font-light">&rarr;</span> {planResult.destination}
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-200 font-medium flex flex-wrap items-center gap-2">
-              <Calendar className="w-4 h-4 text-[#0FA77A]" />
-              <span>{planResult.departure_date} to {planResult.return_date} ({planResult.days} Days / {planResult.nights} Nights)</span>
-              <span>&bull;</span>
-              <span>{planResult.travellers} Traveler(s)</span>
-              <span>&bull;</span>
-              <span className="text-[#0FA77A] font-bold">{state.travelPace} Pace</span>
-            </p>
-          </div>
-
-          {/* Hero Budget Banner */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-black/60 backdrop-blur-xl p-5 rounded-2xl border border-white/15 text-xs font-mono">
-            <div className="space-y-1">
-              <span className="text-slate-400 block text-[10px]">PLANNED SPEND</span>
-              <span className="text-2xl font-extrabold text-[#0FA77A]">₹{cb.total_trip_cost.toLocaleString()}</span>
-            </div>
-            <div className="space-y-1 border-t sm:border-t-0 sm:border-l border-white/15 pt-2 sm:pt-0 sm:pl-4">
-              <span className="text-slate-400 block text-[10px]">HARD BUDGET CAP</span>
-              <span className="text-xl font-bold text-white">₹{cb.maximum_budget.toLocaleString()}</span>
-            </div>
-            <div className="space-y-1 border-t sm:border-t-0 sm:border-l border-white/15 pt-2 sm:pt-0 sm:pl-4">
-              <span className="text-slate-400 block text-[10px]">REMAINING SURPLUS</span>
-              <span className="text-xl font-bold text-teal-300">₹{cb.remaining_budget.toLocaleString()}</span>
-            </div>
-          </div>
-
-          {/* Primary Action Buttons */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={isSaving || saveSuccess}
-                className="px-6 py-3 bg-[#0FA77A] hover:bg-[#0B8465] text-white text-xs font-bold rounded-xl transition-all shadow-xl flex items-center gap-2 uppercase tracking-wider"
-              >
-                {saveSuccess ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    <span>Saved to Profile</span>
-                  </>
-                ) : (
-                  <>
-                    <Bookmark className="w-4 h-4" />
-                    <span>{isSaving ? 'Saving...' : 'Save Trip to Profile'}</span>
-                  </>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={handlePDFDownload}
-                className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold rounded-xl transition-all flex items-center gap-2"
-              >
-                <Download className="w-4 h-4 text-[#0FA77A]" />
-                <span>Download PDF</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleShare}
-                className="px-4 py-3 bg-white/5 hover:bg-white/10 text-slate-300 border border-white/15 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5"
-              >
-                <Share2 className="w-4 h-4" />
-                <span>{copiedShare ? 'Link Copied!' : 'Share'}</span>
-              </button>
-            </div>
-
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* Top Header Banner */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#FFFDFC] border border-[#EBDCC7] rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={onBackToAutoPlan}
-              className="text-xs text-slate-400 hover:text-white underline font-mono"
+              onClick={() => dispatch({ type: 'SET_STAGE', payload: 5 })}
+              className="text-xs font-mono font-bold text-[#1F6E78] hover:underline flex items-center gap-1 cursor-pointer"
             >
-              &larr; Back to Auto Plan Stage
+              <ArrowLeft className="w-3.5 h-3.5" /> Stage 05
             </button>
+            <span className="text-[#EBDCC7]">&bull;</span>
+            <span className="text-xs font-mono text-[#66757F]">Stage 06 of 07</span>
           </div>
-
-          {saveError && (
-            <div className="p-3 bg-rose-950/90 border border-rose-500/40 text-rose-200 text-xs rounded-xl">
-              {saveError}
-            </div>
-          )}
+          <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-[#142A38]">
+            Review Journey &amp; Budget Optimization
+          </h2>
+          <p className="text-xs text-[#66757F]">
+            Verify transport, accommodations, dining, and must-visits before generating your daily timetable.
+          </p>
         </div>
-      </div>
 
-      {/* 2. MULTI-MODAL CONNECTED ROUTE RIBBON */}
-      <div className="bg-[#101419]/90 border border-white/15 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
-          <div className="space-y-0.5">
-            <span className="text-xs font-mono text-[#0FA77A] font-bold uppercase tracking-wider block">
-              Time-Dependent Transit Graph
-            </span>
-            <h3 className="text-xl font-extrabold text-white flex items-center gap-2">
-              <Navigation className="w-5 h-5 text-[#0FA77A]" /> Multi-Modal Route Ribbon
-            </h3>
-          </div>
-          <span className="text-xs font-mono text-slate-400 bg-white/5 px-3 py-1 rounded-xl border border-white/10">
-            Total Transit Fare: ₹{cb.transport_cost.toLocaleString()}
+        <div className="flex items-center gap-2">
+          <span
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold uppercase border ${
+              budgetStatus === 'COMFORTABLE'
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                : budgetStatus === 'TIGHT'
+                ? 'bg-amber-50 text-amber-700 border-amber-200'
+                : 'bg-rose-50 text-rose-700 border-rose-200'
+            }`}
+          >
+            Budget Status: {budgetStatus}
           </span>
         </div>
-
-        {/* Route Segment Timeline Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {planResult.route_segments.map((seg, idx) => (
-            <div
-              key={idx}
-              className="bg-[#161B22] border border-white/10 rounded-xl p-4 space-y-3 text-xs relative hover:border-[#0FA77A]/40 transition-all"
-            >
-              <div className="flex items-center justify-between">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#0FA77A]/15 text-[#0FA77A] font-mono text-[10px] font-bold border border-[#0FA77A]/30">
-                  {seg.transport_mode}
-                </span>
-                <span className="font-mono font-bold text-white">₹{seg.cost}</span>
-              </div>
-
-              <div className="space-y-1">
-                <h4 className="font-extrabold text-white text-sm">
-                  {seg.source_city} &rarr; {seg.dest_city}
-                </h4>
-                <p className="text-[11px] text-slate-400">
-                  {seg.source_node_name} to {seg.dest_node_name}
-                </p>
-              </div>
-
-              <div className="pt-2 border-t border-white/5 text-[11px] font-mono text-slate-400 flex items-center justify-between">
-                <span>{seg.provider}</span>
-                <span className="text-emerald-400 flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-[#0FA77A]" /> Safe Connection
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
-      {/* 3. MAIN TRAVEL COMMAND CENTER (60% TIMELINE / 40% MAP) */}
+      {/* Main Grid: Left Review Summary (7 cols) + Right Budget Panel (5 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        {/* LEFT 60%: AUTO-ITINERARY REVIEW TIMELINE */}
+        {/* LEFT COLUMN: SECTIONS REVIEW */}
         <div className="lg:col-span-7 space-y-6">
-          
-          <div className="bg-[#101419]/90 border border-white/15 rounded-2xl p-6 space-y-4 shadow-xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          {/* 1. Trip Setup Card */}
+          <div className="bg-white border border-[#EBDCC7] rounded-3xl p-6 space-y-4 shadow-sm">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EBDCC7]">
+              <span className="text-xs font-mono font-bold text-[#1F6E78] uppercase tracking-wider flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5" /> 1. Trip Corridor
+              </span>
+              <button
+                type="button"
+                onClick={() => dispatch({ type: 'SET_STAGE', payload: 1 })}
+                className="text-xs font-bold text-[#64748B] hover:text-[#1F6E78] flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <Edit3 className="w-3 h-3" /> Edit
+              </button>
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <span className="text-xs font-mono font-bold text-[#0FA77A] uppercase block">
-                  Automatic Daily Schedule
-                </span>
-                <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-[#4D7CFE]" /> Day-by-Day Timeline Review
+                <h3 className="font-serif text-xl font-bold text-[#142A38]">
+                  {state.origin || 'Origin'} &rarr; {state.destination || 'Destination'}
                 </h3>
+                <p className="text-xs text-[#64748B] mt-0.5">
+                  {state.departureDate} to {state.returnDate} ({diffDays} Days / {nights} Nights)
+                </p>
               </div>
-
-              {/* Day Pills */}
-              <div className="flex items-center gap-1 overflow-x-auto">
-                {days.map((d, idx) => (
-                  <button
-                    key={d.day_number}
-                    type="button"
-                    onClick={() => setSelectedDayIdx(idx)}
-                    className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
-                      selectedDayIdx === idx
-                        ? 'bg-[#0FA77A] text-white shadow-md'
-                        : 'bg-white/5 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    D0{d.day_number}
-                  </button>
-                ))}
+              <div className="text-right">
+                <span className="text-xs font-bold text-[#142A38] block">
+                  {state.travellers} Traveler(s)
+                </span>
+                <span className="text-[11px] text-[#1F6E78] font-mono font-semibold">
+                  {state.travelStyle} Style
+                </span>
               </div>
             </div>
+          </div>
 
-            {/* Active Day Card Header */}
-            <div className="bg-[#161B22] p-4 rounded-xl border border-white/10 flex items-center justify-between text-xs">
-              <span className="font-bold text-white text-sm">{currentDay.title}</span>
-              <span className="font-mono text-[#0FA77A] font-bold">Est. ₹{currentDay.estimated_daily_spend.toLocaleString()}</span>
+          {/* 2. Transportation Card */}
+          <div className="bg-white border border-[#EBDCC7] rounded-3xl p-6 space-y-4 shadow-sm">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EBDCC7]">
+              <span className="text-xs font-mono font-bold text-[#1F6E78] uppercase tracking-wider flex items-center gap-1.5">
+                <Train className="w-3.5 h-3.5" /> 2. Selected Transport
+              </span>
+              <button
+                type="button"
+                onClick={() => dispatch({ type: 'SET_STAGE', payload: 2 })}
+                className="text-xs font-bold text-[#64748B] hover:text-[#1F6E78] flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <Edit3 className="w-3 h-3" /> Edit
+              </button>
             </div>
 
-            {/* Structured Events */}
-            <div className="space-y-3 pt-1">
-              {currentDay.structured_events && currentDay.structured_events.length > 0 ? (
-                currentDay.structured_events.map((ev, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-[#161B22] border border-white/10 rounded-xl p-4 space-y-2 text-xs"
-                  >
-                    <div className="flex items-center justify-between font-mono text-[11px]">
-                      <span className="font-bold text-[#0FA77A] bg-white/5 px-2 py-0.5 rounded">
-                        {ev.start_time} - {ev.end_time}
-                      </span>
-                      <span className="text-slate-400 font-bold uppercase">{ev.event_type}</span>
-                    </div>
-                    <h4 className="font-extrabold text-white text-sm">{ev.title}</h4>
-                    <p className="text-slate-300 text-[11px] leading-relaxed">{ev.description}</p>
-                  </div>
-                ))
-              ) : (
-                <div className="space-y-2">
-                  {currentDay.events.map((eStr, idx) => (
-                    <div key={idx} className="bg-[#161B22] p-3 rounded-xl text-xs text-slate-300">
-                      • {eStr}
-                    </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-bold text-[#142A38] text-sm">
+                    {state.selectedTransportAlternative?.label || 'Recommended'} Multi-Modal Transit
+                  </h4>
+                  <p className="text-xs text-[#64748B]">
+                    {state.selectedTransportAlternative?.transfers ?? 0} transfers &bull; Safe layovers enforced
+                  </p>
+                </div>
+
+                <span className="font-mono font-bold text-[#1F6E78] text-base">
+                  ₹{transportCost.toLocaleString()}
+                </span>
+              </div>
+
+              {state.selectedTransportAlternative?.segments && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {state.selectedTransportAlternative.segments.map((seg, i) => (
+                    <span
+                      key={i}
+                      className="px-2.5 py-1 bg-[#FBF7F1] border border-[#EBDCC7] rounded-xl text-[11px] font-mono text-[#64748B]"
+                    >
+                      {seg.source_city} &rarr; {seg.dest_city} ({seg.transport_mode})
+                    </span>
                   ))}
                 </div>
               )}
             </div>
           </div>
 
-          {/* 4. BUDGET RECEIPT SECTION */}
-          <div className="bg-[#101419] border border-white/15 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl relative">
-            <div className="space-y-1 border-b border-white/10 pb-4">
-              <span className="text-xs font-mono font-bold text-[#0FA77A] uppercase block">
-                Financial Audit Receipt
+          {/* 3. Experiences & Places Card */}
+          <div className="bg-white border border-[#EBDCC7] rounded-3xl p-6 space-y-4 shadow-sm">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EBDCC7]">
+              <span className="text-xs font-mono font-bold text-[#1F6E78] uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" /> 3. Selected Experiences ({state.selectedAttractionItems.length})
               </span>
-              <h3 className="text-2xl font-black text-white font-mono tracking-tight">
-                YOUR ₹{cb.maximum_budget.toLocaleString()} TRIP RECEIPT
+              <button
+                type="button"
+                onClick={() => dispatch({ type: 'SET_STAGE', payload: 3 })}
+                className="text-xs font-bold text-[#64748B] hover:text-[#1F6E78] flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <Edit3 className="w-3 h-3" /> Edit
+              </button>
+            </div>
+
+            {state.selectedAttractionItems.length === 0 ? (
+              <p className="text-xs text-[#64748B]/70 italic">
+                No specific attractions picked. Algorithm will automatically schedule top recommended highlights.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  {state.selectedAttractionItems.map((act) => {
+                    const isMust = state.mustVisitPlaceIds.includes(act.id);
+                    return (
+                      <span
+                        key={act.id}
+                        className={`px-3 py-1 rounded-xl text-xs font-medium border flex items-center gap-1.5 ${
+                          isMust
+                            ? 'bg-[#D8A64B]/20 border-[#D8A64B]/50 text-[#142A38] font-bold'
+                            : 'bg-[#FBF7F1] border-[#EBDCC7] text-[#64748B]'
+                        }`}
+                      >
+                        {isMust && <Star className="w-3 h-3 fill-current text-[#D8A64B]" />}
+                        <span>{act.name}</span>
+                        <span className="text-[#64748B]/70 text-[10px]">({act.entry_fee === 0 ? 'Free' : `₹${act.entry_fee}`})</span>
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 4. Food & Dining Card */}
+          <div className="bg-white border border-[#EBDCC7] rounded-3xl p-6 space-y-4 shadow-sm">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EBDCC7]">
+              <span className="text-xs font-mono font-bold text-[#1F6E78] uppercase tracking-wider flex items-center gap-1.5">
+                <Utensils className="w-3.5 h-3.5" /> 4. Dining Allocation
+              </span>
+              <button
+                type="button"
+                onClick={() => dispatch({ type: 'SET_STAGE', payload: 4 })}
+                className="text-xs font-bold text-[#64748B] hover:text-[#1F6E78] flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <Edit3 className="w-3 h-3" /> Edit
+              </button>
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-bold text-[#142A38] text-sm">
+                  {state.foodPreference} DINING TIER
+                </h4>
+                <p className="text-xs text-[#64748B]">
+                  ₹{foodRatePerDay}/day per person &bull; {state.selectedFoodItems.length} curated food spots bookmarked
+                </p>
+              </div>
+              <span className="font-mono font-bold text-[#1F6E78] text-base">
+                ₹{foodCost.toLocaleString()}
+              </span>
+            </div>
+          </div>
+
+          {/* 5. Stay Card */}
+          <div className="bg-white border border-[#EBDCC7] rounded-3xl p-6 space-y-4 shadow-sm">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EBDCC7]">
+              <span className="text-xs font-mono font-bold text-[#1F6E78] uppercase tracking-wider flex items-center gap-1.5">
+                <Bed className="w-3.5 h-3.5" /> 5. Primary Accommodation
+              </span>
+              <button
+                type="button"
+                onClick={() => dispatch({ type: 'SET_STAGE', payload: 5 })}
+                className="text-xs font-bold text-[#64748B] hover:text-[#1F6E78] flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <Edit3 className="w-3 h-3" /> Edit
+              </button>
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-bold text-[#142A38] text-sm">
+                  {state.selectedHotelItem?.name || 'Standard Riverside Homestay'}
+                </h4>
+                <p className="text-xs text-[#64748B]">
+                  {state.selectedHotelItem?.room_type || 'Private Room'} &bull; {nights} Nights
+                </p>
+              </div>
+              <span className="font-mono font-bold text-[#1F6E78] text-base">
+                ₹{stayCost.toLocaleString()}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: BUDGET HEALTH PANEL */}
+        <div className="lg:col-span-5 sticky top-20 space-y-6">
+          <div className="bg-white border border-[#EBDCC7] rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
+            <div className="space-y-1">
+              <span className="text-xs font-mono font-bold text-[#1F6E78] uppercase tracking-wider block">
+                Budget Allocation Summary
+              </span>
+              <h3 className="font-serif text-xl font-bold text-[#142A38]">
+                Trip Cost Ledger
               </h3>
             </div>
 
-            {/* Proportional Allocation Bar */}
-            <div className="space-y-2">
-              <span className="text-[10px] font-mono text-slate-400 uppercase block">Proportional Cost Distribution</span>
-              <div className="h-4 w-full bg-white/10 rounded-full overflow-hidden flex">
-                <div style={{ width: `${tPct}%` }} className="bg-blue-500 h-full" title={`Transport: ${tPct}%`} />
-                <div style={{ width: `${sPct}%` }} className="bg-purple-500 h-full" title={`Stay: ${sPct}%`} />
-                <div style={{ width: `${fPct}%` }} className="bg-amber-500 h-full" title={`Food: ${fPct}%`} />
-                <div style={{ width: `${aPct}%` }} className="bg-[#0FA77A] h-full" title={`Activities: ${aPct}%`} />
-                <div style={{ width: `${lPct}%` }} className="bg-teal-400 h-full" title={`Local Transfers: ${lPct}%`} />
-                <div style={{ width: `${bPct}%` }} className="bg-slate-500 h-full" title={`Buffer: ${bPct}%`} />
+            {/* Breakdown Items */}
+            <div className="space-y-3 divide-y divide-[#EBDCC7] text-xs">
+              <div className="flex items-center justify-between pt-1 font-mono">
+                <span className="text-[#64748B] flex items-center gap-1.5">
+                  <Train className="w-3.5 h-3.5 text-[#1F6E78]" /> Transit Fare
+                </span>
+                <span className="font-bold text-[#142A38]">₹{transportCost.toLocaleString()}</span>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 font-mono">
+                <span className="text-[#64748B] flex items-center gap-1.5">
+                  <Bed className="w-3.5 h-3.5 text-purple-600" /> Lodging ({nights} nights)
+                </span>
+                <span className="font-bold text-[#142A38]">₹{stayCost.toLocaleString()}</span>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 font-mono">
+                <span className="text-[#64748B] flex items-center gap-1.5">
+                  <Utensils className="w-3.5 h-3.5 text-[#D8A64B]" /> Food &amp; Dining ({diffDays} days)
+                </span>
+                <span className="font-bold text-[#142A38]">₹{foodCost.toLocaleString()}</span>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 font-mono">
+                <span className="text-[#64748B] flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#1F6E78]" /> Experiences &amp; Tickets
+                </span>
+                <span className="font-bold text-[#142A38]">₹{activitiesCost.toLocaleString()}</span>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 font-mono">
+                <span className="text-[#64748B] flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-emerald-600" /> Local Transfers Buffer
+                </span>
+                <span className="font-bold text-[#142A38]">₹{localTransferCost.toLocaleString()}</span>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 font-mono">
+                <span className="text-[#64748B] flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#64748B]" /> Contingency Reserve
+                </span>
+                <span className="font-bold text-[#142A38]">₹{contingencyBuffer.toLocaleString()}</span>
               </div>
             </div>
 
-            {/* Itemized Receipt Table */}
-            <div className="bg-[#161B22] rounded-xl border border-white/10 p-5 space-y-3 font-mono text-xs text-slate-300">
-              <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                <span className="flex items-center gap-2"><Ticket className="w-3.5 h-3.5 text-blue-400" /> Multi-Modal Transport</span>
-                <span className="font-bold text-white">₹{cb.transport_cost.toLocaleString()}</span>
+            {/* Total vs Cap */}
+            <div className="p-4 bg-[#FBF7F1] rounded-2xl border border-[#EBDCC7] space-y-2">
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-[#66757F]">CALCULATED TOTAL</span>
+                <span className="font-black text-base text-[#142A38]">₹{totalCalculated.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                <span className="flex items-center gap-2"><Bed className="w-3.5 h-3.5 text-purple-400" /> Accommodation ({planResult.stay.tier})</span>
-                <span className="font-bold text-white">₹{cb.accommodation_cost.toLocaleString()}</span>
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-[#66757F]">MAX BUDGET CAP</span>
+                <button
+                  type="button"
+                  onClick={() => setBudgetModalOpen(true)}
+                  className="flex items-center gap-1.5 font-bold text-[#1F6E78] hover:underline cursor-pointer"
+                  title="Click to change trip budget"
+                >
+                  <span>₹{state.maximumBudget.toLocaleString()}</span>
+                  <Edit2 className="w-3 h-3 text-[#1F6E78]" />
+                </button>
               </div>
-              <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                <span className="flex items-center gap-2"><Utensils className="w-3.5 h-3.5 text-amber-400" /> Dining ({planResult.food.tier})</span>
-                <span className="font-bold text-white">₹{cb.food_cost.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                <span className="flex items-center gap-2"><Sparkles className="w-3.5 h-3.5 text-[#0FA77A]" /> Experiences &amp; Activities</span>
-                <span className="font-bold text-white">₹{cb.activities_cost.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                <span className="flex items-center gap-2"><Compass className="w-3.5 h-3.5 text-teal-400" /> Local Movement Buffer</span>
-                <span className="font-bold text-white">₹{cb.local_transport_cost.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                <span className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-slate-400" /> Emergency Contingency Buffer</span>
-                <span className="font-bold text-white">₹{cb.contingency_buffer.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between items-center pt-2 text-sm text-white font-bold">
-                <span>TOTAL PLANNED TRIP COST</span>
-                <span className="text-[#0FA77A]">₹{cb.total_trip_cost.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between items-center text-xs text-teal-300 font-bold">
-                <span>REMAINING BUDGET SURPLUS</span>
-                <span>₹{cb.remaining_budget.toLocaleString()} ({cb.budget_status})</span>
+              <div className="pt-2 border-t border-[#EBDCC7] flex items-center justify-between text-xs font-mono font-bold">
+                <span className="text-[#66757F]">REMAINING BALANCE</span>
+                <span className={remainingBudget >= 0 ? 'text-emerald-700' : 'text-rose-600'}>
+                  {remainingBudget >= 0 ? `+₹${remainingBudget.toLocaleString()}` : `-₹${Math.abs(remainingBudget).toLocaleString()} (Shortfall)`}
+                </span>
               </div>
             </div>
-          </div>
 
-        </div>
-
-        {/* RIGHT 40%: MAP & DECISION REASONS */}
-        <div className="lg:col-span-5 sticky top-20 space-y-6">
-          
-          {/* Interactive Map */}
-          <div className="bg-[#101419] border border-white/15 rounded-2xl p-4 space-y-3 shadow-xl">
-            <div className="flex items-center justify-between pb-2 border-b border-white/10 text-xs">
-              <span className="font-bold text-white flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-[#0FA77A]" /> Travel Command Center Map
-              </span>
-              <span className="font-mono text-slate-400 text-[11px]">OpenStreetMap</span>
-            </div>
-
-            <InteractiveMap segments={planResult.route_segments} />
-
-            <div className="text-[11px] font-mono text-slate-400 flex items-center justify-between pt-1">
-              <span>{planResult.origin} &rarr; {planResult.destination}</span>
-              <span className="text-[#0FA77A] font-bold">A* Verified Path</span>
-            </div>
-          </div>
-
-          {/* Decision Rationale */}
-          <div className="bg-[#101419] border border-white/15 rounded-2xl p-6 space-y-4 shadow-xl text-xs">
-            <div className="space-y-1 border-b border-white/10 pb-3">
-              <h4 className="font-extrabold text-white text-sm flex items-center gap-2">
-                <Zap className="w-4 h-4 text-[#0FA77A]" /> Why NAVIX Built This Solution
-              </h4>
-              <p className="text-slate-400 text-[11px]">Deterministic solver decision justifications.</p>
-            </div>
-
-            <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
-              {planResult.decision_explanations.map((exp, idx) => (
-                <div key={idx} className="bg-white/5 border border-white/10 rounded-xl p-3 text-slate-300 text-[11px] leading-relaxed flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0FA77A] mt-0.5 flex-shrink-0" />
-                  <span>{exp}</span>
+            {/* Over-Budget Advice Pill with 1-Click Deterministic Resolution */}
+            {isShortfall && (
+              <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs space-y-3 text-rose-800 animate-in fade-in duration-300">
+                <div className="flex items-center gap-2 font-bold text-rose-800 text-sm">
+                  <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>Budget Exceeded by ₹{shortfallAmount.toLocaleString()}</span>
                 </div>
-              ))}
-            </div>
-          </div>
+                <p className="text-xs text-rose-700 leading-relaxed">
+                  Your current selections exceed your budget cap. Click below to adjust to the minimum mathematically feasible budget (including 8% contingency) in one click.
+                </p>
+                <div className="space-y-2 pt-1">
+                  <button
+                    id="auto-fix-budget-btn"
+                    type="button"
+                    onClick={() => dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: minimumRequiredBudget })}
+                    className="w-full py-2.5 bg-[#1F6E78] hover:bg-[#15525A] text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-sm hover:shadow-md cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <span>Increase Budget to ₹{minimumRequiredBudget.toLocaleString()}</span>
+                  </button>
+                  <div className="flex flex-col gap-1 text-xs pt-1">
+                    <button
+                      type="button"
+                      onClick={() => dispatch({ type: 'SET_STAGE', payload: 2 })}
+                      className="text-left font-semibold text-rose-800 hover:underline cursor-pointer"
+                    >
+                      &bull; Switch to CHEAPEST Transit alternative
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => dispatch({ type: 'SET_STAGE', payload: 5 })}
+                      className="text-left font-semibold text-rose-800 hover:underline cursor-pointer"
+                    >
+                      &bull; Choose a Budget Homestay or Hostel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
-          {/* Community Stories Secondary Section */}
-          <div className="bg-[#101419] border border-white/15 rounded-2xl p-6 space-y-4 shadow-xl text-xs">
-            <h4 className="font-bold text-white uppercase tracking-wider">From the Community</h4>
-            <div className="bg-[#161B22] p-4 rounded-xl border border-white/10 space-y-2">
-              <span className="text-[10px] font-mono text-[#0FA77A] font-bold uppercase">Featured Community Story</span>
-              <h5 className="font-extrabold text-white text-sm">7 Days in Old Manali Under ₹20,000</h5>
-              <p className="text-slate-400 text-[11px] leading-relaxed">
-                Read how fellow backpackers executed the same Sangli to Manali corridor within budget.
-              </p>
-              <Link href="/stories" className="inline-block text-[#0FA77A] font-bold hover:underline pt-1">
-                Explore Community Stories &rarr;
-              </Link>
-            </div>
-          </div>
+            <BudgetEditModal
+              isOpen={budgetModalOpen}
+              onClose={() => setBudgetModalOpen(false)}
+            />
 
+            {/* Primary Action Button */}
+            <button
+              id="generate-itinerary-btn"
+              type="button"
+              disabled={isSubmitting}
+              onClick={onExecutePlan}
+              className="w-full py-4 bg-[#1F6E78] hover:bg-[#15525A] text-white font-black text-xs rounded-2xl shadow-lg hover:shadow-[#1F6E78]/25 transition-all uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+            >
+              <span>{isSubmitting ? 'Organizing Day-by-Day Schedule...' : 'Generate Complete Itinerary →'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-
       </div>
-
     </div>
   );
 };

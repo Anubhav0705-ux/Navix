@@ -5,6 +5,7 @@ import {
   OptimizationProfile, StayPreference, FoodPreference,
   ActivityPreference, TripPlanRequest, ExternalPlaceRef
 } from '@/types';
+import { AttractionItem, FoodPlaceItem, HotelItem, TransportAlternative } from '@/services/destinations';
 import { getCurrentUser } from '@/services/auth';
 
 export type PlannerStage = 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -58,6 +59,15 @@ export interface PlannerState {
   departurePreference: 'Any' | 'Morning' | 'Afternoon' | 'Evening';
   travelComfort: 'Basic' | 'Standard' | 'Comfort';
   selectedRouteOption: 'BALANCED' | 'CHEAPEST' | 'FASTER';
+
+  // Demo Presentation Interactive Selections
+  selectedTransportAlternative?: TransportAlternative;
+  selectedAttractionItems: AttractionItem[];
+  mustVisitPlaceIds: string[];
+  selectedFoodItems: FoodPlaceItem[];
+  mustEatFoodIds: string[];
+  selectedHotelItem?: HotelItem;
+  travelStyle: 'Budget' | 'Balanced' | 'Comfort' | 'Adventure' | 'Relaxed';
 }
 
 export type PlannerAction =
@@ -97,6 +107,13 @@ export type PlannerAction =
   | { type: 'SET_DEPARTURE_PREFERENCE'; payload: 'Any' | 'Morning' | 'Afternoon' | 'Evening' }
   | { type: 'SET_TRAVEL_COMFORT'; payload: 'Basic' | 'Standard' | 'Comfort' }
   | { type: 'SET_ROUTE_OPTION'; payload: 'BALANCED' | 'CHEAPEST' | 'FASTER' }
+  | { type: 'SET_SELECTED_TRANSPORT'; payload: TransportAlternative }
+  | { type: 'TOGGLE_ATTRACTION_ITEM'; payload: AttractionItem }
+  | { type: 'TOGGLE_MUST_VISIT_PLACE'; payload: string }
+  | { type: 'TOGGLE_FOOD_ITEM'; payload: FoodPlaceItem }
+  | { type: 'TOGGLE_MUST_EAT_FOOD'; payload: string }
+  | { type: 'SET_SELECTED_HOTEL'; payload: HotelItem }
+  | { type: 'SET_TRAVEL_STYLE'; payload: 'Budget' | 'Balanced' | 'Comfort' | 'Adventure' | 'Relaxed' }
   | { type: 'PREFILL_FROM_QUERY'; payload: Partial<PlannerState> };
 
 // Clean default dates (departure 14 days ahead, return 20 days ahead)
@@ -142,8 +159,17 @@ const INITIAL_STATE: PlannerState = {
   dietPreference: 'No Preference',
   departurePreference: 'Morning',
   travelComfort: 'Standard',
-  selectedRouteOption: 'BALANCED'
+  selectedRouteOption: 'BALANCED',
+
+  selectedTransportAlternative: undefined,
+  selectedAttractionItems: [],
+  mustVisitPlaceIds: [],
+  selectedFoodItems: [],
+  mustEatFoodIds: [],
+  selectedHotelItem: undefined,
+  travelStyle: 'Balanced'
 };
+
 
 const STORAGE_KEY = 'navix_planner_v2';
 
@@ -152,16 +178,29 @@ function plannerReducer(state: PlannerState, action: PlannerAction): PlannerStat
     case 'SET_STAGE':
       return { ...state, stage: action.payload };
     case 'SET_ORIGIN':
-      return { ...state, origin: action.payload };
+      return { ...state, origin: action.payload, selectedTransportAlternative: undefined };
     case 'SET_DESTINATION':
-      return { ...state, destination: action.payload };
+      return {
+        ...state,
+        destination: action.payload,
+        selectedTransportAlternative: undefined,
+        selectedPlaces: [],
+        selectedDiscoveryPlaces: [],
+        selectedAttractionItems: [],
+        mustVisitPlaceIds: [],
+        mustInclude: [],
+        selectedFoodItems: [],
+        mustEatFoodIds: [],
+        selectedHotelItem: undefined
+      };
     case 'SET_ORIGIN_PLACE':
       return {
         ...state,
         origin: action.payload.display_name,
         originPlace: action.payload,
         originLocationId: action.payload.provider_place_id,
-        originEntityType: 'EXTERNAL_PLACE'
+        originEntityType: 'EXTERNAL_PLACE',
+        selectedTransportAlternative: undefined
       };
     case 'SET_DESTINATION_PLACE':
       return {
@@ -169,27 +208,42 @@ function plannerReducer(state: PlannerState, action: PlannerAction): PlannerStat
         destination: action.payload.display_name,
         destinationPlace: action.payload,
         destinationLocationId: action.payload.provider_place_id,
-        destinationEntityType: 'EXTERNAL_PLACE'
+        destinationEntityType: 'EXTERNAL_PLACE',
+        selectedTransportAlternative: undefined,
+        selectedPlaces: [],
+        selectedDiscoveryPlaces: [],
+        selectedAttractionItems: [],
+        mustVisitPlaceIds: [],
+        mustInclude: [],
+        selectedFoodItems: [],
+        mustEatFoodIds: [],
+        selectedHotelItem: undefined
       };
     case 'CLEAR_ORIGIN_PLACE':
       return {
         ...state,
         originPlace: undefined,
         originLocationId: undefined,
-        originEntityType: undefined
+        originEntityType: undefined,
+        selectedTransportAlternative: undefined
       };
     case 'CLEAR_DESTINATION_PLACE':
       return {
         ...state,
         destinationPlace: undefined,
         destinationLocationId: undefined,
-        destinationEntityType: undefined
+        destinationEntityType: undefined,
+        selectedTransportAlternative: undefined,
+        selectedPlaces: [],
+        selectedDiscoveryPlaces: [],
+        selectedAttractionItems: [],
+        mustVisitPlaceIds: [],
+        mustInclude: [],
+        selectedFoodItems: [],
+        mustEatFoodIds: [],
+        selectedHotelItem: undefined
       };
 
-    case 'SET_ORIGIN':
-      return { ...state, origin: action.payload };
-    case 'SET_DESTINATION':
-      return { ...state, destination: action.payload };
     case 'SET_ORIGIN_LOCATION':
       return {
         ...state,
@@ -316,10 +370,121 @@ function plannerReducer(state: PlannerState, action: PlannerAction): PlannerStat
       return { ...state, travelComfort: action.payload };
     case 'SET_ROUTE_OPTION':
       return { ...state, selectedRouteOption: action.payload, profile: action.payload };
+    case 'SET_SELECTED_TRANSPORT': {
+      const opt = action.payload;
+      const profileMap: Record<string, 'BALANCED' | 'CHEAPEST' | 'FASTER'> = {
+        'CHEAPEST': 'CHEAPEST',
+        'FASTEST': 'FASTER',
+        'COMFORT': 'FASTER',
+        'RECOMMENDED': 'BALANCED',
+        'LOWEST TRANSFERS': 'BALANCED'
+      };
+      const newProfile = profileMap[opt.label] || 'BALANCED';
+      return {
+        ...state,
+        selectedTransportAlternative: opt,
+        selectedRouteOption: newProfile,
+        profile: newProfile
+      };
+    }
+    case 'TOGGLE_ATTRACTION_ITEM': {
+      const item = action.payload;
+      const exists = state.selectedAttractionItems.some((a) => a.id === item.id);
+      const nextItems = exists
+        ? state.selectedAttractionItems.filter((a) => a.id !== item.id)
+        : [...state.selectedAttractionItems, item];
+      const nextIds = nextItems.map((a) => a.id);
+      const nextMustVisits = exists
+        ? state.mustVisitPlaceIds.filter((id) => id !== item.id)
+        : state.mustVisitPlaceIds;
+      return {
+        ...state,
+        selectedAttractionItems: nextItems,
+        selectedPlaces: nextIds,
+        mustVisitPlaceIds: nextMustVisits
+      };
+    }
+    case 'TOGGLE_MUST_VISIT_PLACE': {
+      const id = action.payload;
+      const exists = state.mustVisitPlaceIds.includes(id);
+      const nextMust = exists
+        ? state.mustVisitPlaceIds.filter((p) => p !== id)
+        : [...state.mustVisitPlaceIds, id];
+      // If adding to must-visit, ensure it is also in selectedPlaces and mustInclude
+      const nextPlaces = state.selectedPlaces.includes(id)
+        ? state.selectedPlaces
+        : [...state.selectedPlaces, id];
+      return {
+        ...state,
+        mustVisitPlaceIds: nextMust,
+        selectedPlaces: nextPlaces,
+        mustInclude: nextMust
+      };
+    }
+    case 'TOGGLE_FOOD_ITEM': {
+      const item = action.payload;
+      const exists = state.selectedFoodItems.some((f) => f.id === item.id);
+      const nextItems = exists
+        ? state.selectedFoodItems.filter((f) => f.id !== item.id)
+        : [...state.selectedFoodItems, item];
+      const nextMustEat = exists
+        ? state.mustEatFoodIds.filter((id) => id !== item.id)
+        : state.mustEatFoodIds;
+      return {
+        ...state,
+        selectedFoodItems: nextItems,
+        mustEatFoodIds: nextMustEat
+      };
+    }
+    case 'TOGGLE_MUST_EAT_FOOD': {
+      const id = action.payload;
+      const exists = state.mustEatFoodIds.includes(id);
+      const nextMust = exists
+        ? state.mustEatFoodIds.filter((f) => f !== id)
+        : [...state.mustEatFoodIds, id];
+      return {
+        ...state,
+        mustEatFoodIds: nextMust
+      };
+    }
+    case 'SET_SELECTED_HOTEL': {
+      const hotel = action.payload;
+      const cat = (hotel.category || '').toUpperCase();
+      const stayPref: StayPreference = cat === 'BUDGET' ? 'BUDGET' : cat === 'PREMIUM' ? 'COMFORT' : 'STANDARD';
+      return {
+        ...state,
+        selectedHotelItem: hotel,
+        stayPreference: stayPref
+      };
+    }
+    case 'SET_TRAVEL_STYLE': {
+      const style = action.payload;
+      const paceMap: Record<string, 'Relaxed' | 'Balanced' | 'Packed'> = {
+        'Relaxed': 'Relaxed',
+        'Budget': 'Balanced',
+        'Balanced': 'Balanced',
+        'Comfort': 'Relaxed',
+        'Adventure': 'Packed'
+      };
+      const profileMap: Record<string, OptimizationProfile> = {
+        'Budget': 'CHEAPEST',
+        'Comfort': 'FASTER',
+        'Balanced': 'BALANCED',
+        'Adventure': 'BALANCED',
+        'Relaxed': 'BALANCED'
+      };
+      return {
+        ...state,
+        travelStyle: style,
+        travelPace: paceMap[style] || 'Balanced',
+        profile: profileMap[style] || 'BALANCED'
+      };
+    }
     case 'PREFILL_FROM_QUERY':
       return { ...state, ...action.payload };
     default:
       return state;
+
   }
 }
 
@@ -380,7 +545,11 @@ export const PlannerProvider: React.FC<{ children: React.ReactNode }> = ({ child
       stay_preference: state.stayPreference,
       food_preference: state.foodPreference,
       activity_preference: state.activityPreference,
+      selected_hotel_id: state.selectedHotelItem?.id,
+      selected_food_id: state.selectedFoodItems[0]?.id,
+      selected_transport_alternative_id: state.selectedTransportAlternative?.id,
       planner_preferences: {
+
         selected_activity_ids: state.selectedPlaces,
         trip_personalities: state.personalities,
         pace: state.travelPace.toUpperCase() as 'RELAXED' | 'BALANCED' | 'PACKED',

@@ -129,15 +129,19 @@ class TransitGraph:
         return graph
 
     def resolve_node_ids(self, city_or_node_query: str) -> List[str]:
-        """Resolves a city or station name string to matching node IDs."""
+        """Resolves a city or station name string to matching node IDs, supporting canonical aliases."""
+        from app.core.destinations import normalize_city_name
         key = city_or_node_query.strip().lower()
-        if key in self.nodes:
-            return [key]
-        if key in self.city_to_node_ids:
-            return self.city_to_node_ids[key]
-        
+        normalized = normalize_city_name(city_or_node_query)
+
+        for candidate in [key, normalized]:
+            if candidate in self.nodes:
+                return [candidate]
+            if candidate in self.city_to_node_ids:
+                return self.city_to_node_ids[candidate]
+
         matching = []
         for city_key, node_list in self.city_to_node_ids.items():
-            if key in city_key or city_key in key:
+            if key in city_key or city_key in key or normalized in city_key or city_key in normalized:
                 matching.extend(node_list)
         return list(set(matching))

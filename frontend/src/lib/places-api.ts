@@ -1,10 +1,10 @@
 import {
   PlaceSearchResponse,
-  ExternalPlaceRef,
   TripSetupPayload,
   TripSetupDraftResponse,
   ProviderHealthResponse
 } from '@/types';
+
 
 const rawBase = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 const API_BASE_URL = rawBase.endsWith('/api/v1')

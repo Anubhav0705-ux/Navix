@@ -36,7 +36,7 @@ export const SAMPLE_STORIES: Story[] = [
     title: '7 Days in Old Manali Under ₹20,000: The Complete Backpacker Guide',
     destination: 'Old Manali, Himachal Pradesh',
     excerpt: 'From taking the overnight HRTC Volvo bus from Delhi to sipping hot Kahwa in rustic cafes — here is how I spent a whole week in Old Manali without exceeding my student budget.',
-    coverImage: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1200&auto=format&fit=crop',
+    coverImage: '/media/stories/manali_backpacker_guide.webp',
     author: {
       name: 'Aarav Sharma',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
@@ -60,12 +60,12 @@ export const SAMPLE_STORIES: Story[] = [
         {
           title: 'The Journey: Sangli to Delhi & Beyond',
           body: 'I started my journey from Sangli, taking a quick ₹40 local auto shuttle to Miraj Junction. From Miraj, the Goa Express took me straight to New Delhi. After a brief transit via the Delhi Metro to Kashmere Gate ISBT, I boarded the evening HRTC Volvo bus to Manali.',
-          image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=1000&auto=format&fit=crop'
+          image: '/media/stories/chandigarh_manali_transit.webp'
         },
         {
           title: 'Settling in Old Manali & Local Eats',
           body: 'Old Manali is far quieter and more peaceful than the crowded Mall Road down below. I checked into a standard cozy guest house overlooking apple orchards for ₹1,200 per night. Breakfasts were spent enjoying fresh woodfired pizzas and hot Himalayan tea.',
-          image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1000&auto=format&fit=crop'
+          image: '/media/places/manali_hadimba_temple.webp'
         }
       ],
       budgetBreakdown: [
@@ -82,7 +82,7 @@ export const SAMPLE_STORIES: Story[] = [
     title: 'A Slow Weekend Through Pune Cafes and Heritage Fort Ruins',
     destination: 'Pune, Maharashtra',
     excerpt: 'Explore Shaniwar Wada, cafe-hop in Koregaon Park, and trek Sinhagad Fort — all connected seamlessly via Pune Metro and local city buses for under ₹5,000.',
-    coverImage: 'https://images.unsplash.com/photo-1588416936097-41850ab3d86d?q=80&w=1200&auto=format&fit=crop',
+    coverImage: '/media/stories/pune_heritage_story.webp',
     author: {
       name: 'Priya Deshmukh',
       avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=200&auto=format&fit=crop',
@@ -105,7 +105,7 @@ export const SAMPLE_STORIES: Story[] = [
         {
           title: 'Exploring Old Pune & Peshwa History',
           body: 'Start your morning in the historic Peth areas. Walking through the narrow streets around Shaniwar Wada feels like stepping back 200 years.',
-          image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1000&auto=format&fit=crop'
+          image: '/media/stories/pune_heritage_story.webp'
         }
       ],
       budgetBreakdown: [
@@ -121,7 +121,7 @@ export const SAMPLE_STORIES: Story[] = [
     title: 'Navigating the Scenic Himachal Highway: Chandigarh to Manali Transit',
     destination: 'Chandigarh to Manali',
     excerpt: 'A practical travel log on switching from broad-gauge trains at Chandigarh Junction to Himalayan mountain buses through Mandi and Kullu Valley.',
-    coverImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop',
+    coverImage: '/media/stories/chandigarh_manali_transit.webp',
     author: {
       name: 'Rohan Mehta',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
@@ -144,7 +144,7 @@ export const SAMPLE_STORIES: Story[] = [
         {
           title: 'Schedules & Safe Transfers',
           body: 'Making sure your train arrival at Chandigarh gives you at least 2 hours of buffer before the mountain bus departs is crucial for avoiding stressful transfers.',
-          image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=1000&auto=format&fit=crop'
+          image: '/media/stories/chandigarh_manali_transit.webp'
         }
       ],
       budgetBreakdown: [
@@ -160,7 +160,7 @@ export const SAMPLE_STORIES: Story[] = [
     title: 'Old Delhi Street Food & Heritage Crawl for Under ₹3,000',
     destination: 'Delhi ISBT & Chandni Chowk',
     excerpt: 'How to make the most of a 24-hour transit layover in Delhi: Jama Masjid, Chandni Chowk Paranthe Wali Gali, and Red Fort using Delhi Metro.',
-    coverImage: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1200&auto=format&fit=crop',
+    coverImage: '/media/stories/delhi_heritage_street_food.webp',
     author: {
       name: 'Sneha Kulkarni',
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop',

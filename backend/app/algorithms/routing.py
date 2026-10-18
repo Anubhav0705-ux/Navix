@@ -70,7 +70,13 @@ def search_routes(
 
         # Check Goal State
         if curr_node_id in dest_node_ids and len(segments) > 0:
-            total_elapsed = int((segments[-1].arrival_time - start_time).total_seconds() / 60)
+            journey_elapsed = int((segments[-1].arrival_time - segments[0].departure_time).total_seconds() / 60)
+            initial_wait = max(0, int((segments[0].departure_time - start_time).total_seconds() / 60))
+            if initial_wait <= 1440 and (journey_elapsed + initial_wait) > 0:
+                total_elapsed = journey_elapsed + initial_wait
+            else:
+                total_elapsed = journey_elapsed if journey_elapsed > 0 else (travel_mins + layover_mins)
+
             summary = RouteSummary(
                 total_transport_cost=cost_so_far,
                 total_elapsed_minutes=total_elapsed,

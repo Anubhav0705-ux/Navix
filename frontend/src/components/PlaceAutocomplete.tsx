@@ -47,14 +47,14 @@ export const PlaceAutocomplete: React.FC<PlaceAutocompleteProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Sync internal text state with value prop
-  useEffect(() => {
-    if (selectedPlace) {
-      setQuery(selectedPlace.display_name);
-    } else {
-      setQuery(value || '');
-    }
-  }, [value, selectedPlace]);
+  // Sync internal text state when value or selectedPlace props change
+  const [prevPropValue, setPrevPropValue] = useState(value);
+  const [prevPropSelected, setPrevPropSelected] = useState(selectedPlace);
+  if (value !== prevPropValue || selectedPlace !== prevPropSelected) {
+    setPrevPropValue(value);
+    setPrevPropSelected(selectedPlace);
+    setQuery(selectedPlace ? selectedPlace.display_name : (value || ''));
+  }
 
   // Filter out excluded place (e.g., origin place when picking destination)
   const filteredResults = excludePlaceId

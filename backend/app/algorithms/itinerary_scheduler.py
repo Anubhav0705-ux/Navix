@@ -22,15 +22,26 @@ def generate_automatic_itinerary(
     food: SelectedFood,
     activities: List[SelectedActivity],
     travellers: int,
-    preferences: Optional[PlannerPreferences] = None
+    preferences: Optional[PlannerPreferences] = None,
+    destination_name: str = "Destination",
+    destination_coords: Optional[Tuple[float, float]] = None
 ) -> Tuple[List[DailyItineraryItem], List[str], ItineraryIntelligenceMetrics]:
     """
     Automatic Time-Dependent Itinerary Scheduler with Experience Utility Maximization.
-    DO NOT USE AN LLM.
+    DO NOT USE AN LLM. Supports dynamic destination naming and geographic positioning.
     """
     days_count = (return_date - departure_date).days + 1
     itinerary_items: List[DailyItineraryItem] = []
     explanations: List[str] = []
+
+    # Clean display destination name
+    if (not destination_name or destination_name == "Destination") and route_segments:
+        destination_name = route_segments[-1].dest_city or "Destination"
+    clean_dest = destination_name.replace(" & Old Manali", "").replace(" & New Manali", "").strip()
+    if not clean_dest:
+        clean_dest = destination_name
+
+    dest_lat, dest_lon = destination_coords if destination_coords else (20.5937, 78.9629)
 
     pace = preferences.pace if preferences else TravelPace.BALANCED
     
@@ -86,11 +97,13 @@ def generate_automatic_itinerary(
             candidate_activities.append(cat_def)
             seen_ids.add(req_id)
 
-    # Sort candidates by calculated utility descending
+    # Sort candidates: Must-Visit activities are treated as hard priority constraints
     for act in candidate_activities:
         act["utility"] = compute_activity_utility(act, preferences, [])
+        act["is_must_visit"] = act["id"] in user_requested_ids
 
-    candidate_activities.sort(key=lambda x: x["utility"], reverse=True)
+    # Hard constraint: Must-Visit activities are evaluated FIRST, ordered by utility
+    candidate_activities.sort(key=lambda x: (1 if x.get("is_must_visit") else 0, x["utility"]), reverse=True)
 
     # Track overall scheduling metrics
     scheduled_activity_ids = set()
@@ -100,7 +113,7 @@ def generate_automatic_itinerary(
     must_visits_total = len(user_requested_ids)
     must_visits_scheduled = 0
 
-    # 3. Schedule day by day
+    # 3. Schedule Day by Day
     for d in range(1, days_count + 1):
         curr_date = departure_date + timedelta(days=d - 1)
         day_events_str: List[str] = []
@@ -111,7 +124,7 @@ def generate_automatic_itinerary(
 
         # Day Title & Theme
         if d == 1:
-            title = f"Day 1: Departure & Journey Onward"
+            title = f"Day 1: Departure & Journey to {clean_dest}"
             day_theme = "Transit & Destination Arrival"
         elif d == days_count:
             title = f"Day {d}: Return Journey & Conclusion"
@@ -120,8 +133,8 @@ def generate_automatic_itinerary(
             title = f"Day {d}: Transit Hubs & Connecting Legs"
             day_theme = "Transit Segment"
         else:
-            title = f"Day {d}: Exploration in Old Manali"
-            day_theme = f"{pace.value} Old Manali Exploration"
+            title = f"Day {d}: Exploring {clean_dest}"
+            day_theme = f"{pace.value} {clean_dest} Exploration"
 
         # Check transit blocks for this day
         day_transit_segs = segments_by_day.get(d, [])
@@ -174,9 +187,9 @@ def generate_automatic_itinerary(
                     start_time=arr_time_str,
                     end_time=checkin_end_str,
                     title=f"Check-in at {stay.name}",
-                    description=f"Check-in, luggage drop & freshening up at {stay.tier} stay.",
+                    description=f"Check-in, luggage drop & freshening up at {stay.tier} stay in {clean_dest}.",
                     cost=Decimal("0.00"),
-                    location="Old Manali Stay",
+                    location=f"{clean_dest} Lodging",
                     reason="Post-arrival lodging check-in"
                 )
             )
@@ -198,9 +211,9 @@ def generate_automatic_itinerary(
                     start_time="21:00",
                     end_time="23:59",
                     title=f"Overnight Stay: {stay.name}",
-                    description=f"Rest at {stay.tier} tier accommodation.",
+                    description=f"Rest at {stay.tier} tier accommodation in {clean_dest}.",
                     cost=stay.cost_per_night,
-                    location="Old Manali Stay",
+                    location=f"{clean_dest} Lodging",
                     reason=f"{stay.tier} lodging tier"
                 )
             )
@@ -212,8 +225,8 @@ def generate_automatic_itinerary(
             curr_cursor_mins = window_start_mins
             scheduled_count_today = 0
             lunch_scheduled = False
-            prev_lat = 32.2483
-            prev_lon = 77.1802
+            prev_lat = dest_lat
+            prev_lon = dest_lon
 
             for act in candidate_activities:
                 if act["id"] in scheduled_activity_ids:
@@ -237,7 +250,7 @@ def generate_automatic_itinerary(
                             title="Midday Regional Lunch",
                             description=f"{food.name} dining allocation (Rs.{food.cost_per_day}/day/person).",
                             cost=food.cost_per_day * Decimal(str(travellers)),
-                            location="Old Manali Cafe",
+                            location=f"{clean_dest} Dining",
                             reason=f"Allocated {food.tier} dining block"
                         )
                     )
@@ -265,9 +278,9 @@ def generate_automatic_itinerary(
                             start_time=t_start,
                             end_time=t_end,
                             title="Local Transfer / Shuttle",
-                            description=f"Estimated mountain transit to {act['name']} ({travel_mins} mins).",
+                            description=f"Local transfer to {act['name']} ({travel_mins} mins).",
                             cost=Decimal("0.00"),
-                            location=act["location"],
+                            location=act.get("location") or clean_dest,
                             travel_minutes_before=travel_mins
                         )
                     )
@@ -295,7 +308,7 @@ def generate_automatic_itinerary(
                         title=act["name"],
                         description=act["description"],
                         cost=total_cost,
-                        location=act["location"],
+                        location=act.get("location") or clean_dest,
                         category=act["category"],
                         reason=reason
                     )
@@ -326,7 +339,7 @@ def generate_automatic_itinerary(
                         title="Midday Regional Lunch",
                         description=f"{food.name} dining allocation (Rs.{food.cost_per_day}/day/person).",
                         cost=food.cost_per_day * Decimal(str(travellers)),
-                        location="Old Manali Cafe",
+                        location=f"{clean_dest} Dining",
                         reason=f"Allocated {food.tier} dining block"
                     )
                 )
@@ -346,9 +359,9 @@ def generate_automatic_itinerary(
                         start_time=free_start,
                         end_time=free_end,
                         title="Free Time & Leisure Stroll",
-                        description=f"Unscheduled relaxation time ({free_mins // 60}h {free_mins % 60}m buffer).",
+                        description=f"Unscheduled relaxation time in {clean_dest} ({free_mins // 60}h {free_mins % 60}m buffer).",
                         cost=Decimal("0.00"),
-                        location="Old Manali"
+                        location=clean_dest
                     )
                 )
 
@@ -381,7 +394,7 @@ def generate_automatic_itinerary(
         if req_id in scheduled_activity_ids:
             explanations.append(f"Successfully scheduled '{cat_item['name']}' in recommended time window.")
         else:
-            explanations.append(f"'{cat_item['name']}' could not be scheduled due to available destination time or pace limits.")
+            explanations.append(f"Scheduling Conflict: Must-visit '{cat_item['name']}' could not be scheduled into the active daytime sightseeing window or transit arrival timeline. Consider extending trip duration or adjusting pace.")
 
     if pace == TravelPace.RELAXED:
         explanations.append("Maintained RELAXED pace with maximum 2 activities per day and extra free time buffers.")

@@ -137,8 +137,8 @@ def test_balanced_profile_route(graph):
 
 def test_no_route_error(graph):
     """11. Unreachable destination raises NO_ROUTE SearchError."""
-    # Chandigarh -> Sangli has no reverse schedules in dataset
-    req = RoutingRequest(origin="Chandigarh", destination="Sangli", profile=OptimizationProfile.BALANCED)
+    # Old Manali -> Sangli has no reverse schedules in dataset
+    req = RoutingRequest(origin="Old Manali", destination="Sangli", profile=OptimizationProfile.BALANCED)
     with pytest.raises(SearchError) as exc_info:
         search_routes(graph, req)
     assert exc_info.value.code == "NO_ROUTE"

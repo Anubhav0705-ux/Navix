@@ -20,7 +20,8 @@ def evaluate_stay_utility(tier_name: str, preference: StayPreference) -> float:
     target = pref_map[preference]
     tiers = ["Budget", "Standard", "Comfort"]
     target_idx = tiers.index(target)
-    actual_idx = tiers.index(tier_name)
+    tier_clean = "Comfort" if tier_name in ["Premium", "Luxury", "Comfort"] else ("Budget" if tier_name in ["Budget", "Economy"] else "Standard")
+    actual_idx = tiers.index(tier_clean)
 
     if actual_idx == target_idx:
         return 40.0
@@ -29,6 +30,7 @@ def evaluate_stay_utility(tier_name: str, preference: StayPreference) -> float:
     else:
         # Downgrade penalty per level
         return 40.0 - (target_idx - actual_idx) * 15.0
+
 
 
 def evaluate_food_utility(tier_name: str, preference: FoodPreference) -> float:
@@ -51,7 +53,11 @@ def evaluate_food_utility(tier_name: str, preference: FoodPreference) -> float:
         return 30.0 - (target_idx - actual_idx) * 12.0
 
 
-def evaluate_activity_utility(selected_activities: List[Dict[str, Any]], preference: ActivityPreference) -> float:
+def evaluate_activity_utility(
+    selected_activities: List[Dict[str, Any]],
+    preference: ActivityPreference,
+    must_include_ids: Optional[List[str]] = None
+) -> float:
     """Returns utility score for selected activities against preference."""
     count = len(selected_activities)
     base_score = sum([float(a["cost"]) / 100.0 + 5.0 for a in selected_activities])
@@ -61,11 +67,19 @@ def evaluate_activity_utility(selected_activities: List[Dict[str, Any]], prefere
     elif preference == ActivityPreference.MEDIUM:
         target_count = 2
     else:
-        target_count = len(ACTIVITY_OPTIONS)
+        target_count = 4
 
     count_diff = abs(count - target_count)
     pref_score = max(0.0, 25.0 - count_diff * 8.0)
-    return base_score + pref_score
+
+    must_score = 0.0
+    if must_include_ids:
+        sel_ids = {a.get("id") for a in selected_activities}
+        for mid in must_include_ids:
+            if mid in sel_ids:
+                must_score += 150.0
+
+    return base_score + pref_score + must_score
 
 
 def optimize_trip_budget(
@@ -76,7 +90,11 @@ def optimize_trip_budget(
     nights: int,
     stay_preference: StayPreference,
     food_preference: FoodPreference,
-    activity_preference: ActivityPreference
+    activity_preference: ActivityPreference,
+    accommodations: Optional[List[Dict[str, Any]]] = None,
+    food_options: Optional[List[Dict[str, Any]]] = None,
+    activities: Optional[List[Dict[str, Any]]] = None,
+    must_include_ids: Optional[List[str]] = None
 ) -> Tuple[SelectedStay, SelectedFood, List[SelectedActivity], CostBreakdown, List[str]]:
     """
     Constrained DP / Knapsack Optimizer for whole-trip budget allocation.
@@ -85,9 +103,13 @@ def optimize_trip_budget(
     total_transport_cost = transport_cost_per_person * Decimal(str(travellers))
     unavoidable_local_transport = Decimal("100.00") * Decimal(str(days)) * Decimal(str(travellers))
 
+    stay_catalog = accommodations or ACCOMMODATION_TIERS
+    food_catalog = food_options or FOOD_TIERS
+    activity_catalog = activities if activities is not None else ACTIVITY_OPTIONS
+
     # 1. Calculate Minimum Mandatory Cost (Cheapest stay, food, 0 activities)
-    min_stay = ACCOMMODATION_TIERS[0]
-    min_food = FOOD_TIERS[0]
+    min_stay = stay_catalog[0]
+    min_food = food_catalog[0]
 
     min_stay_total = min_stay["cost_per_night"] * Decimal(str(nights))
     min_food_total = min_food["cost_per_day"] * Decimal(str(days)) * Decimal(str(travellers))
@@ -104,16 +126,23 @@ def optimize_trip_budget(
     best_combo = None
     best_utility = -1.0
 
-    # Activity subsets (from empty to all activities)
+    # Activity subsets (from empty to all activities, capped at 4 for combinatorics)
     activity_subsets = []
-    for r in range(len(ACTIVITY_OPTIONS) + 1):
-        for combo in combinations(ACTIVITY_OPTIONS, r):
+    if must_include_ids:
+        must_acts = [a for a in activity_catalog if a.get("id") in must_include_ids]
+        other_acts = [a for a in activity_catalog if a.get("id") not in must_include_ids]
+        eff_activities = (must_acts + other_acts)[:6]
+    else:
+        eff_activities = activity_catalog[:6]
+
+    for r in range(min(5, len(eff_activities) + 1)):
+        for combo in combinations(eff_activities, r):
             activity_subsets.append(list(combo))
 
-    for stay in ACCOMMODATION_TIERS:
+    for stay in stay_catalog:
         stay_cost = stay["cost_per_night"] * Decimal(str(nights))
 
-        for food in FOOD_TIERS:
+        for food in food_catalog:
             food_cost = food["cost_per_day"] * Decimal(str(days)) * Decimal(str(travellers))
 
             for act_subset in activity_subsets:
@@ -138,8 +167,9 @@ def optimize_trip_budget(
                 # Calculate Utility
                 u_stay = evaluate_stay_utility(stay["tier"], stay_preference)
                 u_food = evaluate_food_utility(food["tier"], food_preference)
-                u_act = evaluate_activity_utility(act_subset, activity_preference)
+                u_act = evaluate_activity_utility(act_subset, activity_preference, must_include_ids)
                 total_utility = u_stay + u_food + u_act
+
 
                 if total_utility > best_utility:
                     best_utility = total_utility

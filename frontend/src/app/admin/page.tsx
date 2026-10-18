@@ -50,7 +50,7 @@ export default function AdminPage() {
     <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#0B1320]">
       <Navbar />
 
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-12 space-y-8">
         
         {/* Admin Header */}
         <div className="bg-white border border-[#E7E5E0] rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">

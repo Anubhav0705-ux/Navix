@@ -2,24 +2,46 @@
 
 @layer base {
   :root {
-    --font-sans: var(--font-manrope), system-ui, -apple-system, sans-serif;
-    --font-serif: var(--font-playfair), Georgia, serif;
+    --font-sans: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-serif: var(--font-serif), Georgia, serif;
     
-    --bg-dark: #101419;
-    --bg-light: #F5F0E8;
-    --emerald: #0FA77A;
-    --electric-blue: #4D7CFE;
-    --coral: #FF6B5D;
-    --warm-yellow: #F7B955;
-    --sand-muted: #D8CBB8;
-    --text-dark: #101828;
+    /* NAVIX Bright Editorial Travel Palette Tokens */
+    --bg-main: #FBF7F1;       /* Warm sunlit editorial canvas */
+    --bg-surface: #FFFDFC;    /* Soft warm white elevated card surface */
+    --bg-subtle: #F5EBE1;     /* Warm sand for secondary containers */
+    --bg-muted: #EBDCC7;      /* Clean sand border & badge fill */
+
+    /* Typography: Deep ink & readable slates */
+    --ink-primary: #142A38;   /* Deep text for headings & editorial contrast */
+    --ink-secondary: #66757F; /* Secondary text for readable body */
+    --ink-muted: #8E9BA4;     /* Muted metadata */
+    --ink-light: #B2BDC5;     /* Inactive elements */
+
+    /* Vibrant Brand Accents */
+    --primary-teal: #1F6E78;  /* Primary brand teal for CTAs & active states */
+    --primary-dark: #15525A;  /* Hover / active dark teal */
+    --ocean-blue: #287FB8;    /* Ocean blue for transit paths & map links */
+    --coral-accent: #E96E55;  /* Warm coral for highlights & energy */
+    --warm-gold: #D8A64B;     /* Warm gold for accents & ratings */
+    --forest-green: #3E7C67;  /* Forest green for nature tags & positive delta */
+    --photo-overlay: #0C1820; /* Dark photographic overlay */
+
+    /* Warm Borders & Shadows */
+    --border-light: #EBDCC7;
+    --border-card: #E2D3BE;
   }
 
   body {
-    background-color: var(--bg-light);
-    color: var(--text-dark);
+    background-color: #FBF7F1;
+    color: #142A38;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(31, 110, 120, 0.2);
+    color: #142A38;
   }
 }
 
@@ -27,91 +49,111 @@
   font-family: var(--font-serif), Georgia, serif;
 }
 
-/* Custom Design Tokens V2 */
-.bg-v2-dark {
-  background-color: #101419;
+/* Warm, elegant custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.bg-v2-light {
-  background-color: #F5F0E8;
+::-webkit-scrollbar-track {
+  background: #FBF7F1;
 }
 
-.text-v2-emerald {
-  color: #0FA77A;
+::-webkit-scrollbar-thumb {
+  background: #EBDCC7;
+  border-radius: 9999px;
 }
 
-.bg-v2-emerald {
-  background-color: #0FA77A;
+::-webkit-scrollbar-thumb:hover {
+  background: #D8C7B5;
 }
 
-.bg-v2-emerald:hover {
-  background-color: #0B8465;
+/* Editorial Card & Elevation Styles */
+.sunlit-card, .editorial-card {
+  background-color: #FFFDFC;
+  border: 1px solid #EBDCC7;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(20, 42, 56, 0.04), 0 2px 6px -1px rgba(20, 42, 56, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.text-v2-blue {
-  color: #4D7CFE;
+.sunlit-card:hover, .editorial-card:hover {
+  border-color: #1F6E78;
+  box-shadow: 0 16px 36px -6px rgba(20, 42, 56, 0.08), 0 4px 12px -2px rgba(20, 42, 56, 0.03);
 }
 
-.bg-v2-blue {
-  background-color: #4D7CFE;
+.sunlit-card-static, .editorial-card-static {
+  background-color: #FFFDFC;
+  border: 1px solid #EBDCC7;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(20, 42, 56, 0.04), 0 2px 6px -1px rgba(20, 42, 56, 0.02);
 }
 
-.text-v2-coral {
-  color: #FF6B5D;
+/* Photo card hover effect with subtle 1.03 scale zoom */
+.photo-card-hover {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
 }
 
-.bg-v2-coral {
-  background-color: #FF6B5D;
+.photo-card-hover:hover {
+  transform: translateY(-4px);
+  border-color: #1F6E78;
+  box-shadow: 0 20px 40px -10px rgba(20, 42, 56, 0.10), 0 4px 14px -2px rgba(31, 110, 120, 0.06);
 }
 
-.text-v2-yellow {
-  color: #F7B955;
+.photo-card-hover:hover img {
+  transform: scale(1.03);
 }
 
-.bg-v2-yellow {
-  background-color: #F7B955;
+/* Button CTA icon shift micro-interaction */
+.group:hover .btn-icon-shift {
+  transform: translateX(3px);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Animated SVG Route Line Draw */
-@keyframes routeDraw {
-  0% {
-    stroke-dashoffset: 1000;
+/* Route timeline line drawing animation */
+@keyframes routeDrawAnim {
+  from {
+    stroke-dashoffset: 100;
   }
-  100% {
+  to {
     stroke-dashoffset: 0;
   }
 }
 
 .animate-route-draw {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: routeDraw 3s ease-out forwards;
+  stroke-dasharray: 100;
+  animation: routeDrawAnim 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Subtle Hero Zoom */
 @keyframes heroZoom {
   0% {
     transform: scale(1);
   }
   100% {
-    transform: scale(1.05);
+    transform: scale(1.03);
   }
 }
 
 .animate-hero-zoom {
-  animation: heroZoom 15s ease-out infinite alternate;
+  animation: heroZoom 24s ease-out infinite alternate;
 }
 
-/* Photo card hover effect */
-.photo-card-hover {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.photo-card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+/* Respect Accessibility & Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-hero-zoom {
+    animation: none !important;
+  }
 }
 
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
+  color-scheme: light;
 }

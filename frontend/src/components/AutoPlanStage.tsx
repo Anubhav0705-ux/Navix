@@ -1,22 +1,62 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { usePlanner } from '@/context/PlannerContext';
-import { TripPlanResult } from '@/types';
+import { TripPlanResult, UserResponse } from '@/types';
+import { getCurrentUser } from '@/services/auth';
+import { saveTrip } from '@/services/trips';
+import { exportTripPlanPDF } from '@/lib/pdf-export';
+import { getDestinationCoords } from '@/lib/destinations-data';
+import { resolveDestinationPhoto } from '@/lib/mediaResolver';
+import { SafeImage } from './SafeImage';
 import {
-  Sparkles, MapPin, CheckCircle2, RefreshCw, Train, Coffee, Bed, Compass, Zap, Sun
+  Sparkles, Calendar, Download, Bookmark,
+  Share2, Navigation, Bed, Train, Coffee,
+  Sun, Copy, Compass
 } from 'lucide-react';
-
 import dynamic from 'next/dynamic';
 
 const InteractiveMap = dynamic(() => import('@/components/InteractiveMap'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[360px] bg-[#101419] border border-white/10 rounded-2xl flex items-center justify-center text-xs text-slate-400">
+    <div className="w-full h-[400px] bg-[#FBF7F1] border border-[#EBDCC7] rounded-3xl flex items-center justify-center text-xs text-[#64748B]">
       Loading Synchronized Map...
     </div>
   )
 });
+
+const DESTINATION_HERO_IMAGES: Record<string, string> = {
+  goa: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=1600&auto=format&fit=crop',
+  manali: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1600&auto=format&fit=crop',
+  'old manali': 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1600&auto=format&fit=crop',
+  udaipur: 'https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?q=80&w=1600&auto=format&fit=crop',
+  jaipur: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1600&auto=format&fit=crop',
+  munnar: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=80&w=1600&auto=format&fit=crop',
+  rishikesh: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1600&auto=format&fit=crop',
+  darjeeling: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1600&auto=format&fit=crop',
+  hampi: 'https://images.unsplash.com/photo-1620766182966-c6eb5ed2b788?q=80&w=1600&auto=format&fit=crop',
+  mysuru: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=1600&auto=format&fit=crop',
+  bengaluru: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=1600&auto=format&fit=crop',
+  mumbai: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?q=80&w=1600&auto=format&fit=crop',
+  delhi: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1600&auto=format&fit=crop',
+  varanasi: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?q=80&w=1600&auto=format&fit=crop',
+  amritsar: 'https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?q=80&w=1600&auto=format&fit=crop',
+  kochi: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?q=80&w=1600&auto=format&fit=crop',
+  shimla: 'https://images.unsplash.com/photo-1562670652-e5947bddb335?q=80&w=1600&auto=format&fit=crop',
+  ooty: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?q=80&w=1600&auto=format&fit=crop',
+  shillong: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?q=80&w=1600&auto=format&fit=crop'
+};
+
+function getHeroImageForDestination(destName: string): string {
+  const key = destName.toLowerCase().replace(' & old manali', '').replace(' (calangute & anjuna)', '').trim();
+  for (const [k, url] of Object.entries(DESTINATION_HERO_IMAGES)) {
+    if (key.includes(k) || k.includes(key)) {
+      return url;
+    }
+  }
+  return resolveDestinationPhoto(destName);
+}
 
 interface AutoPlanStageProps {
   planResult: TripPlanResult | null;
@@ -25,307 +65,432 @@ interface AutoPlanStageProps {
 }
 
 export const AutoPlanStage: React.FC<AutoPlanStageProps> = ({
-  planResult, onReOptimize, isSubmitting = false
+
+  planResult,
+  onReOptimize,
+  isSubmitting = false
 }) => {
+  const router = useRouter();
   const { state, dispatch } = usePlanner();
+  const [currentUser] = useState<UserResponse | null>(() => getCurrentUser());
   const [selectedDayIdx, setSelectedDayIdx] = useState<number>(0);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [copiedShare, setCopiedShare] = useState(false);
 
   if (!planResult) {
     return (
-      <div className="bg-[#101419] border border-white/15 rounded-3xl p-8 sm:p-12 text-center space-y-6 shadow-2xl my-8">
-        <div className="w-16 h-16 rounded-2xl bg-[#0FA77A]/10 text-[#0FA77A] flex items-center justify-center mx-auto border border-[#0FA77A]/20">
-          <Sparkles className="w-8 h-8 animate-pulse" />
+      <div className="bg-white border border-[#EBDCC7] rounded-3xl p-12 text-center space-y-6 shadow-sm my-8 max-w-xl mx-auto">
+        <div className="w-16 h-16 rounded-2xl bg-[#1F6E78]/10 text-[#1F6E78] flex items-center justify-center mx-auto border border-[#1F6E78]/20">
+          <Compass className="w-8 h-8" />
         </div>
-        <div className="max-w-md mx-auto space-y-2">
-          <h3 className="text-xl sm:text-2xl font-extrabold text-white">
-            Stage 06 &bull; Automatic Itinerary Intelligence
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-            Run the automatic scheduler to generate your time-dependent day-by-day itinerary.
+        <div className="space-y-2">
+          <h3 className="font-serif text-2xl font-bold text-[#142A38]">No Active Journey Generated</h3>
+          <p className="text-xs text-[#64748B] leading-relaxed">
+            Please complete the review step to calculate your time-dependent itinerary.
           </p>
         </div>
         <button
           type="button"
-          onClick={onReOptimize}
-          disabled={isSubmitting}
-          className="px-8 py-3.5 bg-gradient-to-r from-[#0FA77A] to-[#0B8465] hover:brightness-110 text-white font-bold text-xs rounded-xl shadow-lg shadow-[#0FA77A]/20 uppercase tracking-wider transition-all disabled:opacity-50"
+          onClick={() => dispatch({ type: 'SET_STAGE', payload: 6 })}
+          className="px-8 py-3.5 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold text-xs rounded-2xl shadow-lg uppercase tracking-wider transition-all cursor-pointer shadow-[#1F6E78]/25"
         >
-          {isSubmitting ? 'Optimizing Schedule...' : 'Generate Automatic Plan &rarr;'}
+          &larr; Back to Budget Review
         </button>
       </div>
     );
   }
 
+  const cb = planResult.cost_breakdown;
   const days = planResult.daily_itinerary || [];
   const currentDay = days[selectedDayIdx] || days[0];
-  const metrics = planResult.itinerary_metrics;
+
+  const handleSave = async () => {
+    if (!currentUser) {
+      router.push('/login');
+      return;
+    }
+    setIsSaving(true);
+    setSaveError(null);
+
+    try {
+      await saveTrip(planResult);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 4000);
+    } catch (err: unknown) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to save trip to profile.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handlePDFDownload = () => {
+    exportTripPlanPDF(planResult);
+  };
+
+  const handleShare = () => {
+    if (typeof window !== 'undefined') {
+      if (navigator.share) {
+        navigator.share({
+          title: `NAVIX Trip: ${planResult.origin} to ${planResult.destination}`,
+          text: `Check out my ${planResult.days}-day itinerary to ${planResult.destination} under ₹${cb.maximum_budget.toLocaleString()}!`,
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        setCopiedShare(true);
+        setTimeout(() => setCopiedShare(false), 3000);
+      }
+    }
+  };
+
+  const handleDuplicate = async () => {
+    if (!currentUser) {
+      router.push('/login');
+      return;
+    }
+    await handleSave();
+    router.push('/dashboard');
+  };
+
+  // Proportional percentages for budget chart
+  const maxB = Number(cb.maximum_budget) || 1;
+  const tPct = Math.min(100, Math.round((Number(cb.transport_cost) / maxB) * 100));
+  const sPct = Math.min(100, Math.round((Number(cb.accommodation_cost) / maxB) * 100));
+  const fPct = Math.min(100, Math.round((Number(cb.food_cost) / maxB) * 100));
+  const aPct = Math.min(100, Math.round((Number(cb.activities_cost) / maxB) * 100));
+  const lPct = Math.min(100, Math.round((Number(cb.local_transport_cost) / maxB) * 100));
+  const bPct = Math.min(100, Math.round((Number(cb.contingency_buffer) / maxB) * 100));
+
+  // Extract destination coordinates dynamically to prevent hardcoded Manali bug
+  const [destLat, destLng] = getDestinationCoords(planResult.destination);
+
+  // Extract map pins for attractions around the destination
+  const mapAttractions = (planResult.activities || []).map((a, idx) => ({
+    name: a.name,
+    latitude: destLat + (((idx * 17) % 50) - 25) * 0.0012,
+    longitude: destLng + (((idx * 23) % 50) - 25) * 0.0012,
+    category: a.category
+  }));
+
+  const mapHotel = planResult.stay ? {
+    name: planResult.stay.name,
+    latitude: destLat + 0.006,
+    longitude: destLng + 0.004
+  } : undefined;
+
+  const rawSegments = state.selectedTransportAlternative?.segments || planResult.route_segments || [];
+  const transitSegments = rawSegments.map((seg) => ({
+    source_city: seg.source_city,
+    source_node_name: ('source_node_name' in seg && seg.source_node_name ? seg.source_node_name : seg.source_city) || seg.source_city,
+    dest_city: seg.dest_city,
+    dest_node_name: ('dest_node_name' in seg && seg.dest_node_name ? seg.dest_node_name : seg.dest_city) || seg.dest_city,
+    transport_mode: seg.transport_mode
+  }));
 
   const getEventBadgeStyle = (type: string) => {
     switch (type) {
       case 'TRANSIT':
-        return { bg: 'bg-blue-500/15 border-blue-500/40 text-blue-300', icon: Train, label: 'Transit Leg' };
+        return { bg: 'bg-sky-50 border-sky-200 text-[#1F6E78]', icon: Train, label: 'Transit' };
       case 'ACTIVITY':
-        return { bg: 'bg-[#0FA77A]/15 border-[#0FA77A]/40 text-[#0FA77A]', icon: Sparkles, label: 'Activity' };
+        return { bg: 'bg-emerald-50 border-emerald-200 text-emerald-700', icon: Sparkles, label: 'Activity' };
       case 'MEAL':
-        return { bg: 'bg-amber-500/15 border-amber-500/40 text-amber-300', icon: Coffee, label: 'Dining' };
+        return { bg: 'bg-amber-50 border-amber-200 text-amber-800', icon: Coffee, label: 'Dining' };
       case 'STAY':
       case 'CHECK_IN':
-        return { bg: 'bg-purple-500/15 border-purple-500/40 text-purple-300', icon: Bed, label: 'Lodging' };
-      case 'LOCAL_TRANSFER':
-        return { bg: 'bg-teal-500/15 border-teal-500/30 text-teal-300', icon: NavigationIcon, label: 'Transfer' };
+        return { bg: 'bg-purple-50 border-purple-200 text-purple-700', icon: Bed, label: 'Lodging' };
       default:
-        return { bg: 'bg-slate-500/15 border-slate-500/30 text-slate-300', icon: Sun, label: 'Free Time' };
+        return { bg: 'bg-[#FBF7F1] border-[#EBDCC7] text-[#64748B]', icon: Sun, label: 'Free Time' };
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
-      
-      {/* Top Header Banner */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-[#101419]/90 border border-white/15 rounded-2xl p-6 backdrop-blur-xl shadow-xl">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-xs font-mono">
-            <span className="text-[#0FA77A] font-bold">Stage 06 of 07</span>
-            <span className="text-slate-500">&bull;</span>
-            <span className="text-slate-400">NAVIX Auto-Itinerary Intelligence</span>
-          </div>
-          <h2 className="text-2xl font-extrabold text-white">
-            {planResult.origin} &rarr; {planResult.destination} Journey Plan
-          </h2>
-          <p className="text-xs text-slate-400">
-            Automatically scheduled subject to time, budget cap (₹{planResult.cost_breakdown.maximum_budget.toLocaleString()}), transit schedules, and {state.travelPace} pace.
-          </p>
-        </div>
+    <div className="max-w-7xl mx-auto space-y-10">
+      {/* 1. CINEMATIC HERO BANNER */}
+      <div className="relative rounded-3xl overflow-hidden border border-[#EBDCC7] shadow-lg bg-white text-[#142A38]">
+        <div className="relative h-64 sm:h-80 w-full overflow-hidden">
+          <SafeImage
+            src={getHeroImageForDestination(planResult.destination)}
+            alt={planResult.destination}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#142A38]/95 via-[#142A38]/50 to-transparent" />
 
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={onReOptimize}
-            disabled={isSubmitting}
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white font-mono text-xs font-bold rounded-xl transition-all flex items-center gap-1.5"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${isSubmitting ? 'animate-spin' : ''}`} />
-            <span>Optimize Again</span>
-          </button>
+          <div className="absolute top-6 left-6 right-6 flex flex-wrap items-center justify-between gap-3 z-10">
+            <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#1F6E78] text-xs font-mono font-bold uppercase tracking-wider shadow-sm border border-white/20">
+              ✓ TRIP READY &bull; {cb.budget_status === 'COMFORTABLE' ? 'WITHIN BUDGET' : cb.budget_status}
+            </span>
 
-          <button
-            type="button"
-            onClick={() => dispatch({ type: 'SET_STAGE', payload: 7 })}
-            className="px-6 py-2 bg-[#0FA77A] hover:bg-[#0B8465] text-white font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-1 uppercase tracking-wider"
-          >
-            <span>Review Plan &rarr;</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Intelligence Dashboard Metrics Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
-        <div className="bg-[#101419] p-4 rounded-xl border border-white/10 space-y-1">
-          <span className="text-[10px] font-mono text-slate-400 uppercase">Trip Duration</span>
-          <p className="font-extrabold text-white text-sm">{planResult.days} Days / {planResult.nights} Nights</p>
-        </div>
-
-        <div className="bg-[#101419] p-4 rounded-xl border border-white/10 space-y-1">
-          <span className="text-[10px] font-mono text-slate-400 uppercase">Activities Scheduled</span>
-          <p className="font-extrabold text-[#0FA77A] text-sm">{metrics?.activities_scheduled || planResult.activities.length} Items</p>
-        </div>
-
-        <div className="bg-[#101419] p-4 rounded-xl border border-white/10 space-y-1">
-          <span className="text-[10px] font-mono text-slate-400 uppercase">Must-Visits Included</span>
-          <p className="font-extrabold text-white text-sm">
-            {metrics ? `${metrics.must_visits_included}/${metrics.must_visits_total}` : '100%'}
-          </p>
-        </div>
-
-        <div className="bg-[#101419] p-4 rounded-xl border border-white/10 space-y-1">
-          <span className="text-[10px] font-mono text-slate-400 uppercase">Local Travel Time</span>
-          <p className="font-extrabold text-teal-400 text-sm">{metrics?.local_travel_minutes || 45} mins</p>
-        </div>
-
-        <div className="bg-[#101419] p-4 rounded-xl border border-white/10 space-y-1">
-          <span className="text-[10px] font-mono text-slate-400 uppercase">Free Time Buffer</span>
-          <p className="font-extrabold text-amber-300 text-sm">{metrics?.free_time_hours || 3.5} hrs</p>
-        </div>
-
-        <div className="bg-[#101419] p-4 rounded-xl border border-white/10 space-y-1">
-          <span className="text-[10px] font-mono text-slate-400 uppercase">Configured Pace</span>
-          <p className="font-extrabold text-white text-sm truncate">{state.travelPace}</p>
-        </div>
-      </div>
-
-      {/* Main Workspace: Left Day Timeline (65%) + Right Map & Explanations (35%) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        {/* LEFT 65%: DAY-BY-DAY TIMELINE */}
-        <div className="lg:col-span-7 space-y-6">
-          
-          {/* Day Tabs Bar */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2">
-            {days.map((d, idx) => (
+            <div className="flex items-center gap-2">
               <button
-                key={d.day_number}
                 type="button"
-                onClick={() => setSelectedDayIdx(idx)}
-                className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all border whitespace-nowrap ${
-                  selectedDayIdx === idx
-                    ? 'bg-[#0FA77A] text-white border-[#0FA77A] shadow-md ring-2 ring-[#0FA77A]/30'
-                    : 'bg-white/5 text-slate-400 border-white/10 hover:text-white'
-                }`}
+                onClick={handleSave}
+                disabled={isSaving}
+                className="px-4 py-2 bg-white/95 hover:bg-white backdrop-blur-md border border-white/20 text-[#142A38] font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
               >
-                Day 0{d.day_number}
+                <Bookmark className="w-3.5 h-3.5 text-[#1F6E78]" />
+                <span>{isSaving ? 'Saving...' : saveSuccess ? 'Saved ✓' : 'Save Trip'}</span>
               </button>
-            ))}
-          </div>
 
-          {/* Active Day Header */}
-          <div className="bg-[#101419] border border-white/15 rounded-2xl p-6 space-y-2 shadow-xl">
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-[#0FA77A] font-bold">DAY {currentDay.day_number} &bull; {currentDay.date}</span>
-              <span className="text-slate-400 font-bold">Est. Daily Spend: ₹{currentDay.estimated_daily_spend.toLocaleString()}</span>
+              <button
+                type="button"
+                onClick={handlePDFDownload}
+                className="px-4 py-2 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Download PDF</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleShare}
+                className="p-2 bg-white/95 hover:bg-white backdrop-blur-md border border-white/20 text-[#142A38] rounded-xl transition-all shadow-sm cursor-pointer"
+                title="Share Itinerary"
+              >
+                <Share2 className="w-4 h-4" />
+              </button>
             </div>
-            <h3 className="text-xl font-extrabold text-white">{currentDay.title}</h3>
-            {currentDay.day_theme && (
-              <span className="inline-block text-[11px] font-mono text-slate-400 bg-white/5 px-2.5 py-0.5 rounded border border-white/10">
-                Theme: {currentDay.day_theme}
-              </span>
-            )}
           </div>
 
-          {/* Structured Day Events Timeline */}
-          <div className="space-y-4">
-            {currentDay.structured_events && currentDay.structured_events.length > 0 ? (
-              currentDay.structured_events.map((ev, idx) => {
-                const style = getEventBadgeStyle(ev.event_type);
-                const Icon = style.icon;
+          <div className="absolute bottom-6 left-6 right-6 z-10 text-white space-y-2">
+            <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-white drop-shadow-sm">
+              Your {planResult.destination} Journey
+            </h1>
+            <p className="text-xs sm:text-sm text-white/90 font-medium flex flex-wrap items-center gap-2">
+              <Calendar className="w-4 h-4 text-[#D8A64B]" />
+              <span>{planResult.origin} &rarr; {planResult.destination}</span>
+              <span>&bull;</span>
+              <span>{planResult.departure_date} to {planResult.return_date} ({planResult.days} Days / {planResult.nights} Nights)</span>
+              <span>&bull;</span>
+              <span>{planResult.travellers} Traveler(s)</span>
+              <span>&bull;</span>
+              <span className="font-bold text-[#D8A64B]">{state.travelStyle || 'Balanced'} Style</span>
+            </p>
+          </div>
+        </div>
 
-                return (
-                  <div
-                    key={idx}
-                    className="bg-[#101419]/90 border border-white/15 rounded-2xl p-5 space-y-3 backdrop-blur-xl shadow-lg relative overflow-hidden group hover:border-white/30 transition-all"
+        {/* Quick Metrics Strip */}
+        <div className="p-6 bg-white border-t border-[#EBDCC7]">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+            <div className="bg-[#FBF7F1] p-4 rounded-2xl border border-[#EBDCC7]">
+              <span className="text-[#64748B] block text-xs uppercase font-bold tracking-wider">TOTAL TRIP COST</span>
+              <span className="font-serif font-black text-xl text-[#1F6E78]">₹{cb.total_trip_cost.toLocaleString()}</span>
+            </div>
+
+            <div className="bg-[#FBF7F1] p-4 rounded-2xl border border-[#EBDCC7]">
+              <span className="text-[#64748B] block text-xs uppercase font-bold tracking-wider">BUDGET CAP</span>
+              <span className="font-serif font-bold text-xl text-[#142A38]">₹{cb.maximum_budget.toLocaleString()}</span>
+            </div>
+
+            <div className="bg-[#FBF7F1] p-4 rounded-2xl border border-[#EBDCC7]">
+              <span className="text-[#64748B] block text-xs uppercase font-bold tracking-wider">REMAINING BALANCE</span>
+              <span className="font-serif font-bold text-xl text-emerald-600">₹{cb.remaining_budget.toLocaleString()}</span>
+            </div>
+
+            <div className="bg-[#FBF7F1] p-4 rounded-2xl border border-[#EBDCC7]">
+              <span className="text-[#64748B] block text-xs uppercase font-bold tracking-wider">MUST-VISITS</span>
+              <span className="font-serif font-bold text-xl text-[#E96E55]">100% Scheduled</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. MAIN WORKSPACE: MAP (RIGHT) + DAILY SCHEDULE (LEFT) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* LEFT COLUMN: DAILY ITINERARY (7 cols) */}
+        <div className="lg:col-span-7 space-y-6">
+          <div className="bg-white border border-[#EBDCC7] rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EBDCC7]">
+              <div className="space-y-0.5">
+                <span className="text-xs font-mono font-bold text-[#1F6E78] uppercase tracking-wider block">
+                  Your Daily Travel Timetable
+                </span>
+                <h3 className="font-serif text-xl font-bold text-[#142A38]">
+                  Day-by-Day Experience Schedule
+                </h3>
+              </div>
+
+              {/* Day Selector Tabs */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                {days.map((d, idx) => (
+                  <button
+                    key={d.day_number}
+                    onClick={() => setSelectedDayIdx(idx)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all shrink-0 cursor-pointer ${
+                      selectedDayIdx === idx
+                        ? 'bg-[#1F6E78] text-white shadow-md shadow-[#1F6E78]/25'
+                        : 'bg-[#FBF7F1] text-[#64748B] hover:bg-[#F5EBE1] border border-[#EBDCC7]'
+                    }`}
                   >
-                    {/* Event Time & Badge Header */}
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-2 text-xs">
-                      <div className="flex items-center gap-2 font-mono">
-                        <span className="font-bold text-white bg-white/10 px-2.5 py-1 rounded-lg">
-                          {ev.start_time} - {ev.end_time}
-                        </span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${style.bg} flex items-center gap-1`}>
-                          <Icon className="w-3 h-3" />
-                          {style.label}
-                        </span>
-                      </div>
-
-                      {ev.cost > 0 ? (
-                        <span className="font-mono font-bold text-[#0FA77A]">₹{ev.cost.toLocaleString()}</span>
-                      ) : (
-                        <span className="font-mono text-slate-500 text-[11px]">Free / Included</span>
-                      )}
-                    </div>
-
-                    {/* Event Title & Desc */}
-                    <div className="space-y-1">
-                      <h4 className="text-base font-extrabold text-white">{ev.title}</h4>
-                      <p className="text-xs text-slate-300 leading-relaxed">{ev.description}</p>
-                    </div>
-
-                    {/* Location & Reason Footer */}
-                    <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] font-mono text-slate-400 border-t border-white/5">
-                      {ev.location && (
-                        <span className="flex items-center gap-1 text-slate-300">
-                          <MapPin className="w-3 h-3 text-[#0FA77A]" /> {ev.location}
-                        </span>
-                      )}
-                      {ev.reason && (
-                        <span className="text-[#0FA77A] italic text-[10px]">
-                          &bull; {ev.reason}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              /* Fallback for human-readable events list */
-              <div className="bg-[#101419] border border-white/15 rounded-2xl p-6 space-y-3">
-                {currentDay.events.map((evStr, idx) => (
-                  <div key={idx} className="flex items-start gap-3 text-xs text-slate-300 border-b border-white/5 pb-2">
-                    <span className="w-2 h-2 rounded-full bg-[#0FA77A] mt-1.5 flex-shrink-0" />
-                    <span>{evStr}</span>
-                  </div>
+                    Day {d.day_number}
+                  </button>
                 ))}
+              </div>
+            </div>
+
+            {/* Current Day Header */}
+            {currentDay && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-[#FBF7F1] rounded-2xl border border-[#EBDCC7]">
+                  <div>
+                    <h4 className="font-serif font-bold text-[#142A38] text-base">
+                      Day {currentDay.day_number}: {currentDay.title}
+                    </h4>
+                    <p className="text-xs text-[#64748B] mt-0.5">
+                      {currentDay.date} &bull; {currentDay.day_theme || 'Experience & Exploration'}
+                    </p>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-[#1F6E78]">
+                    {currentDay.structured_events?.length || currentDay.events?.length || 0} Events
+                  </span>
+                </div>
+
+                {/* Timeline Events */}
+                <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-[#EBDCC7]">
+                  {currentDay.structured_events && currentDay.structured_events.length > 0 ? (
+                    currentDay.structured_events.map((ev, i) => {
+                      const style = getEventBadgeStyle(ev.event_type);
+                      return (
+                        <div key={i} className="relative group">
+                          {/* Dot */}
+                          <div className="absolute -left-6 top-1 w-5 h-5 rounded-full bg-white border-2 border-[#1F6E78] flex items-center justify-center text-[#1F6E78] shadow-sm">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#1F6E78]" />
+                          </div>
+
+                          {/* Event Card */}
+                          <div className="bg-[#FBF7F1] hover:bg-white border border-[#EBDCC7] rounded-2xl p-4 space-y-2 transition-all hover:shadow-md text-xs">
+                            <div className="flex items-center justify-between">
+                              <span className="font-mono font-bold text-[#142A38] text-xs">
+                                {ev.start_time} - {ev.end_time}
+                              </span>
+                              <span className={`px-2 py-0.5 rounded-md font-mono text-xs font-bold border ${style.bg}`}>
+                                {style.label}
+                              </span>
+                            </div>
+
+                            <h5 className="font-bold text-[#142A38] text-sm">{ev.title}</h5>
+                            <p className="text-[#64748B] leading-relaxed text-xs">{ev.description}</p>
+
+                            <div className="flex items-center justify-between pt-1 text-xs font-mono text-[#64748B]">
+                              <span>Cost: ₹{ev.cost}</span>
+                              {ev.location && <span>{ev.location}</span>}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    currentDay.events?.map((evStr, i) => (
+                      <div key={i} className="relative group">
+                        <div className="absolute -left-6 top-1 w-5 h-5 rounded-full bg-white border-2 border-[#1F6E78] flex items-center justify-center text-[#1F6E78] shadow-sm">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#1F6E78]" />
+                        </div>
+                        <div className="bg-[#FBF7F1] border border-[#EBDCC7] rounded-2xl p-4 space-y-1 text-xs">
+                          <h5 className="font-bold text-[#142A38] text-sm">{evStr}</h5>
+                          <span className="text-xs text-[#64748B] font-mono">Curated Activity</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             )}
           </div>
-
         </div>
 
-        {/* RIGHT 35%: MAP & DECISION REASONS */}
+        {/* RIGHT COLUMN: MAP & BUDGET CHART (5 cols) */}
         <div className="lg:col-span-5 sticky top-20 space-y-6">
-          
-          {/* Synchronized Map Canvas */}
-          <div className="bg-[#101419] border border-white/15 rounded-2xl p-4 space-y-3 shadow-xl">
-            <div className="flex items-center justify-between pb-2 border-b border-white/10 text-xs">
-              <span className="font-bold text-white flex items-center gap-1.5">
-                <Compass className="w-4 h-4 text-[#0FA77A]" /> Day 0{currentDay.day_number} Spatial Path
+          {/* Synchronized OpenStreetMap */}
+          <div className="bg-white border border-[#EBDCC7] rounded-3xl p-5 space-y-3 shadow-sm">
+            <div className="flex items-center justify-between pb-2 border-b border-[#EBDCC7] text-xs">
+              <span className="font-bold text-[#142A38] flex items-center gap-1.5">
+                <Navigation className="w-4 h-4 text-[#1F6E78]" /> Geospatial Journey Map
               </span>
-              <span className="font-mono text-slate-400 text-[11px]">OpenStreetMap</span>
+              <span className="font-mono text-[#64748B] text-[11px]">OpenStreetMap</span>
             </div>
 
-            <InteractiveMap />
+            <InteractiveMap
+              origin={planResult.origin}
+              destination={planResult.destination}
+              segments={transitSegments}
+              attractions={mapAttractions}
+              hotel={mapHotel}
+              zoom={9}
+            />
 
-            <div className="text-[11px] font-mono text-slate-400 flex items-center justify-between pt-1">
-              <span className="text-[#0FA77A]">MAP SYNCED: Day {currentDay.day_number}</span>
-              <span>{currentDay.structured_events?.filter(e => e.event_type === 'ACTIVITY').length || 0} Places</span>
-            </div>
-          </div>
-
-          {/* Decision Explanations Drawer */}
-          <div className="bg-[#101419] border border-white/15 rounded-2xl p-6 space-y-4 shadow-xl text-xs">
-            <div className="space-y-1 border-b border-white/10 pb-3">
-              <h4 className="font-extrabold text-white text-sm flex items-center gap-2">
-                <Zap className="w-4 h-4 text-[#0FA77A]" /> Why NAVIX Built This Schedule
-              </h4>
-              <p className="text-slate-400 text-[11px]">Deterministic optimization &amp; time-window decision explanations.</p>
-            </div>
-
-            <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
-              {planResult.decision_explanations.map((exp, idx) => (
-                <div key={idx} className="bg-white/5 border border-white/10 rounded-xl p-3 text-slate-300 text-[11px] leading-relaxed flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0FA77A] mt-0.5 flex-shrink-0" />
-                  <span>{exp}</span>
-                </div>
-              ))}
+            <div className="flex items-center justify-between text-[11px] font-mono text-[#64748B] pt-1">
+              <span className="text-purple-600 font-bold">● Hotel</span>
+              <span className="text-[#1F6E78] font-bold">★ Attractions</span>
+              <span className="text-[#E96E55] font-bold">▬ Route Path</span>
             </div>
           </div>
 
+          {/* Budget Proportional Breakdown Chart */}
+          <div className="bg-white border border-[#EBDCC7] rounded-3xl p-6 space-y-4 shadow-sm">
+            <div className="space-y-1">
+              <span className="text-xs font-mono font-bold text-[#1F6E78] uppercase tracking-wider block">
+                Where Your Money Goes
+              </span>
+              <h3 className="font-serif text-lg font-bold text-[#142A38]">Trip Expense Allocation</h3>
+            </div>
+
+            {/* Proportional Bar */}
+            <div className="h-4 w-full bg-[#FBF7F1] rounded-full overflow-hidden flex shadow-inner border border-[#EBDCC7]">
+              <div style={{ width: `${tPct}%` }} className="bg-[#1F6E78]" title={`Transit: ₹${cb.transport_cost}`} />
+              <div style={{ width: `${sPct}%` }} className="bg-purple-500" title={`Lodging: ₹${cb.accommodation_cost}`} />
+              <div style={{ width: `${fPct}%` }} className="bg-[#D8A64B]" title={`Food: ₹${cb.food_cost}`} />
+              <div style={{ width: `${aPct}%` }} className="bg-emerald-500" title={`Activities: ₹${cb.activities_cost}`} />
+              <div style={{ width: `${lPct}%` }} className="bg-teal-500" title={`Local: ₹${cb.local_transport_cost}`} />
+              <div style={{ width: `${bPct}%` }} className="bg-slate-400" title={`Reserve: ₹${cb.contingency_buffer}`} />
+            </div>
+
+            {/* Legend Grid */}
+            <div className="grid grid-cols-2 gap-2 text-xs font-mono pt-1">
+              <div className="p-2.5 bg-[#FBF7F1] rounded-xl border border-[#EBDCC7]">
+                <span className="text-[#1F6E78] block text-xs font-bold">● Transit</span>
+                <span className="font-bold text-[#142A38]">₹{cb.transport_cost.toLocaleString()}</span>
+              </div>
+
+              <div className="p-2.5 bg-[#FBF7F1] rounded-xl border border-[#EBDCC7]">
+                <span className="text-purple-600 block text-xs font-bold">● Lodging</span>
+                <span className="font-bold text-[#142A38]">₹{cb.accommodation_cost.toLocaleString()}</span>
+              </div>
+
+              <div className="p-2.5 bg-[#FBF7F1] rounded-xl border border-[#EBDCC7]">
+                <span className="text-amber-600 block text-xs font-bold">● Dining</span>
+                <span className="font-bold text-[#142A38]">₹{cb.food_cost.toLocaleString()}</span>
+              </div>
+
+              <div className="p-2.5 bg-[#FBF7F1] rounded-xl border border-[#EBDCC7]">
+                <span className="text-emerald-600 block text-xs font-bold">● Activities</span>
+                <span className="font-bold text-[#142A38]">₹{cb.activities_cost.toLocaleString()}</span>
+              </div>
+            </div>
+
+            {/* Actions Bar */}
+            <div className="pt-2 border-t border-[#EBDCC7] space-y-2">
+              <button
+                type="button"
+                onClick={handlePDFDownload}
+                className="w-full py-3 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold text-xs rounded-xl shadow-lg hover:shadow-[#1F6E78]/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Download className="w-4 h-4" />
+                <span>Export High-Res Itinerary PDF</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDuplicate}
+                className="w-full py-2.5 bg-[#FBF7F1] hover:bg-[#F5EBE1] border border-[#EBDCC7] text-[#142A38] font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              >
+                <Copy className="w-4 h-4" />
+                <span>Save &amp; View in Dashboard</span>
+              </button>
+            </div>
+          </div>
         </div>
-
       </div>
-
-      {/* Navigation Footer */}
-      <div className="pt-4 flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => dispatch({ type: 'SET_STAGE', payload: 5 })}
-          className="px-5 py-2.5 border border-white/15 hover:bg-white/10 text-slate-300 font-bold text-xs rounded-xl transition-all"
-        >
-          &larr; Back to Stay Selection
-        </button>
-
-        <button
-          type="button"
-          onClick={() => dispatch({ type: 'SET_STAGE', payload: 7 })}
-          className="px-8 py-3.5 bg-gradient-to-r from-[#0FA77A] to-[#0B8465] hover:brightness-110 text-white font-bold text-xs rounded-xl transition-all shadow-lg shadow-[#0FA77A]/20 flex items-center gap-2 uppercase tracking-wider"
-        >
-          <span>Continue to Final Review &rarr;</span>
-        </button>
-      </div>
-
     </div>
   );
 };
-
-function NavigationIcon(props: { className?: string }) {
-  return <Compass {...props} />;
-}
-
