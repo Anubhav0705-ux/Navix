@@ -13,7 +13,8 @@ import { Shield, Database, Calendar, Users, MapPin, Loader2 } from 'lucide-react
 
 export default function AdminPage() {
   const router = useRouter();
-  const [currentUser] = useState<UserResponse | null>(() => getCurrentUser());
+  const [currentUser, setCurrentUser] = useState<UserResponse | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const [tab, setTab] = useState<'nodes' | 'schedules' | 'users' | 'trips'>('nodes');
   const [loading, setLoading] = useState(true);
 
@@ -23,10 +24,13 @@ export default function AdminPage() {
   const [trips, setTrips] = useState<AdminTrip[]>([]);
 
   useEffect(() => {
-    if (!currentUser || currentUser.role.toLowerCase() !== 'admin') {
+    setIsMounted(true);
+    const user = getCurrentUser();
+    if (!user || user.role.toLowerCase() !== 'admin') {
       router.push('/login');
       return;
     }
+    setCurrentUser(user);
 
     Promise.all([
       fetchAdminNodes(),
@@ -44,7 +48,24 @@ export default function AdminPage() {
       .catch(() => {
         setLoading(false);
       });
-  }, [currentUser, router]);
+  }, [router]);
+
+  if (!isMounted || !currentUser) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#0B1320]">
+        <Navbar />
+        <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-12 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 text-[#0E9F7A] animate-spin" />
+            <p className="text-xs font-bold uppercase tracking-wider text-[#667085]">
+              Verifying Administrative Session...
+            </p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#0B1320]">

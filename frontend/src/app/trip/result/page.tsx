@@ -11,16 +11,22 @@ import { Compass } from 'lucide-react';
 
 export default function TripResultPage() {
   const router = useRouter();
-  const [currentUser] = useState(() => getCurrentUser());
-  const [plan] = useState<TripPlanResult | null>(() => getTripPlan());
+  const [currentUser, setCurrentUser] = useState<ReturnType<typeof getCurrentUser>>(null);
+  const [plan, setPlan] = useState<TripPlanResult | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (!getCurrentUser()) {
+    setIsMounted(true);
+    const user = getCurrentUser();
+    if (!user) {
       router.replace('/login?returnTo=/trip/result');
+      return;
     }
+    setCurrentUser(user);
+    setPlan(getTripPlan());
   }, [router]);
 
-  if (!currentUser) {
+  if (!isMounted || !currentUser) {
     return null;
   }
 

@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePlanner } from '@/context/PlannerContext';
 import { TripPlanResult, UserResponse } from '@/types';
-import { getCurrentUser } from '@/services/auth';
+import { getCurrentUser, subscribeAuth } from '@/services/auth';
 import { saveTrip } from '@/services/trips';
 import { exportTripPlanPDF } from '@/lib/pdf-export';
 import { getDestinationCoords } from '@/lib/destinations-data';
@@ -13,7 +13,7 @@ import { SafeImage } from './SafeImage';
 import {
   Sparkles, Calendar, Download, Bookmark,
   Share2, Navigation, Bed, Train, Coffee,
-  Sun, Copy, Compass
+  Sun, Copy, Compass, Check
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
@@ -72,7 +72,7 @@ export const AutoPlanStage: React.FC<AutoPlanStageProps> = ({
 }) => {
   const router = useRouter();
   const { state, dispatch } = usePlanner();
-  const [currentUser] = useState<UserResponse | null>(() => getCurrentUser());
+  const currentUser = useSyncExternalStore(subscribeAuth, getCurrentUser, () => null);
   const [selectedDayIdx, setSelectedDayIdx] = useState<number>(0);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -180,13 +180,20 @@ export const AutoPlanStage: React.FC<AutoPlanStageProps> = ({
     longitude: destLng + 0.004
   } : undefined;
 
-  const rawSegments = state.selectedTransportAlternative?.segments || planResult.route_segments || [];
+  interface TransitSegmentLike {
+    source_city?: string;
+    source_node_name?: string;
+    dest_city?: string;
+    dest_node_name?: string;
+    transport_mode?: string;
+  }
+  const rawSegments = (state.selectedTransportAlternative?.segments || planResult.route_segments || []) as TransitSegmentLike[];
   const transitSegments = rawSegments.map((seg) => ({
-    source_city: seg.source_city,
-    source_node_name: ('source_node_name' in seg && seg.source_node_name ? seg.source_node_name : seg.source_city) || seg.source_city,
-    dest_city: seg.dest_city,
-    dest_node_name: ('dest_node_name' in seg && seg.dest_node_name ? seg.dest_node_name : seg.dest_city) || seg.dest_city,
-    transport_mode: seg.transport_mode
+    source_city: seg.source_city || '',
+    source_node_name: (seg.source_node_name ? seg.source_node_name : seg.source_city) || seg.source_city || '',
+    dest_city: seg.dest_city || '',
+    dest_node_name: (seg.dest_node_name ? seg.dest_node_name : seg.dest_city) || seg.dest_city || '',
+    transport_mode: seg.transport_mode || 'BUS'
   }));
 
   const getEventBadgeStyle = (type: string) => {
@@ -218,9 +225,16 @@ export const AutoPlanStage: React.FC<AutoPlanStageProps> = ({
           <div className="absolute inset-0 bg-gradient-to-t from-[#142A38]/95 via-[#142A38]/50 to-transparent" />
 
           <div className="absolute top-6 left-6 right-6 flex flex-wrap items-center justify-between gap-3 z-10">
-            <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#1F6E78] text-xs font-mono font-bold uppercase tracking-wider shadow-sm border border-white/20">
-              ✓ TRIP READY &bull; {cb.budget_status === 'COMFORTABLE' ? 'WITHIN BUDGET' : cb.budget_status}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#1F6E78] text-xs font-mono font-bold uppercase tracking-wider shadow-sm border border-white/20">
+                ✓ TRIP READY &bull; {cb.budget_status === 'COMFORTABLE' ? 'WITHIN BUDGET' : cb.budget_status}
+              </span>
+              {saveError && (
+                <span className="px-3 py-1 rounded-full bg-rose-600/90 text-white text-xs font-medium">
+                  {saveError}
+                </span>
+              )}
+            </div>
 
             <div className="flex items-center gap-2">
               <button
@@ -246,9 +260,9 @@ export const AutoPlanStage: React.FC<AutoPlanStageProps> = ({
                 type="button"
                 onClick={handleShare}
                 className="p-2 bg-white/95 hover:bg-white backdrop-blur-md border border-white/20 text-[#142A38] rounded-xl transition-all shadow-sm cursor-pointer"
-                title="Share Itinerary"
+                title={copiedShare ? "Link Copied!" : "Share Itinerary"}
               >
-                <Share2 className="w-4 h-4" />
+                {copiedShare ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
               </button>
             </div>
           </div>

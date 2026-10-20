@@ -15,7 +15,7 @@ export interface MediaManifestEntry {
   destinationSlug: string;
   category: 'places' | 'food' | 'stays' | 'stories';
   webPath: string;
-  localPath: string;
+  localPath?: string;
   classification: 'exact' | 'representative';
   verificationStatus: 'exact_verified' | 'representative_curated';
   license: string;
@@ -24,44 +24,159 @@ export interface MediaManifestEntry {
   originalUrl?: string;
 }
 
-export const MEDIA_MANIFEST: Record<string, MediaManifestEntry> = rawMediaManifest as Record<string, MediaManifestEntry>;
+export const MEDIA_MANIFEST: Record<string, MediaManifestEntry> = (rawMediaManifest as unknown) as Record<string, MediaManifestEntry>;
 
 // Verified Destination Hero Imagery (Using authentic local WebP assets from /public/home/)
 export const DESTINATION_PHOTOS: Record<string, string> = {
-  goa: '/home/goa.webp',
-  'calangute & anjuna': '/home/goa.webp',
-  manali: '/home/manali.webp',
-  'old manali': '/home/manali.webp',
-  jaipur: '/home/jaipur.webp',
-  udaipur: '/home/udaipur.webp',
-  munnar: '/home/kerala.webp',
-  kerala: '/home/kerala.webp',
-  rishikesh: '/home/rishikesh.webp',
-  varanasi: '/home/varanasi.webp',
-  mumbai: '/home/mumbai.webp',
-  darjeeling: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1600&auto=format&fit=crop',
-  mysuru: '/media/places/mysuru_palace.webp',
-  mysore: '/media/places/mysuru_palace.webp',
-  hampi: 'https://images.unsplash.com/photo-1620766182966-c6eb5ed2b788?q=80&w=1600&auto=format&fit=crop',
-  pune: '/media/stories/pune_heritage_story.webp',
-  delhi: '/media/stories/delhi_heritage_street_food.webp',
-  'new delhi': '/media/stories/delhi_heritage_street_food.webp',
-  sangli: '/media/stories/pune_heritage_story.webp',
-  amritsar: 'https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?q=80&w=1600&auto=format&fit=crop',
-  kochi: '/home/kerala.webp',
-  shimla: 'https://images.unsplash.com/photo-1562670652-e5947bddb335?q=80&w=1600&auto=format&fit=crop',
-  ooty: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?q=80&w=1600&auto=format&fit=crop',
-  shillong: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?q=80&w=1600&auto=format&fit=crop',
-  pondicherry: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=1600&auto=format&fit=crop',
-  leh: 'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?q=80&w=1600&auto=format&fit=crop',
-  ladakh: 'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?q=80&w=1600&auto=format&fit=crop',
-  chandigarh: '/media/stories/chandigarh_manali_transit.webp',
-  bengaluru: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=1600&auto=format&fit=crop',
-  bangalore: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=1600&auto=format&fit=crop',
-  chennai: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=1600&auto=format&fit=crop',
-  kolkata: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?q=80&w=1600&auto=format&fit=crop',
-  jodhpur: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1600&auto=format&fit=crop',
-  jaisalmer: 'https://images.unsplash.com/photo-1603262110263-fb0112e7cc33?q=80&w=1600&auto=format&fit=crop'
+  'agra': '/media/destinations/agra.webp',
+  'ahmedabad': '/media/destinations/ahmedabad.webp',
+  'alibaug': '/media/destinations/alibaug.webp',
+  'alleppey': '/media/destinations/alleppey.webp',
+  'amritsar': '/media/destinations/amritsar.webp',
+  'araku-valley': '/media/destinations/araku-valley.webp',
+  'auli': '/media/destinations/auli.webp',
+  'aurangabad': '/media/destinations/aurangabad.webp',
+  'ayodhya': '/media/destinations/ayodhya.webp',
+  'bengaluru': '/media/destinations/bengaluru.webp',
+  'bhopal': '/media/destinations/bhopal.webp',
+  'bhubaneswar': '/media/destinations/bhubaneswar.webp',
+  'bhuj': '/media/destinations/bhuj.webp',
+  'bikaner': '/media/destinations/bikaner.webp',
+  'bir': '/media/destinations/bir.webp',
+  'bodh-gaya': '/media/destinations/bodh-gaya.webp',
+  'chandigarh': '/media/destinations/chandigarh.webp',
+  'chennai': '/media/destinations/chennai.webp',
+  'cherrapunji': '/media/destinations/cherrapunji.webp',
+  'chikmagalur': '/media/destinations/chikmagalur.webp',
+  'chopta': '/media/destinations/chopta.webp',
+  'coorg': '/media/destinations/coorg.webp',
+  'dalhousie': '/media/destinations/dalhousie.webp',
+  'darjeeling': '/media/destinations/darjeeling.webp',
+  'dehradun': '/media/destinations/dehradun.webp',
+  'delhi': '/media/destinations/delhi.webp',
+  'dharamshala': '/media/destinations/dharamshala.webp',
+  'dwarka': '/media/destinations/dwarka.webp',
+  'gangtok': '/media/destinations/gangtok.webp',
+  'ganpatipule': '/media/destinations/ganpatipule.webp',
+  'goa': '/media/destinations/goa.webp',
+  'gokarna': '/media/destinations/gokarna.webp',
+  'gulmarg': '/media/destinations/gulmarg.webp',
+  'guwahati': '/media/destinations/guwahati.webp',
+  'hampi': '/media/destinations/hampi.webp',
+  'haridwar': '/media/destinations/haridwar.webp',
+  'hyderabad': '/media/destinations/hyderabad.webp',
+  'indore': '/media/destinations/indore.webp',
+  'jagdalpur': '/media/destinations/jagdalpur.webp',
+  'jaipur': '/media/destinations/jaipur.webp',
+  'jaisalmer': '/media/destinations/jaisalmer.webp',
+  'jodhpur': '/media/destinations/jodhpur.webp',
+  'kalimpong': '/media/destinations/kalimpong.webp',
+  'kanyakumari': '/media/destinations/kanyakumari.webp',
+  'kasol': '/media/destinations/kasol.webp',
+  'kaziranga': '/media/destinations/kaziranga.webp',
+  'khajuraho': '/media/destinations/khajuraho.webp',
+  'kochi': '/media/destinations/kochi.webp',
+  'kodaikanal': '/media/destinations/kodaikanal.webp',
+  'kohima': '/media/destinations/kohima.webp',
+  'kolhapur': '/media/destinations/kolhapur.webp',
+  'kolkata': '/media/destinations/kolkata.webp',
+  'konark': '/media/destinations/konark.webp',
+  'kullu': '/media/destinations/kullu.webp',
+  'leh': '/media/destinations/leh.webp',
+  'lonavala': '/media/destinations/lonavala.webp',
+  'lucknow': '/media/destinations/lucknow.webp',
+  'ludhiana': '/media/destinations/ludhiana.webp',
+  'madurai': '/media/destinations/madurai.webp',
+  'mahabaleshwar': '/media/destinations/mahabaleshwar.webp',
+  'mahabalipuram': '/media/destinations/mahabalipuram.webp',
+  'manali': '/media/destinations/manali.webp',
+  'mangaluru': '/media/destinations/mangaluru.webp',
+  'margao': '/media/destinations/margao.webp',
+  'miraj': '/media/destinations/miraj.webp',
+  'mount-abu': '/media/destinations/mount-abu.webp',
+  'mumbai': '/media/destinations/mumbai.webp',
+  'munnar': '/media/destinations/munnar.webp',
+  'mussoorie': '/media/destinations/mussoorie.webp',
+  'mysuru': '/media/destinations/mysuru.webp',
+  'nagpur': '/media/destinations/nagpur.webp',
+  'nainital': '/media/destinations/nainital.webp',
+  'nashik': '/media/destinations/nashik.webp',
+  'north-goa': '/media/destinations/north-goa.webp',
+  'nubra-valley': '/media/destinations/nubra-valley.webp',
+  'ooty': '/media/destinations/ooty.webp',
+  'orchha': '/media/destinations/orchha.webp',
+  'pachmarhi': '/media/destinations/pachmarhi.webp',
+  'pahalgam': '/media/destinations/pahalgam.webp',
+  'panaji': '/media/destinations/panaji.webp',
+  'patiala': '/media/destinations/patiala.webp',
+  'pondicherry': '/media/destinations/pondicherry.webp',
+  'prayagraj': '/media/destinations/prayagraj.webp',
+  'pune': '/media/destinations/pune.webp',
+  'puri': '/media/destinations/puri.webp',
+  'pushkar': '/media/destinations/pushkar.webp',
+  'raipur': '/media/destinations/raipur.webp',
+  'rameswaram': '/media/destinations/rameswaram.webp',
+  'ranthambore': '/media/destinations/ranthambore.webp',
+  'ratnagiri': '/media/destinations/ratnagiri.webp',
+  'rishikesh': '/media/destinations/rishikesh.webp',
+  'sangli': '/media/destinations/sangli.webp',
+  'shillong': '/media/destinations/shillong.webp',
+  'shimla': '/media/destinations/shimla.webp',
+  'siliguri': '/media/destinations/siliguri.webp',
+  'south-goa': '/media/destinations/south-goa.webp',
+  'spiti': '/media/destinations/spiti.webp',
+  'srinagar': '/media/destinations/srinagar.webp',
+  'surat': '/media/destinations/surat.webp',
+  'tawang': '/media/destinations/tawang.webp',
+  'thekkady': '/media/destinations/thekkady.webp',
+  'thiruvananthapuram': '/media/destinations/thiruvananthapuram.webp',
+  'tirthan-valley': '/media/destinations/tirthan-valley.webp',
+  'tirupati': '/media/destinations/tirupati.webp',
+  'udaipur': '/media/destinations/udaipur.webp',
+  'udupi': '/media/destinations/udupi.webp',
+  'ujjain': '/media/destinations/ujjain.webp',
+  'vadodara': '/media/destinations/vadodara.webp',
+  'varanasi': '/media/destinations/varanasi.webp',
+  'varkala': '/media/destinations/varkala.webp',
+  'visakhapatnam': '/media/destinations/visakhapatnam.webp',
+  'warangal': '/media/destinations/warangal.webp',
+  'wayanad': '/media/destinations/wayanad.webp',
+};
+
+// Verified Story Covers (32 authentic editorial photographs from /public/media/stories/)
+export const STORY_PHOTOS: Record<string, string> = {
+  'story_01': '/media/stories/story_01.webp',
+  'story_02': '/media/stories/story_02.webp',
+  'story_03': '/media/stories/story_03.webp',
+  'story_04': '/media/stories/story_04.webp',
+  'story_05': '/media/stories/story_05.webp',
+  'story_06': '/media/stories/story_06.webp',
+  'story_07': '/media/stories/story_07.webp',
+  'story_08': '/media/stories/story_08.webp',
+  'story_09': '/media/stories/story_09.webp',
+  'story_10': '/media/stories/story_10.webp',
+  'story_11': '/media/stories/story_11.webp',
+  'story_12': '/media/stories/story_12.webp',
+  'story_13': '/media/stories/story_13.webp',
+  'story_14': '/media/stories/story_14.webp',
+  'story_15': '/media/stories/story_15.webp',
+  'story_16': '/media/stories/story_16.webp',
+  'story_17': '/media/stories/story_17.webp',
+  'story_18': '/media/stories/story_18.webp',
+  'story_19': '/media/stories/story_19.webp',
+  'story_20': '/media/stories/story_20.webp',
+  'story_21': '/media/stories/story_21.webp',
+  'story_22': '/media/stories/story_22.webp',
+  'story_23': '/media/stories/story_23.webp',
+  'story_24': '/media/stories/story_24.webp',
+  'story_25': '/media/stories/story_25.webp',
+  'story_26': '/media/stories/story_26.webp',
+  'story_27': '/media/stories/story_27.webp',
+  'story_28': '/media/stories/story_28.webp',
+  'story_29': '/media/stories/story_29.webp',
+  'story_30': '/media/stories/story_30.webp',
+  'story_31': '/media/stories/story_31.webp',
+  'story_32': '/media/stories/story_32.webp',
 };
 
 // Exact Entity-Level Landmark & Dish Resolution Registry
@@ -188,25 +303,103 @@ export const VERIFIED_ENTITY_PHOTOS: Record<string, string> = {
   'ganga kinare': '/media/stays/rishikesh_ganga_kinare.webp',
   'aloha on the ganges': '/media/stays/rishikesh_aloha_ganges.webp',
   'lalitha mahal': '/media/stays/mysuru_lalitha_mahal.webp',
-  'royal orchid metropole': '/media/stays/mysuru_royal_orchid.webp'
+  'royal orchid metropole': '/media/stays/mysuru_royal_orchid.webp',
+
+  // Shimla Verified Entities (Phase 6)
+  'viceregal lodge': '/media/places/shimla_viceregal_lodge.webp',
+  'rashtrapati niwas': '/media/places/shimla_viceregal_lodge.webp',
+  'christ church': '/media/places/shimla_christ_church.webp',
+  'the ridge': '/media/places/shimla_christ_church.webp',
+  'jakhoo temple': '/media/places/shimla_jakhoo_temple.webp',
+  'hanuman statue': '/media/places/shimla_jakhoo_temple.webp',
+  'kalka-shimla': '/media/places/shimla_toy_train.webp',
+  'toy train': '/media/places/shimla_toy_train.webp',
+  'chadwick': '/media/places/shimla_chadwick_falls.webp',
+  'kufri': '/media/places/shimla_kufri.webp',
+  'mahasu peak': '/media/places/shimla_kufri.webp',
+  'annandale': '/media/places/shimla_annandale.webp',
+  'summer hill': '/media/places/shimla_summer_hill.webp',
+  'lakkar bazaar': '/media/places/shimla_lakkar_bazaar.webp',
+  'shimla mall road': '/media/places/shimla_mall_road.webp',
+
+  // Shimla Regional Food (Phase 7)
+  'himachali dham': '/media/food/himachal_dham_thali.webp',
+  'dham': '/media/food/himachal_dham_thali.webp',
+  'kullvi siddu': '/media/food/himachal_siddu.webp',
+  'madra': '/media/food/himachal_madra.webp',
+  'babru': '/media/food/himachal_babru.webp',
+  'chha gosht': '/media/food/himachal_chha_gosht.webp',
+  'wake & bake': '/media/food/shimla_apple_crumble.webp',
+  'apple crumble': '/media/food/shimla_apple_crumble.webp',
+  'kewal ka dhaba': '/media/food/shimla_pahari_tea.webp',
+  'pahari chai': '/media/food/shimla_pahari_tea.webp',
+
+  // Shimla Stays (Phase 8)
+  'oberoi cecil': '/media/stays/shimla_oberoi_cecil.webp',
+  'clarkes hotel': '/media/stays/shimla_clarkes.webp',
+  'wildflower hall': '/media/stays/shimla_wildflower_hall.webp',
+  'woodville palace': '/media/stays/shimla_woodville_palace.webp',
+  'zostel shimla': '/media/stays/shimla_zostel.webp',
+
+  // Spiti Valley Verified Entities
+  'key gompa': '/media/places/spiti_key_monastery.webp',
+  'key monastery': '/media/places/spiti_key_monastery.webp',
+  'kye monastery': '/media/places/spiti_key_monastery.webp',
+  'chandratal': '/media/places/spiti_chandratal.webp',
+  'dhankar': '/media/places/spiti_dhankar.webp',
+  'tabo monastery': '/media/places/spiti_tabo.webp',
+  'pin valley': '/media/places/spiti_pin_valley.webp',
+  'hikkim': '/media/places/spiti_hikkim.webp',
+  'komic': '/media/places/spiti_komic.webp',
+  'langza': '/media/places/spiti_langza.webp',
+  'chicham bridge': '/media/places/spiti_chicham_bridge.webp',
+  'kunzum pass': '/media/places/spiti_kunzum_pass.webp',
+
+  // Chopta Verified Entities
+  'tungnath': '/media/places/chopta_tungnath.webp',
+  'chandrashila': '/media/places/chopta_chandrashila.webp',
+  'deoria tal': '/media/places/chopta_deoria_tal.webp',
+  'rohini bugyal': '/media/places/chopta_rohini_bugyal.webp',
+  'ukhimath': '/media/places/chopta_ukhimath.webp',
+  'sari village': '/media/places/chopta_sari_village.webp',
+  'dugalbitta': '/media/places/chopta_dugalbitta.webp',
+
+  // Miraj Verified Entities
+  'miraj dargah': '/media/places/miraj_dargah.webp',
+  'sitar craft': '/media/places/miraj_sitar_craft.webp',
+  'miraj junction': '/media/places/miraj_junction.webp',
+  'krishna river peaceful ghats': '/media/places/miraj_krishna_ghat.webp',
+
+  // Cherrapunji Verified Entities
+  'nohkalikai': '/media/places/cherrapunji_nohkalikai.webp',
+  'living root bridge': '/media/places/cherrapunji_root_bridge.webp',
+  'root bridge': '/media/places/cherrapunji_root_bridge.webp',
+  'mawsmai cave': '/media/places/cherrapunji_mawsmai_cave.webp',
+  'seven sisters': '/media/places/cherrapunji_seven_sisters.webp',
+  'wei sawdong': '/media/places/cherrapunji_wei_sawdong.webp',
+  'arwah cave': '/media/places/cherrapunji_arwah_cave.webp',
+  'dainthlen': '/media/places/cherrapunji_dainthlen.webp'
 };
 
-// Curated Category Emergency Fallbacks
+// Curated Category Fallbacks (Neutral Branded Archetypes — Never cross-destination leaks)
 export const CATEGORY_FALLBACKS: Record<string, string> = {
-  beach: '/home/goa.webp',
-  mountains: '/home/manali.webp',
-  mountain: '/home/manali.webp',
-  heritage: '/home/jaipur.webp',
-  spiritual: '/home/rishikesh.webp',
-  nature: '/home/kerala.webp',
-  city: '/home/mumbai.webp',
-  hotel: '/media/stays/goa_fort_tiracol.webp',
-  stay: '/media/stays/goa_panjim_inn.webp',
-  resort: '/media/stays/jaipur_umaid_bhawan.webp',
-  hostel: '/media/stays/manali_zostel_old_manali.webp',
-  food: '/media/food/jaipur_dal_baati_churma.webp',
-  restaurant: '/media/food/goa_fish_curry.webp',
-  default: '/home/goa.webp'
+  place: '/media/placeholders/navix_place_representative.webp',
+  attraction: '/media/placeholders/navix_place_representative.webp',
+  sightseeing: '/media/placeholders/navix_place_representative.webp',
+  heritage: '/media/placeholders/navix_place_representative.webp',
+  nature: '/media/placeholders/navix_place_representative.webp',
+  spiritual: '/media/placeholders/navix_place_representative.webp',
+  adventure: '/media/placeholders/navix_place_representative.webp',
+  food: '/media/placeholders/navix_food_representative.webp',
+  restaurant: '/media/placeholders/navix_food_representative.webp',
+  dining: '/media/placeholders/navix_food_representative.webp',
+  cafe: '/media/placeholders/navix_food_representative.webp',
+  hotel: '/media/placeholders/navix_stay_representative.webp',
+  stay: '/media/placeholders/navix_stay_representative.webp',
+  hostel: '/media/placeholders/navix_stay_representative.webp',
+  resort: '/media/placeholders/navix_stay_representative.webp',
+  homestay: '/media/placeholders/navix_stay_representative.webp',
+  default: '/media/placeholders/navix_default_representative.webp'
 };
 
 /**
@@ -224,6 +417,12 @@ export function sanitizeImageUrl(url?: string | null): string | null {
 /**
  * Resolves a context-appropriate, verified photo based on entity ID, name, destination,
  * and verified local asset manifest.
+ *
+ * Strict Fallback Priority (Phase 3):
+ * 1. exact entity photo (MEDIA_MANIFEST)
+ * 2. verified entity-specific representative photo (VERIFIED_ENTITY_PHOTOS)
+ * 3. neutral NAVIX placeholder clearly treated as representative
+ * 4. NEVER another unrelated destination (e.g. no Manali mountain photo on a Goa dish or Sangli temple)
  */
 export function resolveFallbackImage(
   category?: string | null,
@@ -243,7 +442,7 @@ export function resolveFallbackImage(
     return MEDIA_MANIFEST[hint].webPath;
   }
 
-  // 3. Check verified landmark entity registry
+  // 3. Check verified landmark entity registry (Exact or substring match)
   for (const [entityKey, url] of Object.entries(VERIFIED_ENTITY_PHOTOS)) {
     if (hint.includes(entityKey) || entityKey.includes(hint)) {
       return url;
@@ -258,34 +457,24 @@ export function resolveFallbackImage(
     }
   }
 
-  // 5. Check destination match
-  for (const [dest, url] of Object.entries(DESTINATION_PHOTOS)) {
-    if (hint.includes(dest) || dest.includes(hint)) {
-      return url;
+  // 5. Destination cover resolution ONLY when resolving a destination hero image
+  if (cat === 'destination' || cat === 'destinations') {
+    for (const [dest, url] of Object.entries(DESTINATION_PHOTOS)) {
+      if (hint.includes(dest) || dest.includes(hint)) {
+        return url;
+      }
     }
   }
 
-  // 6. Contextual category fallback
-  if (hint.includes('beach') || hint.includes('sea') || hint.includes('coast') || cat.includes('beach')) {
-    return CATEGORY_FALLBACKS.beach;
-  }
-  if (hint.includes('mountain') || hint.includes('trek') || hint.includes('peak') || hint.includes('himalaya') || cat.includes('mountain')) {
-    return CATEGORY_FALLBACKS.mountains;
-  }
-  if (hint.includes('fort') || hint.includes('palace') || hint.includes('temple') || hint.includes('heritage') || cat.includes('heritage')) {
-    return CATEGORY_FALLBACKS.heritage;
-  }
-  if (hint.includes('ganga') || hint.includes('ghat') || hint.includes('aarti') || hint.includes('spiritual') || cat.includes('spiritual')) {
-    return CATEGORY_FALLBACKS.spiritual;
-  }
-  if (hint.includes('hotel') || hint.includes('resort') || hint.includes('stay') || hint.includes('lodge') || cat.includes('hotel') || cat.includes('stay')) {
-    return CATEGORY_FALLBACKS.hotel;
-  }
-  if (hint.includes('cafe') || hint.includes('restaurant') || hint.includes('food') || hint.includes('thali') || hint.includes('dining') || cat.includes('food') || cat.includes('dining')) {
+  // 6. Neutral Branded Archetype Fallback (Never leak another destination's photo!)
+  if (cat.includes('food') || cat.includes('dining') || cat.includes('restaurant') || cat.includes('cafe')) {
     return CATEGORY_FALLBACKS.food;
   }
-  if (hint.includes('sanctuary') || hint.includes('forest') || hint.includes('nature') || hint.includes('garden') || cat.includes('nature')) {
-    return CATEGORY_FALLBACKS.nature;
+  if (cat.includes('stay') || cat.includes('hotel') || cat.includes('hostel') || cat.includes('resort') || cat.includes('homestay')) {
+    return CATEGORY_FALLBACKS.hotel;
+  }
+  if (cat.includes('place') || cat.includes('attraction') || cat.includes('sightseeing') || cat.includes('heritage') || cat.includes('nature') || cat.includes('adventure')) {
+    return CATEGORY_FALLBACKS.place;
   }
 
   return CATEGORY_FALLBACKS.default;
@@ -312,4 +501,14 @@ export function getMediaMetadata(webPathOrId: string): MediaManifestEntry | null
     }
   }
   return null;
+}
+
+/**
+ * Resolves the primary photo for a story by story ID or slug.
+ */
+export function resolveStoryPhoto(storyIdOrSlug: string, fallback?: string): string {
+  if (STORY_PHOTOS[storyIdOrSlug]) {
+    return STORY_PHOTOS[storyIdOrSlug];
+  }
+  return fallback || resolveFallbackImage('story', storyIdOrSlug);
 }

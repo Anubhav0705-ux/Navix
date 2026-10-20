@@ -114,7 +114,8 @@ export type PlannerAction =
   | { type: 'TOGGLE_MUST_EAT_FOOD'; payload: string }
   | { type: 'SET_SELECTED_HOTEL'; payload: HotelItem }
   | { type: 'SET_TRAVEL_STYLE'; payload: 'Budget' | 'Balanced' | 'Comfort' | 'Adventure' | 'Relaxed' }
-  | { type: 'PREFILL_FROM_QUERY'; payload: Partial<PlannerState> };
+  | { type: 'PREFILL_FROM_QUERY'; payload: Partial<PlannerState> }
+  | { type: 'RESTORE_SAVED_STATE'; payload: Partial<PlannerState> };
 
 // Clean default dates (departure 14 days ahead, return 20 days ahead)
 const getFutureDate = (daysAhead: number) => {
@@ -482,6 +483,8 @@ function plannerReducer(state: PlannerState, action: PlannerAction): PlannerStat
     }
     case 'PREFILL_FROM_QUERY':
       return { ...state, ...action.payload };
+    case 'RESTORE_SAVED_STATE':
+      return { ...state, ...action.payload };
     default:
       return state;
 
@@ -497,19 +500,21 @@ interface PlannerContextType {
 const PlannerContext = createContext<PlannerContextType | undefined>(undefined);
 
 export const PlannerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(plannerReducer, INITIAL_STATE, (init) => {
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = sessionStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          return { ...init, ...JSON.parse(saved) };
-        }
-      } catch {
-        // Fallback to initial
+  const [state, dispatch] = useReducer(plannerReducer, INITIAL_STATE);
+  const isHydratedRef = React.useRef(false);
+
+  // Restore saved state safely on client mount to prevent SSR hydration mismatch
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        dispatch({ type: 'RESTORE_SAVED_STATE', payload: JSON.parse(saved) });
       }
+    } catch {
+      // Fallback to initial state
     }
-    return init;
-  });
+    isHydratedRef.current = true;
+  }, []);
 
   // Prefill logged-in user name into Traveller 1 if default
   useEffect(() => {
@@ -522,14 +527,13 @@ export const PlannerProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [state.travellerProfiles, dispatch]);
 
-  // Save to sessionStorage on state changes
+  // Save to sessionStorage on state changes only after client hydration
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      } catch {
-        // Ignore quota errors
-      }
+    if (!isHydratedRef.current) return;
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      // Ignore quota errors
     }
   }, [state]);
 

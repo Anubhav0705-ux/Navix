@@ -25,15 +25,14 @@ export default function StoriesPage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [stories, setStories] = useState<StoryItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [bookmarkedSlugs, setBookmarkedSlugs] = useState<string[]>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem('navix_bookmarked_stories');
-        if (saved) return JSON.parse(saved);
-      } catch {}
-    }
-    return [];
-  });
+  const [bookmarkedSlugs, setBookmarkedSlugs] = useState<string[]>([]);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('navix_bookmarked_stories');
+      if (saved) setBookmarkedSlugs(JSON.parse(saved));
+    } catch {}
+  }, []);
 
   const toggleBookmark = (slug: string, e: React.MouseEvent) => {
     e.preventDefault();

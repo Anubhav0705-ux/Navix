@@ -1,0 +1,4987 @@
+{
+  "catalogVersion": "3.0.0",
+  "lastUpdated": "2026-10-19T12:16:37Z",
+  "totalAssets": 249,
+  "items": [
+    {
+      "entityType": "attraction",
+      "entityId": "att_goa_01",
+      "destinationId": "goa",
+      "imageId": "att_goa_01",
+      "role": "cover",
+      "pathOrUrl": "/media/places/goa_basilica_bom_jesus.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Basilica_of_Bom_Jesus,_Old_Goa_(ca._1870).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Basilica_of_Bom_Jesus,_Old_Goa_(ca._1870).jpg",
+      "creator": "D'Souza and Paul Studio",
+      "license": "Public domain",
+      "attribution": "D'Souza and Paul Studio",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_goa_02",
+      "destinationId": "goa",
+      "imageId": "att_goa_02",
+      "role": "cover",
+      "pathOrUrl": "/media/places/goa_fontainhas.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Streets_of_Fontainhas,_Panaji_(02).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Streets_of_Fontainhas,_Panaji_(02).jpg",
+      "creator": "iMahesh",
+      "license": "CC BY-SA 4.0",
+      "attribution": "iMahesh",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_goa_03",
+      "destinationId": "goa",
+      "imageId": "att_goa_03",
+      "role": "cover",
+      "pathOrUrl": "/media/places/goa_fort_aguada.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:FortAquada2,Goa.JPG",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:FortAquada2,Goa.JPG",
+      "creator": "Aruna at Malayalam Wikipedia",
+      "license": "CC BY-SA 3.0",
+      "attribution": "Aruna at Malayalam Wikipedia",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_goa_04",
+      "destinationId": "goa",
+      "imageId": "att_goa_04",
+      "role": "cover",
+      "pathOrUrl": "/media/places/goa_dudhsagar_falls.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Dudhsagar_Falls,_Goa_(51821730751).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Dudhsagar_Falls,_Goa_(51821730751).jpg",
+      "creator": "solarisgirl",
+      "license": "CC BY-SA 2.0",
+      "attribution": "solarisgirl",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_goa_05",
+      "destinationId": "goa",
+      "imageId": "att_goa_05",
+      "role": "cover",
+      "pathOrUrl": "/media/places/goa_anjuna_coast.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Anjuna_Beach,_Goa,_India,_Legendary_Curlies_beach_shack.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Anjuna_Beach,_Goa,_India,_Legendary_Curlies_beach_shack.jpg",
+      "creator": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "attribution": "Vyacheslav Argenberg",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_goa_06",
+      "destinationId": "goa",
+      "imageId": "att_goa_06",
+      "role": "cover",
+      "pathOrUrl": "/media/places/goa_chapora_fort.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Chapora_fort_25012016.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Chapora_fort_25012016.jpg",
+      "creator": "Nikhilb239",
+      "license": "CC BY 3.0",
+      "attribution": "Nikhilb239",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_goa_07",
+      "destinationId": "goa",
+      "imageId": "att_goa_07",
+      "role": "cover",
+      "pathOrUrl": "/media/places/goa_palolem_beach.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Beach_shack_at_sunset,_Palolem,_Goa.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Beach_shack_at_sunset,_Palolem,_Goa.jpg",
+      "creator": "Niranjan Ramamurthy",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Niranjan Ramamurthy",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_goa_08",
+      "destinationId": "goa",
+      "imageId": "att_goa_08",
+      "role": "cover",
+      "pathOrUrl": "/media/places/goa_se_cathedral.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Monument_at_Old_Goa_--_Se_Cathedral_02.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Monument_at_Old_Goa_--_Se_Cathedral_02.jpg",
+      "creator": "Fredericknoronha",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Fredericknoronha",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_goa_09",
+      "destinationId": "goa",
+      "imageId": "att_goa_09",
+      "role": "cover",
+      "pathOrUrl": "/media/places/goa_savoi_spice.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Goan_Saraswat_Cuisine_-_Savoi_Plantation,Goa_-_039A3269.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Goan_Saraswat_Cuisine_-_Savoi_Plantation,Goa_-_039A3269.jpg",
+      "creator": "Lazybuck",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Lazybuck",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_goa_10",
+      "destinationId": "goa",
+      "imageId": "att_goa_10",
+      "role": "cover",
+      "pathOrUrl": "/media/places/goa_arambol_lake.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Arambol,_Goa,_Arambol_Beach_late_at_night,_music_and_dance,_deep_twilight_hour.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Arambol,_Goa,_Arambol_Beach_late_at_night,_music_and_dance,_deep_twilight_hour.jpg",
+      "creator": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "attribution": "Vyacheslav Argenberg",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_goa_01",
+      "destinationId": "goa",
+      "imageId": "food_goa_01",
+      "role": "cover",
+      "pathOrUrl": "/media/food/goa_fish_curry.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Fish-curry-rice,_Goan-style_01.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Fish-curry-rice,_Goan-style_01.jpg",
+      "creator": "Fredericknoronha",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Fredericknoronha",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_goa_02",
+      "destinationId": "goa",
+      "imageId": "food_goa_02",
+      "role": "cover",
+      "pathOrUrl": "/media/food/goa_kingfish_rava_fry.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Indian_Mackerel.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Indian_Mackerel.jpg",
+      "creator": "Sannidhishetty",
+      "license": "CC0",
+      "attribution": "Sannidhishetty",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_goa_03",
+      "destinationId": "goa",
+      "imageId": "food_goa_03",
+      "role": "cover",
+      "pathOrUrl": "/media/food/goa_prawn_balchao.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Biriyani_and_Prawn_Masala.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Biriyani_and_Prawn_Masala.jpg",
+      "creator": "Tirthankar.Bachhar",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Tirthankar.Bachhar",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_goa_04",
+      "destinationId": "goa",
+      "imageId": "food_goa_04",
+      "role": "cover",
+      "pathOrUrl": "/media/food/goa_hummus_mezze.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Pesto_fettucine_and_a_mezze_bowl_at_Hons_All-Day_Dining,_Le_Press,_Hazratganj,_Lucknow_(2025-08-03).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Pesto_fettucine_and_a_mezze_bowl_at_Hons_All-Day_Dining,_Le_Press,_Hazratganj,_Lucknow_(2025-08-03).jpg",
+      "creator": "Contrapunctus-1",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Contrapunctus-1",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_goa_05",
+      "destinationId": "goa",
+      "imageId": "food_goa_05",
+      "role": "cover",
+      "pathOrUrl": "/media/food/goa_appam_stew.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Appam_(Kerala_dish).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Appam_(Kerala_dish).jpg",
+      "creator": "Asif Saleh",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Asif Saleh",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_goa_06",
+      "destinationId": "goa",
+      "imageId": "food_goa_06",
+      "role": "cover",
+      "pathOrUrl": "/media/food/goa_bebinca_dessert.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Bebinca-_Kerala_Style.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Bebinca-_Kerala_Style.jpg",
+      "creator": "Alex Ouseppachan",
+      "license": "CC0",
+      "attribution": "Alex Ouseppachan",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_goa_07",
+      "destinationId": "goa",
+      "imageId": "food_goa_07",
+      "role": "cover",
+      "pathOrUrl": "/media/food/goa_souvlaki_mezze.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:026.365_-_January_26,_2010_(313_(Y2))_(4308004722).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:026.365_-_January_26,_2010_(313_(Y2))_(4308004722).jpg",
+      "creator": "Morgan from Montreal, Quebec, Canada",
+      "license": "CC BY 2.0",
+      "attribution": "Morgan from Montreal, Quebec, Canada",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_manali_01",
+      "destinationId": "manali",
+      "imageId": "att_manali_01",
+      "role": "cover",
+      "pathOrUrl": "/media/places/manali_hadimba_temple.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Hadimba_Devi_Temple,_Hidimba_Devi_Temple_Dhungari_Temple_Manali_and_around_vrtmrgmpksk_(25).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Hadimba_Devi_Temple,_Hidimba_Devi_Temple_Dhungari_Temple_Manali_and_around_vrtmrgmpksk_(25).jpg",
+      "creator": "Vinayaraj",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Vinayaraj",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_manali_02",
+      "destinationId": "manali",
+      "imageId": "att_manali_02",
+      "role": "cover",
+      "pathOrUrl": "/media/places/manali_manu_temple.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Birte_Fritsch,_Manu_Temple_in_Old_Manali_(45).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Birte_Fritsch,_Manu_Temple_in_Old_Manali_(45).jpg",
+      "creator": "Birte Fritsch",
+      "license": "CC BY 4.0",
+      "attribution": "Birte Fritsch",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_manali_03",
+      "destinationId": "manali",
+      "imageId": "att_manali_03",
+      "role": "cover",
+      "pathOrUrl": "/media/places/manali_solang_valley.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:A_view_of_solang_valley_on_the_way_to_rohtang_pass.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:A_view_of_solang_valley_on_the_way_to_rohtang_pass.jpg",
+      "creator": "Shubhanshu at English Wikipedia",
+      "license": "Public domain",
+      "attribution": "Shubhanshu at English Wikipedia",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_manali_04",
+      "destinationId": "manali",
+      "imageId": "att_manali_04",
+      "role": "cover",
+      "pathOrUrl": "/media/places/manali_jogini_waterfall.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Jon_Evans,_Holy_Place,_Jogini_Waterfall_near_Manali.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Jon_Evans,_Holy_Place,_Jogini_Waterfall_near_Manali.jpg",
+      "creator": "Jon Evans",
+      "license": "CC BY 4.0",
+      "attribution": "Jon Evans",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_manali_05",
+      "destinationId": "manali",
+      "imageId": "att_manali_05",
+      "role": "cover",
+      "pathOrUrl": "/media/places/manali_vashisht_temple.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Kullu_manali_(100).JPG",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kullu_manali_(100).JPG",
+      "creator": "Guptaele",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Guptaele",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_manali_06",
+      "destinationId": "manali",
+      "imageId": "att_manali_06",
+      "role": "cover",
+      "pathOrUrl": "/media/places/manali_atal_tunnel.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Atal_Tunnel_01_(cropped).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Atal_Tunnel_01_(cropped).jpg",
+      "creator": "Jagseer S Sidhu",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Jagseer S Sidhu",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_manali_07",
+      "destinationId": "manali",
+      "imageId": "att_manali_07",
+      "role": "cover",
+      "pathOrUrl": "/media/places/manali_naggar_castle.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Kullu_Valley,_Naggar_Castle,_India.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kullu_Valley,_Naggar_Castle,_India.jpg",
+      "creator": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "attribution": "Vyacheslav Argenberg",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_manali_08",
+      "destinationId": "manali",
+      "imageId": "att_manali_08",
+      "role": "cover",
+      "pathOrUrl": "/media/places/manali_beas_river.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Above_Manali_in_the_Kullu_valley.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Above_Manali_in_the_Kullu_valley.jpg",
+      "creator": "4ocima",
+      "license": "CC BY 2.0",
+      "attribution": "4ocima",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_manali_09",
+      "destinationId": "manali",
+      "imageId": "att_manali_09",
+      "role": "cover",
+      "pathOrUrl": "/media/places/manali_tibetan_monastery.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:DSC_0051_Bardo_deities_-_Von_Ngari_Monastery_-_Rewalsar.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:DSC_0051_Bardo_deities_-_Von_Ngari_Monastery_-_Rewalsar.jpg",
+      "creator": "Prof Ranga Sai",
+      "license": "CC0",
+      "attribution": "Prof Ranga Sai",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_manali_10",
+      "destinationId": "manali",
+      "imageId": "att_manali_10",
+      "role": "cover",
+      "pathOrUrl": "/media/places/manali_mall_road.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Durga_Mata_Mandir_at_Mall_Road,_Manali.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Durga_Mata_Mandir_at_Mall_Road,_Manali.jpg",
+      "creator": "Jagseer S Sidhu",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Jagseer S Sidhu",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_manali_01",
+      "destinationId": "manali",
+      "imageId": "food_manali_01",
+      "role": "cover",
+      "pathOrUrl": "/media/food/manali_woodfired_pizza.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Pizza_baking_in_Wood-fired_oven.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Pizza_baking_in_Wood-fired_oven.jpg",
+      "creator": "Jared Tarbell from Awesometown, United States of America",
+      "license": "CC BY 2.0",
+      "attribution": "Jared Tarbell from Awesometown, United States of America",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_manali_02",
+      "destinationId": "manali",
+      "imageId": "food_manali_02",
+      "role": "cover",
+      "pathOrUrl": "/media/food/manali_shakshuka.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Bino_Gabso.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Bino_Gabso.jpg",
+      "creator": "שמרי הנסיך הדני המגניב",
+      "license": "CC BY-SA 3.0",
+      "attribution": "שמרי הנסיך הדני המגניב",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_manali_03",
+      "destinationId": "manali",
+      "imageId": "food_manali_03",
+      "role": "cover",
+      "pathOrUrl": "/media/food/manali_trout_fish.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Indian_style_pan_fried_Trout_Fish_masala_from_Himalayas.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Indian_style_pan_fried_Trout_Fish_masala_from_Himalayas.jpg",
+      "creator": "Kaynatkazi",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Kaynatkazi",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_manali_04",
+      "destinationId": "manali",
+      "imageId": "food_manali_04",
+      "role": "cover",
+      "pathOrUrl": "/media/food/manali_thukpa_momos.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Pork_Thukpa.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Pork_Thukpa.jpg",
+      "creator": "Sumit Surai",
+      "license": "CC BY-SA 3.0",
+      "attribution": "Sumit Surai",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_manali_05",
+      "destinationId": "manali",
+      "imageId": "food_manali_05",
+      "role": "cover",
+      "pathOrUrl": "/media/food/manali_cafe_platter.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Brisket_and_grilled_cheese_sandwich_with_a_side_of_French_fries.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Brisket_and_grilled_cheese_sandwich_with_a_side_of_French_fries.jpg",
+      "creator": "Ser Amantio di Nicolao",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Ser Amantio di Nicolao",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_manali_06",
+      "destinationId": "manali",
+      "imageId": "food_manali_06",
+      "role": "cover",
+      "pathOrUrl": "/media/food/manali_cinnamon_cookies.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Caf%C3%A9_e_bolachas.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Caf%C3%A9_e_bolachas.jpg",
+      "creator": "Brigitte Tohm",
+      "license": "CC0",
+      "attribution": "Brigitte Tohm",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_manali_07",
+      "destinationId": "manali",
+      "imageId": "food_manali_07",
+      "role": "cover",
+      "pathOrUrl": "/media/food/manali_himachali_siddu.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Kullvi_Siddu_(Himachal_Pradesh).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kullvi_Siddu_(Himachal_Pradesh).jpg",
+      "creator": "Rajani Gairshail",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Rajani Gairshail",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_jaipur_01",
+      "destinationId": "jaipur",
+      "imageId": "att_jaipur_01",
+      "role": "cover",
+      "pathOrUrl": "/media/places/jaipur_amber_fort.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:20191218_Jaigarh_Fort,_Amer,_Jaipur_1551_9335.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:20191218_Jaigarh_Fort,_Amer,_Jaipur_1551_9335.jpg",
+      "creator": "Jakub Hałun",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Jakub Hałun",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_jaipur_02",
+      "destinationId": "jaipur",
+      "imageId": "att_jaipur_02",
+      "role": "cover",
+      "pathOrUrl": "/media/places/jaipur_hawa_mahal.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:20191218,_Hawa_Mahal_(The_Palace_of_Winds)_in_Jaipur,_1128_9119.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:20191218,_Hawa_Mahal_(The_Palace_of_Winds)_in_Jaipur,_1128_9119.jpg",
+      "creator": "Jakub Hałun",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Jakub Hałun",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_jaipur_03",
+      "destinationId": "jaipur",
+      "imageId": "att_jaipur_03",
+      "role": "cover",
+      "pathOrUrl": "/media/places/jaipur_city_palace.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:20191218_Gate,_City_Palace,_Jaipur,_1012_9069.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:20191218_Gate,_City_Palace,_Jaipur,_1012_9069.jpg",
+      "creator": "Jakub Hałun",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Jakub Hałun",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_jaipur_04",
+      "destinationId": "jaipur",
+      "imageId": "att_jaipur_04",
+      "role": "cover",
+      "pathOrUrl": "/media/places/jaipur_jantar_mantar.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:20191218_Brihat_Samrat_Yantra,_Jantar_Mantar,_Jaipur,_0909_8993.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:20191218_Brihat_Samrat_Yantra,_Jantar_Mantar,_Jaipur,_0909_8993.jpg",
+      "creator": "Jakub Hałun",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Jakub Hałun",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_jaipur_05",
+      "destinationId": "jaipur",
+      "imageId": "att_jaipur_05",
+      "role": "cover",
+      "pathOrUrl": "/media/places/jaipur_nahargarh_fort.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:20191218_Fort_Nahargarh,_Jaipur_1514_9294.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:20191218_Fort_Nahargarh,_Jaipur_1514_9294.jpg",
+      "creator": "Jakub Hałun",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Jakub Hałun",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_jaipur_06",
+      "destinationId": "jaipur",
+      "imageId": "att_jaipur_06",
+      "role": "cover",
+      "pathOrUrl": "/media/places/jaipur_albert_hall.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Albert_Hall_(Museum).JPG",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Albert_Hall_(Museum).JPG",
+      "creator": "chetan",
+      "license": "CC BY-SA 3.0",
+      "attribution": "chetan",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_jaipur_07",
+      "destinationId": "jaipur",
+      "imageId": "att_jaipur_07",
+      "role": "cover",
+      "pathOrUrl": "/media/places/jaipur_jal_mahal.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:20191218_Jal_Mahal_Palace_in_Jaipur_1429_9234.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:20191218_Jal_Mahal_Palace_in_Jaipur_1429_9234.jpg",
+      "creator": "Jakub Hałun",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Jakub Hałun",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_jaipur_08",
+      "destinationId": "jaipur",
+      "imageId": "att_jaipur_08",
+      "role": "cover",
+      "pathOrUrl": "/media/places/jaipur_johari_bazaar.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Bazaar_Merchants_in_Jaipur_in_1962_(1).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Bazaar_Merchants_in_Jaipur_in_1962_(1).jpg",
+      "creator": "Cecil Stoughton",
+      "license": "Public domain",
+      "attribution": "Cecil Stoughton",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_jaipur_09",
+      "destinationId": "jaipur",
+      "imageId": "att_jaipur_09",
+      "role": "cover",
+      "pathOrUrl": "/media/places/jaipur_galta_ji.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Galta_Ji_Mandir_(14-07-2022)_img_02.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Galta_Ji_Mandir_(14-07-2022)_img_02.jpg",
+      "creator": "Chainwit.",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Chainwit.",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_jaipur_10",
+      "destinationId": "jaipur",
+      "imageId": "att_jaipur_10",
+      "role": "cover",
+      "pathOrUrl": "/media/places/jaipur_jaigarh_fort.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Jaivana_Cannon_at_Jaigarh_fort_2015-07-26.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Jaivana_Cannon_at_Jaigarh_fort_2015-07-26.jpg",
+      "creator": "NimishTHEWIKI",
+      "license": "CC BY-SA 4.0",
+      "attribution": "NimishTHEWIKI",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_jaipur_01",
+      "destinationId": "jaipur",
+      "imageId": "food_jaipur_01",
+      "role": "cover",
+      "pathOrUrl": "/media/food/jaipur_dal_baati_churma.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:%22Delectable_Dal_Baati_Churma%22.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:%22Delectable_Dal_Baati_Churma%22.jpg",
+      "creator": "Mahi Tatavarty",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Mahi Tatavarty",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_jaipur_02",
+      "destinationId": "jaipur",
+      "imageId": "food_jaipur_02",
+      "role": "cover",
+      "pathOrUrl": "/media/food/jaipur_pyaaz_kachori.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Jodhpuri_Kanda(Pyaaz)_Kachori.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Jodhpuri_Kanda(Pyaaz)_Kachori.jpg",
+      "creator": "PabIoChocobar",
+      "license": "CC0",
+      "attribution": "PabIoChocobar",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_jaipur_03",
+      "destinationId": "jaipur",
+      "imageId": "food_jaipur_03",
+      "role": "cover",
+      "pathOrUrl": "/media/food/jaipur_laal_maas.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Indian_mutton_Curry.JPG",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Indian_mutton_Curry.JPG",
+      "creator": "Vikas Jayaswal",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Vikas Jayaswal",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_jaipur_04",
+      "destinationId": "jaipur",
+      "imageId": "food_jaipur_04",
+      "role": "cover",
+      "pathOrUrl": "/media/food/jaipur_ker_sangri.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Ker_Sangri.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Ker_Sangri.jpg",
+      "creator": "AKSHRAJJODHA",
+      "license": "CC BY-SA 4.0",
+      "attribution": "AKSHRAJJODHA",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_jaipur_05",
+      "destinationId": "jaipur",
+      "imageId": "food_jaipur_05",
+      "role": "cover",
+      "pathOrUrl": "/media/food/jaipur_cutting_chai.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Chai_In_Sakora.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Chai_In_Sakora.jpg",
+      "creator": "Dadhichbittu007",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Dadhichbittu007",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_jaipur_06",
+      "destinationId": "jaipur",
+      "imageId": "food_jaipur_06",
+      "role": "cover",
+      "pathOrUrl": "/media/food/jaipur_seekh_kebabs.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Indian_Chicken_Seekh_Kebab.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Indian_Chicken_Seekh_Kebab.jpg",
+      "creator": "Ishitadsa",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Ishitadsa",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_jaipur_07",
+      "destinationId": "jaipur",
+      "imageId": "food_jaipur_07",
+      "role": "cover",
+      "pathOrUrl": "/media/food/jaipur_samosa_jalebi.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Jalebi-an_Indian_sweetdish.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Jalebi-an_Indian_sweetdish.jpg",
+      "creator": "Yogendra Singh",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Yogendra Singh",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_rishikesh_01",
+      "destinationId": "rishikesh",
+      "imageId": "att_rishikesh_01",
+      "role": "cover",
+      "pathOrUrl": "/media/places/rishikesh_triveni_ghat.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Aarti_at_Triveni_Ghat_Rishikesh.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Aarti_at_Triveni_Ghat_Rishikesh.jpg",
+      "creator": "ArmouredCyborg",
+      "license": "CC BY-SA 4.0",
+      "attribution": "ArmouredCyborg",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_rishikesh_02",
+      "destinationId": "rishikesh",
+      "imageId": "att_rishikesh_02",
+      "role": "cover",
+      "pathOrUrl": "/media/places/rishikesh_lakshman_jhula.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Lakshman_Jhula_Bridge_-_Hrishikesh_-_Uttarakhand_001.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Lakshman_Jhula_Bridge_-_Hrishikesh_-_Uttarakhand_001.jpg",
+      "creator": "Snehrashmi",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Snehrashmi",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_rishikesh_03",
+      "destinationId": "rishikesh",
+      "imageId": "att_rishikesh_03",
+      "role": "cover",
+      "pathOrUrl": "/media/places/rishikesh_beatles_ashram.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Beatles_Ashram_01.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Beatles_Ashram_01.jpg",
+      "creator": "Athulvis",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Athulvis",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_rishikesh_04",
+      "destinationId": "rishikesh",
+      "imageId": "att_rishikesh_04",
+      "role": "cover",
+      "pathOrUrl": "/media/places/rishikesh_neer_garh_waterfall.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Neer_Garh_Waterfall.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Neer_Garh_Waterfall.jpg",
+      "creator": "Wittystef",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Wittystef",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_rishikesh_05",
+      "destinationId": "rishikesh",
+      "imageId": "att_rishikesh_05",
+      "role": "cover",
+      "pathOrUrl": "/media/places/rishikesh_river_rafting.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Ganga_at_Kaudiayala.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Ganga_at_Kaudiayala.jpg",
+      "creator": "Chakumar at English Wikipedia",
+      "license": "CC BY 3.0",
+      "attribution": "Chakumar at English Wikipedia",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_rishikesh_06",
+      "destinationId": "rishikesh",
+      "imageId": "att_rishikesh_06",
+      "role": "cover",
+      "pathOrUrl": "/media/places/rishikesh_parmarth_niketan.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:A_havan_ceremony_on_the_banks_of_Ganges,_Muni_ki_Reti,_Rishikesh.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:A_havan_ceremony_on_the_banks_of_Ganges,_Muni_ki_Reti,_Rishikesh.jpg",
+      "creator": "Ajay Tallam from Milpitas, USA",
+      "license": "CC BY-SA 2.0",
+      "attribution": "Ajay Tallam from Milpitas, USA",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_rishikesh_07",
+      "destinationId": "rishikesh",
+      "imageId": "att_rishikesh_07",
+      "role": "cover",
+      "pathOrUrl": "/media/places/rishikesh_kunjapuri_temple.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Kunjapuri_Temple,_Rishikesh,_Uttarakhand,_India_(15110748073).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kunjapuri_Temple,_Rishikesh,_Uttarakhand,_India_(15110748073).jpg",
+      "creator": "Travel &amp; Shit from Brighton, UK",
+      "license": "CC BY-SA 2.0",
+      "attribution": "Travel &amp; Shit from Brighton, UK",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_rishikesh_08",
+      "destinationId": "rishikesh",
+      "imageId": "att_rishikesh_08",
+      "role": "cover",
+      "pathOrUrl": "/media/places/rishikesh_ram_jhula.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Devotees_and_Tourist_Enjoying_the_Sunset_at_Rishikesh_Ram_jhula_05.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Devotees_and_Tourist_Enjoying_the_Sunset_at_Rishikesh_Ram_jhula_05.jpg",
+      "creator": "Goutam1962",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Goutam1962",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_rishikesh_10",
+      "destinationId": "rishikesh",
+      "imageId": "att_rishikesh_10",
+      "role": "cover",
+      "pathOrUrl": "/media/places/rishikesh_bungee_jumping.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Bungee_jumping_platform_at_Garry_Bridge_-_geograph.org.uk_-_2937882.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Bungee_jumping_platform_at_Garry_Bridge_-_geograph.org.uk_-_2937882.jpg",
+      "creator": "David Baird",
+      "license": "CC BY-SA 2.0",
+      "attribution": "David Baird",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_rishikesh_01",
+      "destinationId": "rishikesh",
+      "imageId": "food_rishikesh_01",
+      "role": "cover",
+      "pathOrUrl": "/media/food/rishikesh_sattvic_thali.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:A_thali_with_daal_roti_bhindi_ki_sabzi_and_mango_pickle.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:A_thali_with_daal_roti_bhindi_ki_sabzi_and_mango_pickle.jpg",
+      "creator": "Devika",
+      "license": "CC BY-SA 2.0",
+      "attribution": "Devika",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_rishikesh_02",
+      "destinationId": "rishikesh",
+      "imageId": "food_rishikesh_02",
+      "role": "cover",
+      "pathOrUrl": "/media/food/rishikesh_falafel_plate.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Food_in_Israel.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Food_in_Israel.jpg",
+      "creator": "young shanahan",
+      "license": "CC BY 2.0",
+      "attribution": "young shanahan",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_rishikesh_03",
+      "destinationId": "rishikesh",
+      "imageId": "food_rishikesh_03",
+      "role": "cover",
+      "pathOrUrl": "/media/food/rishikesh_smoothie_bowl.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Healthy_Trendy_Brunch_(Unsplash).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Healthy_Trendy_Brunch_(Unsplash).jpg",
+      "creator": "Jannis Brandt _jannis",
+      "license": "CC0",
+      "attribution": "Jannis Brandt _jannis",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_rishikesh_04",
+      "destinationId": "rishikesh",
+      "imageId": "food_rishikesh_04",
+      "role": "cover",
+      "pathOrUrl": "/media/food/rishikesh_aloo_puri.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Aaloo_ki_sabji_%26_Kuttu_ki_puri_-_Gujarat_-_SHAILI_016.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Aaloo_ki_sabji_%26_Kuttu_ki_puri_-_Gujarat_-_SHAILI_016.jpg",
+      "creator": "Shaili Sharma",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Shaili Sharma",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_rishikesh_05",
+      "destinationId": "rishikesh",
+      "imageId": "food_rishikesh_05",
+      "role": "cover",
+      "pathOrUrl": "/media/food/rishikesh_ayurvedic_bowl.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:A_Fresh_Healthy_Snack_(Unsplash).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:A_Fresh_Healthy_Snack_(Unsplash).jpg",
+      "creator": "Jez Timms jeztimms",
+      "license": "CC0",
+      "attribution": "Jez Timms jeztimms",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_rishikesh_06",
+      "destinationId": "rishikesh",
+      "imageId": "food_rishikesh_06",
+      "role": "cover",
+      "pathOrUrl": "/media/food/rishikesh_masala_dosa.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Dosa_with_Sambhar_and_Cooked_Potato_Vegetable_,_Nagpur.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Dosa_with_Sambhar_and_Cooked_Potato_Vegetable_,_Nagpur.jpg",
+      "creator": "Chanda",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Chanda",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_rishikesh_07",
+      "destinationId": "rishikesh",
+      "imageId": "food_rishikesh_07",
+      "role": "cover",
+      "pathOrUrl": "/media/food/rishikesh_apple_strudel.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Apfelstrudel_in_%C3%96sterreich.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Apfelstrudel_in_%C3%96sterreich.jpg",
+      "creator": "Naturpuur",
+      "license": "CC BY 4.0",
+      "attribution": "Naturpuur",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_mysuru_01",
+      "destinationId": "mysuru",
+      "imageId": "att_mysuru_01",
+      "role": "cover",
+      "pathOrUrl": "/media/places/mysuru_palace.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Amba_Vilas_palace.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Amba_Vilas_palace.jpg",
+      "creator": "Darakshanehaluddin",
+      "license": "CC0",
+      "attribution": "Darakshanehaluddin",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_mysuru_02",
+      "destinationId": "mysuru",
+      "imageId": "att_mysuru_02",
+      "role": "cover",
+      "pathOrUrl": "/media/places/mysuru_chamundeshwari_temple.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Chamundeshwari_Temple,_Mysuru,_Karnataka,_India_Temple.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Chamundeshwari_Temple,_Mysuru,_Karnataka,_India_Temple.jpg",
+      "creator": "Arun Mohan",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Arun Mohan",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_mysuru_03",
+      "destinationId": "mysuru",
+      "imageId": "att_mysuru_03",
+      "role": "cover",
+      "pathOrUrl": "/media/places/mysuru_brindavan_gardens.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Brindavan_Garden,_Karnataka,_India.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Brindavan_Garden,_Karnataka,_India.jpg",
+      "creator": "Naveen R Gowda",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Naveen R Gowda",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_mysuru_04",
+      "destinationId": "mysuru",
+      "imageId": "att_mysuru_04",
+      "role": "cover",
+      "pathOrUrl": "/media/places/mysuru_st_philomenas.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Inner_view_of_St._Philomena%27s_Cathedral_in_Mysuru_(Mysore),_Karnataka._03.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Inner_view_of_St._Philomena%27s_Cathedral_in_Mysuru_(Mysore),_Karnataka._03.jpg",
+      "creator": "Harvinder Chandigarh",
+      "license": "CC BY 4.0",
+      "attribution": "Harvinder Chandigarh",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_mysuru_05",
+      "destinationId": "mysuru",
+      "imageId": "att_mysuru_05",
+      "role": "cover",
+      "pathOrUrl": "/media/places/mysuru_devaraja_market.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Flowers,_Devaraja_Market_(01).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Flowers,_Devaraja_Market_(01).jpg",
+      "creator": "Christopher J. Fynn",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Christopher J. Fynn",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_mysuru_06",
+      "destinationId": "mysuru",
+      "imageId": "att_mysuru_06",
+      "role": "cover",
+      "pathOrUrl": "/media/places/mysuru_jaganmohan_palace.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Jaganmohan_Palace,_Mysore_(b).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Jaganmohan_Palace,_Mysore_(b).jpg",
+      "creator": "hristopher J. Fynn",
+      "license": "CC BY-SA 4.0",
+      "attribution": "hristopher J. Fynn",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_mysuru_07",
+      "destinationId": "mysuru",
+      "imageId": "att_mysuru_07",
+      "role": "cover",
+      "pathOrUrl": "/media/places/mysuru_sandalwood_factory.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Shiva_Tripurantaka.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Shiva_Tripurantaka.jpg",
+      "creator": "Clinton Steeds",
+      "license": "CC BY 2.0",
+      "attribution": "Clinton Steeds",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_mysuru_08",
+      "destinationId": "mysuru",
+      "imageId": "att_mysuru_08",
+      "role": "cover",
+      "pathOrUrl": "/media/places/mysuru_karanji_lake.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Fountain_Karanji_Mysore_Nov23_A7C_08190.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Fountain_Karanji_Mysore_Nov23_A7C_08190.jpg",
+      "creator": "This Photo was taken by Timothy A. Gonsalves.  Feel free to use my photos, but p",
+      "license": "CC BY-SA 4.0",
+      "attribution": "This Photo was taken by Timothy A. Gonsalves.  Feel free to use my photos, but p",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_mysuru_09",
+      "destinationId": "mysuru",
+      "imageId": "att_mysuru_09",
+      "role": "cover",
+      "pathOrUrl": "/media/places/mysuru_srirangapatna.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Outer_Wall_SW_Ranganatha_Swamy_Temple_Srirangapatna_Jan24_A7C_08954.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Outer_Wall_SW_Ranganatha_Swamy_Temple_Srirangapatna_Jan24_A7C_08954.jpg",
+      "creator": "This Photo was taken by Timothy A. Gonsalves.  Feel free to use my photos, but p",
+      "license": "CC BY-SA 4.0",
+      "attribution": "This Photo was taken by Timothy A. Gonsalves.  Feel free to use my photos, but p",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "att_mysuru_10",
+      "destinationId": "mysuru",
+      "imageId": "att_mysuru_10",
+      "role": "cover",
+      "pathOrUrl": "/media/places/mysuru_rail_museum.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Mysuru_Rail_Museum_-_Locomotive_ES_506.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Mysuru_Rail_Museum_-_Locomotive_ES_506.jpg",
+      "creator": "Ingo Mehling",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Ingo Mehling",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_mysuru_01",
+      "destinationId": "mysuru",
+      "imageId": "food_mysuru_01",
+      "role": "cover",
+      "pathOrUrl": "/media/food/mysuru_mylari_dosa.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Mylari_Mysore.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Mylari_Mysore.jpg",
+      "creator": "Prof tpms",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Prof tpms",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_mysuru_02",
+      "destinationId": "mysuru",
+      "imageId": "food_mysuru_02",
+      "role": "cover",
+      "pathOrUrl": "/media/food/mysuru_mysore_pak.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Ghee_Mysore_Pak.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Ghee_Mysore_Pak.jpg",
+      "creator": "Vaidehi Pujary",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Vaidehi Pujary",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_mysuru_03",
+      "destinationId": "mysuru",
+      "imageId": "food_mysuru_03",
+      "role": "cover",
+      "pathOrUrl": "/media/food/mysuru_banana_leaf_biryani.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Chicken-biriyani.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Chicken-biriyani.jpg",
+      "creator": "Sunanda muni behera",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Sunanda muni behera",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_mysuru_04",
+      "destinationId": "mysuru",
+      "imageId": "food_mysuru_04",
+      "role": "cover",
+      "pathOrUrl": "/media/food/mysuru_tandoori_platter.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Chicken_Tandoor_Mix_Platter.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Chicken_Tandoor_Mix_Platter.jpg",
+      "creator": "Contentshare",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Contentshare",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_mysuru_05",
+      "destinationId": "mysuru",
+      "imageId": "food_mysuru_05",
+      "role": "cover",
+      "pathOrUrl": "/media/food/mysuru_filter_coffee.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Indian_filter_coffee_in_Dabarah.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Indian_filter_coffee_in_Dabarah.jpg",
+      "creator": "Wikimedia Contributor",
+      "license": "CC BY-SA 3.0",
+      "attribution": "Wikimedia Contributor",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_mysuru_06",
+      "destinationId": "mysuru",
+      "imageId": "food_mysuru_06",
+      "role": "cover",
+      "pathOrUrl": "/media/food/mysuru_bisi_bele_bath.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Bisi_Bele_Bath-Diu-DSC001.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Bisi_Bele_Bath-Diu-DSC001.jpg",
+      "creator": "Mahi Gajwani",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Mahi Gajwani",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "food",
+      "entityId": "food_mysuru_07",
+      "destinationId": "mysuru",
+      "imageId": "food_mysuru_07",
+      "role": "cover",
+      "pathOrUrl": "/media/food/mysuru_karnataka_thali.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:A_traditional_veg_thali_at_Karnataka.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:A_traditional_veg_thali_at_Karnataka.jpg",
+      "creator": "ঈশান জ্যোতি বৰা",
+      "license": "CC BY-SA 4.0",
+      "attribution": "ঈশান জ্যোতি বৰা",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_goa_01",
+      "destinationId": "goa",
+      "imageId": "stay_goa_01",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/goa_fort_tiracol.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Heritage_Hotel_in_Fort_Terekhol_(_Tiracol_)_@_Pedne_TaluK_in_Goa_-_panoramio.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Heritage_Hotel_in_Fort_Terekhol_(_Tiracol_)_@_Pedne_TaluK_in_Goa_-_panoramio.jpg",
+      "creator": "Deepak Patil",
+      "license": "CC BY-SA 3.0",
+      "attribution": "Deepak Patil",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_goa_03",
+      "destinationId": "goa",
+      "imageId": "stay_goa_03",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/goa_panjim_inn.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:A_Garment_store_in_Fontainhas,_Panaji.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:A_Garment_store_in_Fontainhas,_Panaji.jpg",
+      "creator": "iMahesh",
+      "license": "CC BY-SA 4.0",
+      "attribution": "iMahesh",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_goa_04",
+      "destinationId": "goa",
+      "imageId": "stay_goa_04",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/goa_taj_exotica.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Calubian_Leyte_Philippines_Sunset.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Calubian_Leyte_Philippines_Sunset.jpg",
+      "creator": "Paul Schedler",
+      "license": "CC BY 2.5",
+      "attribution": "Paul Schedler",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_manali_01",
+      "destinationId": "manali",
+      "imageId": "stay_manali_01",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/manali_zostel_old_manali.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Jacobs_Home_earlier_called_Miller-Jacobs_Home,_Galveston.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Jacobs_Home_earlier_called_Miller-Jacobs_Home,_Galveston.jpg",
+      "creator": "Jim Evans",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Jim Evans",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_manali_05",
+      "destinationId": "manali",
+      "imageId": "stay_manali_05",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/manali_hosteller.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Kath-Kuni_House_Wall_with_Beehive_Niches_in_Thundal,_Shimla_District.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kath-Kuni_House_Wall_with_Beehive_Niches_in_Thundal,_Shimla_District.jpg",
+      "creator": "Jagriti Zinta",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Jagriti Zinta",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_jaipur_01",
+      "destinationId": "jaipur",
+      "imageId": "stay_jaipur_01",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/jaipur_umaid_bhawan.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:20191205_Haveli_Khazanchi,_Gali_Khazanchi,_Old_Delhi_0635_6745.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:20191205_Haveli_Khazanchi,_Gali_Khazanchi,_Old_Delhi_0635_6745.jpg",
+      "creator": "Jakub Hałun",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Jakub Hałun",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_jaipur_04",
+      "destinationId": "jaipur",
+      "imageId": "stay_jaipur_04",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/jaipur_itc_rajputana.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:India_-_Jaipur_-_002_-_Jantar_Mantar_Observatory_(1026583267).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:India_-_Jaipur_-_002_-_Jantar_Mantar_Observatory_(1026583267).jpg",
+      "creator": "McKay Savage from London, UK",
+      "license": "CC BY 2.0",
+      "attribution": "McKay Savage from London, UK",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_rishikesh_05",
+      "destinationId": "rishikesh",
+      "imageId": "stay_rishikesh_05",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/rishikesh_aloha_ganges.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:The_street_railway_review_(1891)_(14737666496).jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:The_street_railway_review_(1891)_(14737666496).jpg",
+      "creator": "Internet Archive Book Images",
+      "license": "No restrictions",
+      "attribution": "Internet Archive Book Images",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_mysuru_01",
+      "destinationId": "mysuru",
+      "imageId": "stay_mysuru_01",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/mysuru_lalitha_mahal.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Lalitha_Mahal_Palace_Conference_Hall.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Lalitha_Mahal_Palace_Conference_Hall.jpg",
+      "creator": "DeepanjanGhosh",
+      "license": "CC BY-SA 4.0",
+      "attribution": "DeepanjanGhosh",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_mysuru_03",
+      "destinationId": "mysuru",
+      "imageId": "stay_mysuru_03",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/mysuru_royal_orchid.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Heritage_Bungalow_no_8_at_Takdah_or_Tukdah_in_Darjeeling_district_06.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Heritage_Bungalow_no_8_at_Takdah_or_Tukdah_in_Darjeeling_district_06.jpg",
+      "creator": "Amitabha Gupta",
+      "license": "CC BY 4.0",
+      "attribution": "Amitabha Gupta",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stories",
+      "entityId": "story_manali_01",
+      "destinationId": "manali",
+      "imageId": "story_manali_01",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/manali_backpacker_guide.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Kullu_Valley_at_dawn.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kullu_Valley_at_dawn.jpg",
+      "creator": "UnpetitproleX",
+      "license": "CC BY-SA 4.0",
+      "attribution": "UnpetitproleX",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stories",
+      "entityId": "story_goa_01",
+      "destinationId": "goa",
+      "imageId": "story_goa_01",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/goa_heritage_story.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Kostel_Na%C5%A1%C3%AD_Pan%C3%AD_Neposkvrn%C4%9Bn%C3%A9ho_po%C4%8Det%C3%AD,_Panad%C5%BE%C3%AD.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kostel_Na%C5%A1%C3%AD_Pan%C3%AD_Neposkvrn%C4%9Bn%C3%A9ho_po%C4%8Det%C3%AD,_Panad%C5%BE%C3%AD.jpg",
+      "creator": "Ondřej Žváček",
+      "license": "CC BY 2.5",
+      "attribution": "Ondřej Žváček",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stories",
+      "entityId": "story_pune_01",
+      "destinationId": "pune",
+      "imageId": "story_pune_01",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/pune_heritage_story.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Detail_of_main_gate,_Shaniwar_Wada,_Pune.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Detail_of_main_gate,_Shaniwar_Wada,_Pune.jpg",
+      "creator": "Vis M",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Vis M",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stories",
+      "entityId": "story_chandigarh_01",
+      "destinationId": "manali",
+      "imageId": "story_chandigarh_01",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/chandigarh_manali_transit.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Beas_Valley_-_Kothi_-_Kullu_2014-05-10_2288.JPG",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Beas_Valley_-_Kothi_-_Kullu_2014-05-10_2288.JPG",
+      "creator": "Biswarup Ganguly",
+      "license": "CC BY 3.0",
+      "attribution": "Biswarup Ganguly",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stories",
+      "entityId": "story_delhi_01",
+      "destinationId": "delhi",
+      "imageId": "story_delhi_01",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/delhi_heritage_street_food.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Jama_Masjid,_Delhi,_morning_view.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Jama_Masjid,_Delhi,_morning_view.jpg",
+      "creator": "Dennis G. Jarvis",
+      "license": "CC BY-SA 2.0",
+      "attribution": "Dennis G. Jarvis",
+      "geographicVerification": "exact_verified",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_goa_05",
+      "destinationId": "goa",
+      "imageId": "stay_goa_05",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/goa_hosteller_candolim.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Candolim_Beach.j_Goa.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Candolim_Beach.j_Goa.jpg",
+      "creator": "Jasir Hamim",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Jasir Hamim",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_manali_02",
+      "destinationId": "manali",
+      "imageId": "stay_manali_02",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/manali_the_himalayan.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Manali-Snow_Valley_Resort-02-2016-gje.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Manali-Snow_Valley_Resort-02-2016-gje.jpg",
+      "creator": "Gerd Eichmann",
+      "license": "CC BY 4.0",
+      "attribution": "Gerd Eichmann",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_jaipur_05",
+      "destinationId": "jaipur",
+      "imageId": "stay_jaipur_05",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/jaipur_alsisar_haveli.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Domestic_Goose.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Domestic_Goose.jpg",
+      "creator": "JJ Harrison",
+      "license": "CC BY-SA 3.0",
+      "attribution": "JJ Harrison",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "stay",
+      "entityId": "stay_rishikesh_02",
+      "destinationId": "rishikesh",
+      "imageId": "stay_rishikesh_02",
+      "role": "cover",
+      "pathOrUrl": "/media/stays/rishikesh_ganga_kinare.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:A_view_of_east_bank_of_Ganges,_Rishikesh.jpg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:A_view_of_east_bank_of_Ganges,_Rishikesh.jpg",
+      "creator": "McKay Savage from Chennai, India",
+      "license": "CC BY 2.0",
+      "attribution": "McKay Savage from Chennai, India",
+      "geographicVerification": "representative_curated",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_sangli",
+      "destinationId": "dest_sangli",
+      "imageId": "dest_sangli_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/sangli.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Sangli",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Sangli — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 650,
+        "height": 434
+      },
+      "perceptualHash": "1033b2f2f0eca24e"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_miraj",
+      "destinationId": "dest_miraj",
+      "imageId": "dest_miraj_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/miraj.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Miraj",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Miraj — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1181,
+        "height": 735
+      },
+      "perceptualHash": "01111490121e8b6a"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_kolhapur",
+      "destinationId": "dest_kolhapur",
+      "imageId": "dest_kolhapur_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/kolhapur.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Kolhapur",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Kolhapur — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "2c2f6c8e136c1213"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_pune",
+      "destinationId": "dest_pune",
+      "imageId": "dest_pune_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/pune.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Pune",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Pune — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 790
+      },
+      "perceptualHash": "f0f0f0d0f03032b5"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_mumbai",
+      "destinationId": "dest_mumbai",
+      "imageId": "dest_mumbai_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/mumbai.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Mumbai",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Mumbai — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "fffcfbfbb3c2c431"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_nashik",
+      "destinationId": "dest_nashik",
+      "imageId": "dest_nashik_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/nashik.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Nashik",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Nashik — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1080,
+        "height": 720
+      },
+      "perceptualHash": "61e5e4e42c33324a"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_aurangabad",
+      "destinationId": "dest_aurangabad",
+      "imageId": "dest_aurangabad_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/aurangabad.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Aurangabad_Bibi_ka_Maqbara.jpg",
+      "creator": "Shishirdasika",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Shishirdasika (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 932
+      },
+      "perceptualHash": "a020232ae8f03476"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_nagpur",
+      "destinationId": "dest_nagpur",
+      "imageId": "dest_nagpur_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/nagpur.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Nagpur",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Nagpur — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1048
+      },
+      "perceptualHash": "a0886c0c8eaae0b0"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_mahabaleshwar",
+      "destinationId": "dest_mahabaleshwar",
+      "imageId": "dest_mahabaleshwar_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/mahabaleshwar.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Mahabaleshwar",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Mahabaleshwar — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 778
+      },
+      "perceptualHash": "b5b8bafdb8f0b070"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_lonavala",
+      "destinationId": "dest_lonavala",
+      "imageId": "dest_lonavala_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/lonavala.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Lonavala",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Lonavala — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "d8d81d379597f8f0"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_alibaug",
+      "destinationId": "dest_alibaug",
+      "imageId": "dest_alibaug_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/alibaug.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Alibaug_Fort_South_CauseWay.JPG",
+      "creator": "Paapu07",
+      "license": "CC BY-SA 3.0",
+      "attribution": "Paapu07 (CC BY-SA 3.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1046
+      },
+      "perceptualHash": "db292446c0d5e11f"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_ratnagiri",
+      "destinationId": "dest_ratnagiri",
+      "imageId": "dest_ratnagiri_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/ratnagiri.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Ratnagiri",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Ratnagiri — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 788
+      },
+      "perceptualHash": "00218c4d5554f0c3"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_ganpatipule",
+      "destinationId": "dest_ganpatipule",
+      "imageId": "dest_ganpatipule_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/ganpatipule.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Ganpatipule",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Ganpatipule — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "e0e08898b4cce2e0"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_goa",
+      "destinationId": "dest_goa",
+      "imageId": "dest_goa_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/goa.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Goa",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Goa — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 788
+      },
+      "perceptualHash": "c4828050dcdcb4dc"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_panaji",
+      "destinationId": "dest_panaji",
+      "imageId": "dest_panaji_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/panaji.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Panaji",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Panaji — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "f0e0c06025242c29"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_north-goa",
+      "destinationId": "dest_north-goa",
+      "imageId": "dest_north-goa_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/north-goa.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Chapora_fort_25012016.jpg",
+      "creator": "Nikhilb239",
+      "license": "CC BY 3.0",
+      "attribution": "Nikhilb239 (CC BY 3.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 578
+      },
+      "perceptualHash": "c0f48b080c4ddbb2"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_south-goa",
+      "destinationId": "dest_south-goa",
+      "imageId": "dest_south-goa_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/south-goa.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Beach_shack_at_sunset,_Palolem,_Goa.jpg",
+      "creator": "Niranjan Ramamurthy",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Niranjan Ramamurthy (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "f0f0f0f0e0f0b0b6"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_margao",
+      "destinationId": "dest_margao",
+      "imageId": "dest_margao_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/margao.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Margao",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Margao — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 560
+      },
+      "perceptualHash": "80496b636b6b6933"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_delhi",
+      "destinationId": "dest_delhi",
+      "imageId": "dest_delhi_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/delhi.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/New_Delhi",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "New Delhi — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "090b0e0d299669d2"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_agra",
+      "destinationId": "dest_agra",
+      "imageId": "dest_agra_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/agra.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Agra",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Agra — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 921
+      },
+      "perceptualHash": "c3c4d14b4dcd9070"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_jaipur",
+      "destinationId": "dest_jaipur",
+      "imageId": "dest_jaipur_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/jaipur.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Jaipur",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Jaipur — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "17899c3b3b2bb0cc"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_jodhpur",
+      "destinationId": "dest_jodhpur",
+      "imageId": "dest_jodhpur_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/jodhpur.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Jodhpur",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Jodhpur — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1280,
+        "height": 854
+      },
+      "perceptualHash": "e8f2c395081898b4"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_udaipur",
+      "destinationId": "dest_udaipur",
+      "imageId": "dest_udaipur_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/udaipur.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Udaipur",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Udaipur — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "d8dce0b084b13d64"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_jaisalmer",
+      "destinationId": "dest_jaisalmer",
+      "imageId": "dest_jaisalmer_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/jaisalmer.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Jaisalmer",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Jaisalmer — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "fcfcf8f8f8ada7a5"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_bikaner",
+      "destinationId": "dest_bikaner",
+      "imageId": "dest_bikaner_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/bikaner.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Bikaner",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Bikaner — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "2fc42c0fa7959639"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_pushkar",
+      "destinationId": "dest_pushkar",
+      "imageId": "dest_pushkar_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/pushkar.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Pushkar",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Pushkar — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 931
+      },
+      "perceptualHash": "6f1e3e4fdb391f0f"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_mount-abu",
+      "destinationId": "dest_mount-abu",
+      "imageId": "dest_mount-abu_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/mount-abu.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:1851_One_of_the_Jain_temples_in_Dilwara_Mount_Abu_Rajasthan.jpg",
+      "creator": "William Carpenter (painter)",
+      "license": "Public domain",
+      "attribution": "William Carpenter (painter) (Public domain)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 993
+      },
+      "perceptualHash": "0b217676755899fb"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_ranthambore",
+      "destinationId": "dest_ranthambore",
+      "imageId": "dest_ranthambore_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/ranthambore.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:First_gateway_to_Ranthambore_Fort.jpg",
+      "creator": "Jpmeena",
+      "license": "CC BY-SA 3.0",
+      "attribution": "Jpmeena (CC BY-SA 3.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1050,
+        "height": 1400
+      },
+      "perceptualHash": "0d8e13331a8a8fb7"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_amritsar",
+      "destinationId": "dest_amritsar",
+      "imageId": "dest_amritsar_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/amritsar.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Amritsar",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Amritsar — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 573
+      },
+      "perceptualHash": "0000124647110606"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_patiala",
+      "destinationId": "dest_patiala",
+      "imageId": "dest_patiala_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/patiala.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Patiala",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Patiala — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "4d2b69cc8ecececc"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_ludhiana",
+      "destinationId": "dest_ludhiana",
+      "imageId": "dest_ludhiana_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/ludhiana.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Ludhiana",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Ludhiana — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 934
+      },
+      "perceptualHash": "e0f8c603b3f2f0f0"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_chandigarh",
+      "destinationId": "dest_chandigarh",
+      "imageId": "dest_chandigarh_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/chandigarh.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Chandigarh",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Chandigarh — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "f8c090989c9f65c0"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_manali",
+      "destinationId": "dest_manali",
+      "imageId": "dest_manali_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/manali.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Manali,_Himachal_Pradesh",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Manali, Himachal Pradesh — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 909
+      },
+      "perceptualHash": "c0e1f0fdbee6421a"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_kullu",
+      "destinationId": "dest_kullu",
+      "imageId": "dest_kullu_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/kullu.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Kullu",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Kullu — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 931
+      },
+      "perceptualHash": "a5f4d8e1b870e06c"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_kasol",
+      "destinationId": "dest_kasol",
+      "imageId": "dest_kasol_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/kasol.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Kasol",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Kasol — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 960,
+        "height": 720
+      },
+      "perceptualHash": "eeece8f0e0a8caf0"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_dharamshala",
+      "destinationId": "dest_dharamshala",
+      "imageId": "dest_dharamshala_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/dharamshala.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Dharamshala",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Dharamshala — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 698
+      },
+      "perceptualHash": "bea832ffff6bbb96"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_dalhousie",
+      "destinationId": "dest_dalhousie",
+      "imageId": "dest_dalhousie_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/dalhousie.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Khajjiar",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Khajjiar — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1080,
+        "height": 1080
+      },
+      "perceptualHash": "4d53f372b0fc71f0"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_shimla",
+      "destinationId": "dest_shimla",
+      "imageId": "dest_shimla_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/shimla.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Shimla",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Shimla — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 931
+      },
+      "perceptualHash": "1c1c98000a7969d1"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_spiti",
+      "destinationId": "dest_spiti",
+      "imageId": "dest_spiti_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/spiti.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kee_monastery_Spiti_Valley.JPG",
+      "creator": "Ksuryawanshi",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Ksuryawanshi (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "30034dfce6cfc6c4"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_tirthan-valley",
+      "destinationId": "dest_tirthan-valley",
+      "imageId": "dest_tirthan-valley_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/tirthan-valley.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Cornus_capitata,_Tirthan_Valley,_Kullu_District,_Himachal_Pradesh_(%E0%A4%AB%E0%A4%BE%E0%A4%97%E0%A5%81).jpg",
+      "creator": "Ramwik",
+      "license": "CC BY-SA 3.0",
+      "attribution": "Ramwik (CC BY-SA 3.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1050,
+        "height": 1400
+      },
+      "perceptualHash": "626e6c02314bd412"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_dehradun",
+      "destinationId": "dest_dehradun",
+      "imageId": "dest_dehradun_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/dehradun.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Dehradun",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Dehradun — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 788
+      },
+      "perceptualHash": "fffffffffdfe7cb8"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_rishikesh",
+      "destinationId": "dest_rishikesh",
+      "imageId": "dest_rishikesh_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/rishikesh.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Rishikesh",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Rishikesh — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "db53d379e854e4e3"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_haridwar",
+      "destinationId": "dest_haridwar",
+      "imageId": "dest_haridwar_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/haridwar.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Haridwar",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Haridwar — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "119989a93465e1a5"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_mussoorie",
+      "destinationId": "dest_mussoorie",
+      "imageId": "dest_mussoorie_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/mussoorie.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Mussoorie",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Mussoorie — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 971
+      },
+      "perceptualHash": "3f3f06323260e147"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_nainital",
+      "destinationId": "dest_nainital",
+      "imageId": "dest_nainital_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/nainital.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Nainital",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Nainital — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "20e1cd3890c09018"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_auli",
+      "destinationId": "dest_auli",
+      "imageId": "dest_auli_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/auli.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Auli_cable_car.jpg",
+      "creator": "Mandeep Thander",
+      "license": "CC BY-SA 2.5",
+      "attribution": "Mandeep Thander (CC BY-SA 2.5)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 600,
+        "height": 402
+      },
+      "perceptualHash": "c4c4b8b8a88b9bc1"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_chopta",
+      "destinationId": "dest_chopta",
+      "imageId": "dest_chopta_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/chopta.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Chopta",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Chopta — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "e8ccd63a9cb6e4d4"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_srinagar",
+      "destinationId": "dest_srinagar",
+      "imageId": "dest_srinagar_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/srinagar.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Srinagar",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Srinagar — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "dbcdf9f4cadbbca4"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_gulmarg",
+      "destinationId": "dest_gulmarg",
+      "imageId": "dest_gulmarg_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/gulmarg.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Gulmarg",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Gulmarg — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "93d2d2faf8b4edcc"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_pahalgam",
+      "destinationId": "dest_pahalgam",
+      "imageId": "dest_pahalgam_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/pahalgam.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Pahalgam",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Pahalgam — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "b4b6f14478f83040"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_leh",
+      "destinationId": "dest_leh",
+      "imageId": "dest_leh_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/leh.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Leh",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Leh — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "83426402118e10c1"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_nubra-valley",
+      "destinationId": "dest_nubra-valley",
+      "imageId": "dest_nubra-valley_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/nubra-valley.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Diskit",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Diskit — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 992,
+        "height": 1400
+      },
+      "perceptualHash": "700224b038911c19"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_varanasi",
+      "destinationId": "dest_varanasi",
+      "imageId": "dest_varanasi_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/varanasi.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Varanasi",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Varanasi — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "2038c4c6cae6e6e8"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_lucknow",
+      "destinationId": "dest_lucknow",
+      "imageId": "dest_lucknow_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/lucknow.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Lucknow",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Lucknow — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 837
+      },
+      "perceptualHash": "890930c1840454b0"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_ayodhya",
+      "destinationId": "dest_ayodhya",
+      "imageId": "dest_ayodhya_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/ayodhya.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Ayodhya",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Ayodhya — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1058
+      },
+      "perceptualHash": "80c8cc0e230f1d59"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_prayagraj",
+      "destinationId": "dest_prayagraj",
+      "imageId": "dest_prayagraj_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/prayagraj.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Prayagraj",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Prayagraj — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1050,
+        "height": 1400
+      },
+      "perceptualHash": "6969f3f469d0e1e5"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_bodh-gaya",
+      "destinationId": "dest_bodh-gaya",
+      "imageId": "dest_bodh-gaya_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/bodh-gaya.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Bodh_Gaya",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Bodh Gaya — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "68ca484ccc8aaa33"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_kolkata",
+      "destinationId": "dest_kolkata",
+      "imageId": "dest_kolkata_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/kolkata.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Kolkata",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Kolkata — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 800
+      },
+      "perceptualHash": "cc4c08c953b32146"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_darjeeling",
+      "destinationId": "dest_darjeeling",
+      "imageId": "dest_darjeeling_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/darjeeling.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Darjeeling",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Darjeeling — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 915
+      },
+      "perceptualHash": "e76b6b9bbe179fb8"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_kalimpong",
+      "destinationId": "dest_kalimpong",
+      "imageId": "dest_kalimpong_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/kalimpong.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Kalimpong",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Kalimpong — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "63e2dccae0d652d2"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_siliguri",
+      "destinationId": "dest_siliguri",
+      "imageId": "dest_siliguri_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/siliguri.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Siliguri",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Siliguri — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 790
+      },
+      "perceptualHash": "18e0f029539831f0"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_gangtok",
+      "destinationId": "dest_gangtok",
+      "imageId": "dest_gangtok_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/gangtok.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Gangtok",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Gangtok — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "98226ac2c64c2c70"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_guwahati",
+      "destinationId": "dest_guwahati",
+      "imageId": "dest_guwahati_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/guwahati.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Guwahati",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Guwahati — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1024,
+        "height": 768
+      },
+      "perceptualHash": "0098d8dad8faf1f1"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_shillong",
+      "destinationId": "dest_shillong",
+      "imageId": "dest_shillong_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/shillong.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Shillong",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Shillong — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 896
+      },
+      "perceptualHash": "5071f1e1e2e2e4e0"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_cherrapunji",
+      "destinationId": "dest_cherrapunji",
+      "imageId": "dest_cherrapunji_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/cherrapunji.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Cherrapunji",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Cherrapunji — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 695,
+        "height": 934
+      },
+      "perceptualHash": "7b5b7b531b710404"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_kaziranga",
+      "destinationId": "dest_kaziranga",
+      "imageId": "dest_kaziranga_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/kaziranga.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:An_Indian_rhinoceros_(Rhinoceros_unicornis),_also_known_as_the_greater_one-horned_rhinoceros,_at_Kaziranga_National_Park,_Assam,_India.jpg",
+      "creator": "Joydeep Chakraborty",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Joydeep Chakraborty (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 930
+      },
+      "perceptualHash": "b3372c060d4ee2f6"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_tawang",
+      "destinationId": "dest_tawang",
+      "imageId": "dest_tawang_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/tawang.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Tawang",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Tawang — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 932
+      },
+      "perceptualHash": "3c9c9a0899a0a272"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_kohima",
+      "destinationId": "dest_kohima",
+      "imageId": "dest_kohima_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/kohima.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Kohima",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Kohima — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1049
+      },
+      "perceptualHash": "80c0c1c2c0cbece1"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_bhubaneswar",
+      "destinationId": "dest_bhubaneswar",
+      "imageId": "dest_bhubaneswar_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/bhubaneswar.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Bhubaneswar",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Bhubaneswar — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 657,
+        "height": 467
+      },
+      "perceptualHash": "a0628e87177143d7"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_puri",
+      "destinationId": "dest_puri",
+      "imageId": "dest_puri_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/puri.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Jagannath",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Jagannath — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 646
+      },
+      "perceptualHash": "abe336670c8ccccd"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_konark",
+      "destinationId": "dest_konark",
+      "imageId": "dest_konark_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/konark.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Closeup_of_the_center_of_a_stone_wheel_-_Konark_Sun_Temple,_Orissa,_India.jpg",
+      "creator": "Subhrajyoti07",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Subhrajyoti07 (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 931
+      },
+      "perceptualHash": "96d179697159b816"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_raipur",
+      "destinationId": "dest_raipur",
+      "imageId": "dest_raipur_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/raipur.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Raipur",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Raipur — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 853
+      },
+      "perceptualHash": "6523616971792595"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_jagdalpur",
+      "destinationId": "dest_jagdalpur",
+      "imageId": "dest_jagdalpur_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/jagdalpur.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Jagdalpur",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Jagdalpur — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 818
+      },
+      "perceptualHash": "c4c6968686a64343"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_bengaluru",
+      "destinationId": "dest_bengaluru",
+      "imageId": "dest_bengaluru_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/bengaluru.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Bengaluru",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Bengaluru — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1054
+      },
+      "perceptualHash": "b63f3939a7f3c3cb"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_mysuru",
+      "destinationId": "dest_mysuru",
+      "imageId": "dest_mysuru_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/mysuru.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Mysore",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Mysore — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 798,
+        "height": 1400
+      },
+      "perceptualHash": "aaaaae435134828d"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_hampi",
+      "destinationId": "dest_hampi",
+      "imageId": "dest_hampi_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/hampi.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Hampi",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Hampi — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 700
+      },
+      "perceptualHash": "dffb0a84a690094d"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_chikmagalur",
+      "destinationId": "dest_chikmagalur",
+      "imageId": "dest_chikmagalur_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/chikmagalur.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Chikmagalur",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Chikmagalur — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "ce9e9c88eeac7072"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_gokarna",
+      "destinationId": "dest_gokarna",
+      "imageId": "dest_gokarna_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/gokarna.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Gokarna,_Karnataka",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Gokarna, Karnataka — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 800,
+        "height": 580
+      },
+      "perceptualHash": "1836f8f0f4c47cde"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_udupi",
+      "destinationId": "dest_udupi",
+      "imageId": "dest_udupi_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/udupi.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Udupi",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Udupi — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 938
+      },
+      "perceptualHash": "f8f6969636d89cdc"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_mangaluru",
+      "destinationId": "dest_mangaluru",
+      "imageId": "dest_mangaluru_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/mangaluru.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Mangaluru",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Mangaluru — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 919
+      },
+      "perceptualHash": "5b2fad3a7281a429"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_kochi",
+      "destinationId": "dest_kochi",
+      "imageId": "dest_kochi_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/kochi.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Kochi",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Kochi — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": "d910e0ccccc8c8c8"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_munnar",
+      "destinationId": "dest_munnar",
+      "imageId": "dest_munnar_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/munnar.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Munnar",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Munnar — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "00010c0ef6fa6e96"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_alleppey",
+      "destinationId": "dest_alleppey",
+      "imageId": "dest_alleppey_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/alleppey.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Alappuzha_loves_Wikimedia_IMG_7655.JPG",
+      "creator": "User:Sivavkm",
+      "license": "CC BY-SA 3.0",
+      "attribution": "User:Sivavkm (CC BY-SA 3.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "0e9e99926d939361"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_wayanad",
+      "destinationId": "dest_wayanad",
+      "imageId": "dest_wayanad_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/wayanad.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Banasura",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Banasura — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 556,
+        "height": 800
+      },
+      "perceptualHash": "e0e909299119b94d"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_varkala",
+      "destinationId": "dest_varkala",
+      "imageId": "dest_varkala_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/varkala.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Varkala",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Varkala — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1136,
+        "height": 752
+      },
+      "perceptualHash": "e4c1072fe39ecee3"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_thekkady",
+      "destinationId": "dest_thekkady",
+      "imageId": "dest_thekkady_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/thekkady.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Thekkady",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Thekkady — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "9dfe07fcf875f8f8"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_thiruvananthapuram",
+      "destinationId": "dest_thiruvananthapuram",
+      "imageId": "dest_thiruvananthapuram_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/thiruvananthapuram.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Thiruvananthapuram",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Thiruvananthapuram — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "f8c6c6b373c6c6e4"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_chennai",
+      "destinationId": "dest_chennai",
+      "imageId": "dest_chennai_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/chennai.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Chennai",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Chennai — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 636,
+        "height": 438
+      },
+      "perceptualHash": "1058585edbd83486"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_pondicherry",
+      "destinationId": "dest_pondicherry",
+      "imageId": "dest_pondicherry_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/pondicherry.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Pondicherry",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Pondicherry — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "0800befd7eeff4c2"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_ooty",
+      "destinationId": "dest_ooty",
+      "imageId": "dest_ooty_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/ooty.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Ooty",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Ooty — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 762
+      },
+      "perceptualHash": "ffbefefafd1d99fd"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_kodaikanal",
+      "destinationId": "dest_kodaikanal",
+      "imageId": "dest_kodaikanal_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/kodaikanal.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Kodaikanal",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Kodaikanal — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "82f4cc80959612c8"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_madurai",
+      "destinationId": "dest_madurai",
+      "imageId": "dest_madurai_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/madurai.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Madurai",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Madurai — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 687
+      },
+      "perceptualHash": "c9b3939333736300"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_rameswaram",
+      "destinationId": "dest_rameswaram",
+      "imageId": "dest_rameswaram_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/rameswaram.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Rameswaram",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Rameswaram — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1049
+      },
+      "perceptualHash": "700104b0b0928406"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_kanyakumari",
+      "destinationId": "dest_kanyakumari",
+      "imageId": "dest_kanyakumari_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/kanyakumari.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Kanyakumari",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Kanyakumari — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "0040ab3b3b68e9a9"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_mahabalipuram",
+      "destinationId": "dest_mahabalipuram",
+      "imageId": "dest_mahabalipuram_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/mahabalipuram.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Mamallapuram,_Mahabalipuram,_Shore_Temple,_India.jpg",
+      "creator": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "attribution": "Vyacheslav Argenberg (CC BY 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1060
+      },
+      "perceptualHash": "930b1e0a6a4bc373"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_hyderabad",
+      "destinationId": "dest_hyderabad",
+      "imageId": "dest_hyderabad_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/hyderabad.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Hyderabad",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Hyderabad — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "07a7efe3cc3c0613"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_visakhapatnam",
+      "destinationId": "dest_visakhapatnam",
+      "imageId": "dest_visakhapatnam_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/visakhapatnam.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Visakhapatnam",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Visakhapatnam — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 931
+      },
+      "perceptualHash": "fcd1cc88b278f919"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_araku-valley",
+      "destinationId": "dest_araku-valley",
+      "imageId": "dest_araku-valley_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/araku-valley.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Araku_Valley",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Araku Valley — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 620,
+        "height": 412
+      },
+      "perceptualHash": "c84a78321b312c93"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_tirupati",
+      "destinationId": "dest_tirupati",
+      "imageId": "dest_tirupati_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/tirupati.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Tirupati",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Tirupati — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "b3b3b0f2a56e189c"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_ahmedabad",
+      "destinationId": "dest_ahmedabad",
+      "imageId": "dest_ahmedabad_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/ahmedabad.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Ahmedabad",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Ahmedabad — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "90c4ace2a29ac740"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_vadodara",
+      "destinationId": "dest_vadodara",
+      "imageId": "dest_vadodara_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/vadodara.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Vadodara",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Vadodara — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 684
+      },
+      "perceptualHash": "fcf8dcd8d46ddadc"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_surat",
+      "destinationId": "dest_surat",
+      "imageId": "dest_surat_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/surat.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Surat",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Surat — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "94f0f8cc50802801"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_bhuj",
+      "destinationId": "dest_bhuj",
+      "imageId": "dest_bhuj_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/bhuj.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Bhuj",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Bhuj — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 788
+      },
+      "perceptualHash": "2339393d05454d45"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_dwarka",
+      "destinationId": "dest_dwarka",
+      "imageId": "dest_dwarka_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/dwarka.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Dwarka",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Dwarka — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1024,
+        "height": 768
+      },
+      "perceptualHash": "dbcd278e9c1363cb"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_indore",
+      "destinationId": "dest_indore",
+      "imageId": "dest_indore_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/indore.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Indore",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Indore — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 961
+      },
+      "perceptualHash": "62c050346424e0e0"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_bhopal",
+      "destinationId": "dest_bhopal",
+      "imageId": "dest_bhopal_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/bhopal.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Bhopal",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Bhopal — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 788
+      },
+      "perceptualHash": "42ecead215182848"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_ujjain",
+      "destinationId": "dest_ujjain",
+      "imageId": "dest_ujjain_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/ujjain.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Ujjain",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Ujjain — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 788
+      },
+      "perceptualHash": "2636363524b0a1b5"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_khajuraho",
+      "destinationId": "dest_khajuraho",
+      "imageId": "dest_khajuraho_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/khajuraho.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Khajuraho",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Khajuraho — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 977
+      },
+      "perceptualHash": "00191131384e1659"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_orchha",
+      "destinationId": "dest_orchha",
+      "imageId": "dest_orchha_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/orchha.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Orchha",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Orchha — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "fca3bd1e0666e6f4"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_pachmarhi",
+      "destinationId": "dest_pachmarhi",
+      "imageId": "dest_pachmarhi_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/pachmarhi.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Pachmarhi",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Pachmarhi — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "e0f0320383f2c363"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_bir",
+      "destinationId": "dest_bir",
+      "imageId": "dest_bir_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/bir.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:BIR_BILLING_PARAGLIDING.jpg",
+      "creator": "Kartik mj",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Kartik mj (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 842
+      },
+      "perceptualHash": "dcd2fbf9f4c8caf4"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_coorg",
+      "destinationId": "dest_coorg",
+      "imageId": "dest_coorg_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/coorg.webp",
+      "source": "wikipedia",
+      "sourcePage": "https://en.wikipedia.org/wiki/Madikeri",
+      "creator": "Wikimedia / Wikipedia Contributors",
+      "license": "CC BY-SA / Public Domain",
+      "attribution": "Madikeri — Wikimedia Commons Contributors",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "0c9ec3ca3c30e08c"
+    },
+    {
+      "entityType": "destination",
+      "entityId": "dest_warangal",
+      "destinationId": "dest_warangal",
+      "imageId": "dest_warangal_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/warangal.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kakatiya_Kala_Thoranam,_Warangal_Fort.jpg",
+      "creator": "Vasukrishnan57",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Vasukrishnan57 (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "161723273767df1e"
+    },
+    {
+      "entityType": "attraction",
+      "entityId": "dest_bir-billing",
+      "destinationId": "dest_bir-billing",
+      "imageId": "dest_bir-billing",
+      "role": "cover",
+      "pathOrUrl": "/media/destinations/bir-billing.webp",
+      "source": "https://commons.wikimedia.org/wiki/File:Pilot_on_a_paragliding_takeoff_at_Bir-Billing.JPG",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Pilot_on_a_paragliding_takeoff_at_Bir-Billing.JPG",
+      "creator": "Okorok (CC BY-SA 3.0)",
+      "license": "CC BY-SA 3.0",
+      "attribution": "Okorok (CC BY-SA 3.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "perceptualHash": null
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_01",
+      "destinationId": "Manali",
+      "imageId": "story_01_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_01.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Skiing_manali.jpg",
+      "creator": "Saurc zlunag at English Wikipedia",
+      "license": "Public domain",
+      "attribution": "Saurc zlunag at English Wikipedia (Public domain)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 926
+      },
+      "perceptualHash": "dbd595b24cc5f0f0"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_02",
+      "destinationId": "Goa",
+      "imageId": "story_02_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_02.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Outpost_store_at_Fontainhas,_Panaji.jpg",
+      "creator": "iMahesh",
+      "license": "CC BY-SA 4.0",
+      "attribution": "iMahesh (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "4f0e839b532b6ba4"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_03",
+      "destinationId": "Kasol",
+      "imageId": "story_03_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_03.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Chalal.jpg",
+      "creator": "Stalinjeet Brar",
+      "license": "CC BY 3.0",
+      "attribution": "Stalinjeet Brar (CC BY 3.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1050,
+        "height": 1400
+      },
+      "perceptualHash": "3c78fcecd4d4c032"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_04",
+      "destinationId": "Jaipur",
+      "imageId": "story_04_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_04.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Hawa_Mahal_-_Jaipur_India.jpg",
+      "creator": "Sidharth.jha",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Sidharth.jha (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 791,
+        "height": 791
+      },
+      "perceptualHash": "171555151d9f9ddb"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_05",
+      "destinationId": "Amritsar",
+      "imageId": "story_05_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_05.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Akal_Takht_and_Harmandir_Sahib,_Amritsar,_Punjab,_India.jpg",
+      "creator": "Jasleen Kaur",
+      "license": "CC BY-SA 2.0",
+      "attribution": "Jasleen Kaur (CC BY-SA 2.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 815
+      },
+      "perceptualHash": "c0c02666c4c68680"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_06",
+      "destinationId": "Hampi",
+      "imageId": "story_06_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_06.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:An_evening_in_Hampi.jpg",
+      "creator": "Srikumar.menon",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Srikumar.menon (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "f8f8f8e0f2f2bc38"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_07",
+      "destinationId": "Munnar",
+      "imageId": "story_07_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_07.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:A_peak_view_of_munnar._near_anamudi._kerala.jpg",
+      "creator": "Kirubanithi Suba",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Kirubanithi Suba (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 786
+      },
+      "perceptualHash": "1c824499e0c08804"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_08",
+      "destinationId": "Varanasi",
+      "imageId": "story_08_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_08.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Aarti,_Ganga_Aarti_at_Dashashwamedh_Ghat,_Varanasi.jpg",
+      "creator": "Chetanbtc",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Chetanbtc (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 933,
+        "height": 1400
+      },
+      "perceptualHash": "1c8e96727271f132"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_09",
+      "destinationId": "Leh",
+      "imageId": "story_09_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_09.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Thiksey,_Buddhism_in_Ladakh,_North_India.jpg",
+      "creator": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "attribution": "Vyacheslav Argenberg (CC BY 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "e3ff240cb6362744"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_10",
+      "destinationId": "Mahabaleshwar",
+      "imageId": "story_10_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_10.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Boats_On_Venna_Lake.jpg",
+      "creator": "Ganesh G (Ganeshrg)",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Ganesh G (Ganeshrg) (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1280,
+        "height": 853
+      },
+      "perceptualHash": "e0e3f2efb49876c4"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_11",
+      "destinationId": "Pondicherry",
+      "imageId": "story_11_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_11.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:GANDHI.jpg",
+      "creator": "Purnim",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Purnim (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 853
+      },
+      "perceptualHash": "b24999ce8ea8aea6"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_12",
+      "destinationId": "Darjeeling",
+      "imageId": "story_12_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_12.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Batasia_Loop_of_Darjeeling_Himalayan_Railway.jpg",
+      "creator": "Vikramjit Kakati",
+      "license": "CC BY-SA 3.0",
+      "attribution": "Vikramjit Kakati (CC BY-SA 3.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 476
+      },
+      "perceptualHash": "3f47c925e7fde574"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_13",
+      "destinationId": "Rishikesh",
+      "imageId": "story_13_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_13.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Ganga_at_Kaudiayala.jpg",
+      "creator": "Chakumar at English Wikipedia",
+      "license": "CC BY 3.0",
+      "attribution": "Chakumar at English Wikipedia (CC BY 3.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "e87492fcf8f0f0f0"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_14",
+      "destinationId": "Mumbai",
+      "imageId": "story_14_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_14.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Marine_Drive_23rd_May,_2026.jpg",
+      "creator": "GiffyTiffy",
+      "license": "CC BY 4.0",
+      "attribution": "GiffyTiffy (CC BY 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "0000009049091400"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_15",
+      "destinationId": "Kolkata",
+      "imageId": "story_15_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_15.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Hooghly_River_and_the_Howrah_Bridge,_Kolkata,_India.jpg",
+      "creator": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "attribution": "Vyacheslav Argenberg (CC BY 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "0000180d4d47c7f3"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_16",
+      "destinationId": "Jodhpur",
+      "imageId": "story_16_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_16.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Blue_City_Jodhpur.jpg",
+      "creator": "सुबोध पाठक",
+      "license": "CC BY-SA 4.0",
+      "attribution": "सुबोध पाठक (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1166,
+        "height": 778
+      },
+      "perceptualHash": "f0f2fdeca4181979"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_17",
+      "destinationId": "Shimla",
+      "imageId": "story_17_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_17.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Chrisy_Church,_Shimla.jpg",
+      "creator": "PranjalMehta11997",
+      "license": "CC BY-SA 4.0",
+      "attribution": "PranjalMehta11997 (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 952
+      },
+      "perceptualHash": "e1e248e97372e29c"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_18",
+      "destinationId": "Ooty",
+      "imageId": "story_18_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_18.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:%22Dodabetta%22.jpg",
+      "creator": "Manikantareddy",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Manikantareddy (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 930
+      },
+      "perceptualHash": "9063b21b9ce0204e"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_19",
+      "destinationId": "Shillong",
+      "imageId": "story_19_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_19.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:A_double_decker_living_bridge_in_Meghalaya,_December_2011.jpg",
+      "creator": "Vinayak Hegde",
+      "license": "CC BY 2.0",
+      "attribution": "Vinayak Hegde (CC BY 2.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 938
+      },
+      "perceptualHash": "c1d9f8f80891d8c8"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_20",
+      "destinationId": "Srinagar",
+      "imageId": "story_20_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_20.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Dal_Lake,_India_(ASTER).jpg",
+      "creator": "NASA/METI/AIST/Japan Space Systems, and U.S./Japan ASTER Science Team",
+      "license": "Public domain",
+      "attribution": "NASA/METI/AIST/Japan Space Systems, and U.S./Japan (Public domain)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1273,
+        "height": 1400
+      },
+      "perceptualHash": "3b9a387b27969c3c"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_21",
+      "destinationId": "Bengaluru",
+      "imageId": "story_21_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_21.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Flower_show_at_Lalbagh_botanical_garden_2026_(76921).jpg",
+      "creator": "Kaartic",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Kaartic (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "26a4a438362c269c"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_22",
+      "destinationId": "Kochi",
+      "imageId": "story_22_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_22.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Fishing_nets_in_Fort_Kochi.jpg",
+      "creator": "Bockomet",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Bockomet (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 934
+      },
+      "perceptualHash": "ac2e8bcedbfb6e4a"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_23",
+      "destinationId": "Varkala",
+      "imageId": "story_23_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_23.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Varkala_Beach-_Sunset_at_Papanasam_Beach_(3394033637).jpg",
+      "creator": "Prashanth dotcompals from Tattamangalam, India",
+      "license": "CC BY 2.0",
+      "attribution": "Prashanth dotcompals from Tattamangalam, India (CC BY 2.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 800,
+        "height": 534
+      },
+      "perceptualHash": "e8f0e0727a79c0d2"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_24",
+      "destinationId": "Mysuru",
+      "imageId": "story_24_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_24.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:A_Courtyard_of_Amba_Vilas_Palace_(Mysuru_Palace),_during_day.jpg",
+      "creator": "Shashank Mehendale",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Shashank Mehendale (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "f0b0ccfcece0e8e4"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_25",
+      "destinationId": "Agra",
+      "imageId": "story_25_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_25.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Our_boys_in_India_(1892)_(14595161858).jpg",
+      "creator": "Internet Archive Book Images",
+      "license": "No restrictions",
+      "attribution": "Internet Archive Book Images (No restrictions)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1084,
+        "height": 1400
+      },
+      "perceptualHash": "fccf236e7ef387ac"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_26",
+      "destinationId": "Aurangabad",
+      "imageId": "story_26_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_26.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Ellora_caves!.jpg",
+      "creator": "Gunjanppatel99",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Gunjanppatel99 (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1050,
+        "height": 1400
+      },
+      "perceptualHash": "b07521dbd6b21081"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_28",
+      "destinationId": "Gangtok",
+      "imageId": "story_28_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_28.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Prayer_Wheels_(72903977).jpeg",
+      "creator": "Lipikahalder1",
+      "license": "CC BY 3.0",
+      "attribution": "Lipikahalder1 (CC BY 3.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 934
+      },
+      "perceptualHash": "a4264a8a600802c2"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_29",
+      "destinationId": "Udaipur",
+      "imageId": "story_29_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_29.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Maharaja_Fateh_Singh_of_Udaipur,_(r.1884-1930),_on_royal_barge,_Udaipur.jpg",
+      "creator": "Unknown authorUnknown author",
+      "license": "Public domain",
+      "attribution": "Unknown authorUnknown author (Public domain)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1032
+      },
+      "perceptualHash": "852b3ddc68acb1d9"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_30",
+      "destinationId": "Indore",
+      "imageId": "story_30_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_30.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Glympse_Of_Rajwada,_Indore.jpg",
+      "creator": "MAYANK789",
+      "license": "CC BY-SA 4.0",
+      "attribution": "MAYANK789 (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1048
+      },
+      "perceptualHash": "299494aa96968e8e"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_31",
+      "destinationId": "Kodaikanal",
+      "imageId": "story_31_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_31.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kodaikanal_123.jpg",
+      "creator": "Ayushdon",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Ayushdon (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 1050
+      },
+      "perceptualHash": "0080408084d8d9c1"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_32",
+      "destinationId": "Khajuraho",
+      "imageId": "story_32_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_32.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kandariya_Mahadev_temple_(side_view)_Khajuraho_Temple_complex,_UNESCO_WHS,_Madya_Pradesh.jpg",
+      "creator": "Omkarshinde19",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Omkarshinde19 (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1400,
+        "height": 933
+      },
+      "perceptualHash": "bcbcbc1f13277f5b"
+    },
+    {
+      "entityType": "story",
+      "entityId": "story_27",
+      "destinationId": "Gokarna",
+      "imageId": "story_27_cover",
+      "role": "cover",
+      "pathOrUrl": "/media/stories/story_27.webp",
+      "source": "wikimedia",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kudle_Beach,_Gokarna.jpg",
+      "creator": "Malavikanandan30",
+      "license": "CC BY-SA 4.0",
+      "attribution": "Malavikanandan30 (CC BY-SA 4.0)",
+      "geographicVerification": "exact_destination",
+      "reviewStatus": "approved",
+      "dimensions": {
+        "width": 1152,
+        "height": 864
+      },
+      "perceptualHash": "e0e0cc8ec6f83f33"
+    }
+  ]
+}

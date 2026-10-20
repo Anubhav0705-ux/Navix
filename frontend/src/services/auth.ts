@@ -24,6 +24,16 @@ export function isAuthenticated(): boolean {
   return !!getToken() && !!getCurrentUser();
 }
 
+export function subscribeAuth(callback: () => void): () => void {
+  if (typeof window === 'undefined') return () => {};
+  window.addEventListener('navix-auth-change', callback);
+  window.addEventListener('storage', callback);
+  return () => {
+    window.removeEventListener('navix-auth-change', callback);
+    window.removeEventListener('storage', callback);
+  };
+}
+
 export function setSession(token: string, user: UserResponse): void {
   if (typeof window === 'undefined') return;
   localStorage.setItem(TOKEN_KEY, token);

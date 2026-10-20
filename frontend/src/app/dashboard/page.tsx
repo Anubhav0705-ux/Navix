@@ -56,7 +56,8 @@ const RECOMMENDED_DESTINATIONS = [
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [currentUser] = useState<UserResponse | null>(() => getCurrentUser());
+  const [currentUser, setCurrentUser] = useState<UserResponse | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const [savedTrips, setSavedTrips] = useState<SavedTripItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -64,10 +65,13 @@ export default function DashboardPage() {
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!currentUser) {
+    setIsMounted(true);
+    const user = getCurrentUser();
+    if (!user) {
       router.replace('/login?returnTo=/dashboard');
       return;
     }
+    setCurrentUser(user);
 
     getSavedTrips()
       .then((data) => {
@@ -77,10 +81,23 @@ export default function DashboardPage() {
       .catch(() => {
         setLoading(false);
       });
-  }, [currentUser, router]);
+  }, [router]);
 
-  if (!currentUser) {
-    return null;
+  if (!isMounted || !currentUser) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#FBF7F1] text-[#142A38]">
+        <Navbar />
+        <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-16 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 text-[#1F6E78] animate-spin" />
+            <p className="text-xs font-bold uppercase tracking-wider text-[#66757F]">
+              Loading Personal Travel Library...
+            </p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   const showToast = (msg: string) => {

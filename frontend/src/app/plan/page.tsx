@@ -27,19 +27,26 @@ function InnerPlannerWorkspace() {
   const searchParams = useSearchParams();
   const { state, dispatch, getBackendPayload } = usePlanner();
 
-  const [isAuthenticatedUser] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return !!getCurrentUser();
-    }
-    return false;
-  });
+  const [isAuthenticatedUser, setIsAuthenticatedUser] = useState<boolean | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingStage, setLoadingStage] = useState(0);
   const [errorInfo, setErrorInfo] = useState<{ code: string; message: string } | null>(null);
-  const [planResult, setPlanResult] = useState<TripPlanResult | null>(() => getTripPlan());
+  const [planResult, setPlanResult] = useState<TripPlanResult | null>(null);
+
+  // Safely verify traveler session and restore plan on mount
+  useEffect(() => {
+    const user = getCurrentUser();
+    setIsAuthenticatedUser(!!user);
+    const savedPlan = getTripPlan();
+    if (savedPlan) {
+      setPlanResult(savedPlan);
+    }
+  }, []);
 
   // Strict Authentication Guard & Draft Restoration
   useEffect(() => {
+    if (isAuthenticatedUser === null) return;
+
     if (!isAuthenticatedUser) {
       // Unauthenticated guest: preserve draft intent safely before redirecting
       const qOrigin = searchParams.get('origin') || '';

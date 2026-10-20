@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { Logo } from './Logo';
-import { getCurrentUser, logoutSession } from '@/services/auth';
+import { getCurrentUser, logoutSession, subscribeAuth } from '@/services/auth';
 import { UserResponse } from '@/types';
 import {
   Menu, X, Compass, BookOpen, Bookmark,
@@ -21,29 +21,9 @@ export const Navbar: React.FC<NavbarProps> = ({ transparentOnHero = false }) => 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [currentUser, setCurrentUser] = useState<UserResponse | null>(() => {
-    if (typeof window !== 'undefined') {
-      return getCurrentUser();
-    }
-    return null;
-  });
+  const currentUser = useSyncExternalStore(subscribeAuth, getCurrentUser, () => null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Subscribe to auth state changes across window and tabs
-  useEffect(() => {
-    const handleAuthChange = () => {
-      setCurrentUser(getCurrentUser());
-    };
-
-    window.addEventListener('navix-auth-change', handleAuthChange);
-    window.addEventListener('storage', handleAuthChange);
-
-    return () => {
-      window.removeEventListener('navix-auth-change', handleAuthChange);
-      window.removeEventListener('storage', handleAuthChange);
-    };
-  }, []);
 
   // Close menus on route transitions
   const [prevPathname, setPrevPathname] = useState(pathname);
@@ -92,7 +72,6 @@ export const Navbar: React.FC<NavbarProps> = ({ transparentOnHero = false }) => 
 
   const handleLogout = () => {
     logoutSession();
-    setCurrentUser(null);
     setAccountDropdownOpen(false);
     router.push('/');
   };

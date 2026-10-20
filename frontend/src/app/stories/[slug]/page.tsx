@@ -18,16 +18,17 @@ export default function StoryDetailPage() {
   const [story, setStory] = useState<StoryItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(() => {
-    if (typeof window !== 'undefined' && slug) {
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+  const [copiedShare, setCopiedShare] = useState(false);
+
+  useEffect(() => {
+    if (slug) {
       try {
         const saved = localStorage.getItem('navix_bookmarked_stories');
-        if (saved) return JSON.parse(saved).includes(slug);
+        if (saved) setIsBookmarked(JSON.parse(saved).includes(slug));
       } catch {}
     }
-    return false;
-  });
-  const [copiedShare, setCopiedShare] = useState(false);
+  }, [slug]);
 
   useEffect(() => {
     if (!slug) return;
