@@ -35,6 +35,7 @@ services:
       - DB_USER=${DB_USER:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-root123}
       - NAVIX_DATA_MODE=${NAVIX_DATA_MODE:-demo}
+      - NAVIX_DEMO_ADMIN_PASSWORD=${NAVIX_DEMO_ADMIN_PASSWORD:-}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - ALLOW_LOCALHOST_DB=true

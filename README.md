@@ -173,7 +173,7 @@ Open `http://localhost:3000` in your browser.
 | Role | Email | Password | Permissions |
 | :--- | :--- | :--- | :--- |
 | **Traveler** | `traveler@navix.test` | `password123` | Interactive planner, saved trip management, personal dashboard, PDF export |
-| **Administrator** | `admin@navix.test` | `password123` | Full access + `/admin` control panel for transit graph, schedules, and user audits |
+| **Administrator** | `admin@navix.com` | Configured via `NAVIX_DEMO_ADMIN_PASSWORD` in `.env` | Full access + `/admin` control panel for transit graph, schedules, and user audits |
 
 *Note: New traveler accounts can also be created instantly via `/register`.*
 

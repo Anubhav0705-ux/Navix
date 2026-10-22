@@ -1,3 +1,4 @@
+import os
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
@@ -45,10 +46,24 @@ def test_register_and_profile():
 
 
 def test_admin_access():
-    # Login admin
+    from app.database.session import SessionLocal
+    from app.models.user import User
+    from app.core.security import hash_password
+
+    admin_password = os.getenv("NAVIX_DEMO_ADMIN_PASSWORD", "NavixTestAdmin2026!SecureKey")
+    db = SessionLocal()
+    try:
+        admin_user = db.query(User).filter(User.email == "admin@navix.com").first()
+        if admin_user:
+            admin_user.password_hash = hash_password(admin_password)
+            db.commit()
+    finally:
+        db.close()
+
+    # Login admin using environment-driven bootstrap credential
     login_resp = client.post(
         "/api/v1/auth/login",
-        json={"email": "admin@navix.com", "password": "AdminPassword123!"}
+        json={"email": "admin@navix.com", "password": admin_password}
     )
     assert login_resp.status_code == 200
     admin_token = login_resp.json()["access_token"]

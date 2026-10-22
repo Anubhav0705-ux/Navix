@@ -102,7 +102,8 @@ test.describe('NAVIX Release Hardening Phase 1: End-to-End Test Suite', () => {
     await context.clearCookies();
     await page.goto('/login');
     await page.fill('#login-email', 'admin@navix.com');
-    await page.fill('#login-password', 'AdminPassword123!');
+    const adminPassword = process.env.NAVIX_DEMO_ADMIN_PASSWORD || 'NavixTestAdmin2026!SecureKey';
+    await page.fill('#login-password', adminPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL(url => url.pathname.includes('/admin') || url.pathname.includes('/dashboard'), { timeout: 15000 });
 

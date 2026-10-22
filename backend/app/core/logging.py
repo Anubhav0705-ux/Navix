@@ -16,7 +16,7 @@ SENSITIVE_PATTERNS = [
     (r'(?i)Bearer\s+[a-zA-Z0-9\-_=]+\.[a-zA-Z0-9\-_=]+\.?[a-zA-Z0-9\-_=]*', r'Bearer [REDACTED]'),
     (r'(postgresql(?:\+[a-zA-Z0-9]+)?://[^:]+:)([^@]+)(@.+)', r'\1[REDACTED]\3'),
     (r'(rediss?://[^:]*:)([^@]+)(@.+)', r'\1[REDACTED]\3'),
-    (r'(?i)("?(?:password|hashed_password|secret|secret_key|jwt|access_token|refresh_token|token|authorization|cookie)"?\s*[:=]\s*)"?[^"&\s,;]+"?', r'\1"[REDACTED]"'),
+    (r'(?i)("?(?:password|hashed_password|navix_demo_admin_password|secret|secret_key|jwt|access_token|refresh_token|token|authorization|cookie)"?\s*[:=]\s*)"?[^"&\s,;]+"?', r'\1"[REDACTED]"'),
 ]
 
 

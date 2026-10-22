@@ -75,6 +75,11 @@ class Settings(BaseSettings):
     UNSPLASH_ACCESS_KEY: Optional[str] = Field(default=None, description="Unsplash API Access Key")
     # Data Source Mode (demo | hybrid | live) - 48-Hour Presentation Release
     NAVIX_DATA_MODE: str = Field(default="demo", description="Data mode: demo | hybrid | live")
+    # Environment-driven development/demo admin bootstrap (DEV/TEST only)
+    NAVIX_DEMO_ADMIN_PASSWORD: Optional[str] = Field(
+        default=None,
+        description="Bootstrap password for demo/dev admin account (DEV/TEST only)"
+    )
 
     @model_validator(mode="after")
     def validate_and_normalize_configuration(self) -> "Settings":
@@ -96,6 +101,27 @@ class Settings(BaseSettings):
         if mode_lower not in ("demo", "hybrid", "live"):
             mode_lower = "demo"
         self.NAVIX_DATA_MODE = mode_lower
+
+        # 1c. Validate NAVIX_DEMO_ADMIN_PASSWORD
+        if self.NAVIX_DEMO_ADMIN_PASSWORD is not None:
+            # Strictly prohibited in Staging and Production
+            if self.APP_ENV in (EnvironmentOption.STAGING.value, EnvironmentOption.PRODUCTION.value):
+                raise ValueError(
+                    f"NAVIX_DEMO_ADMIN_PASSWORD is not permitted in {self.APP_ENV}. "
+                    "Admin bootstrap credentials are strictly prohibited in staging/production environments."
+                )
+
+            # Reject empty, short, or well-known insecure passwords
+            insecure_defaults = {
+                "admin", "admin123", "password", "password123", "123456",
+                "navix", "navix123", "root", "toor", "adminpassword123!", "navixadmin2026!"
+            }
+            trimmed_pw = self.NAVIX_DEMO_ADMIN_PASSWORD.strip()
+            if len(trimmed_pw) < 8 or trimmed_pw.lower() in insecure_defaults:
+                raise ValueError(
+                    "Unsafe NAVIX_DEMO_ADMIN_PASSWORD rejected. Password must be at least 8 characters "
+                    "and cannot match common default or dictionary passwords."
+                )
 
         # 2. Set Default DEBUG Flag based on Environment if not explicitly overridden
         if self.DEBUG is None:

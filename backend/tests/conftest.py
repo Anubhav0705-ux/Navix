@@ -121,18 +121,27 @@ def setup_test_database():
                 db.add(t)
 
             admin_user = db.query(User).filter(User.email == "admin@navix.com").first()
+            demo_admin_pw = os.getenv("NAVIX_DEMO_ADMIN_PASSWORD")
+            if not demo_admin_pw:
+                demo_admin_pw = "NavixTestAdmin2026!SecureKey"
+                os.environ["NAVIX_DEMO_ADMIN_PASSWORD"] = demo_admin_pw
+
+            admin_hash = hash_password(demo_admin_pw)
             if not admin_user:
                 a_usr = User(
                     user_id="usr_02",
                     name="System Admin",
                     email="admin@navix.com",
                     role="admin",
-                    password_hash=hash_password("AdminPassword123!")
+                    password_hash=admin_hash
                 )
                 db.add(a_usr)
                 db.flush()
                 adm = Admin(admin_id=a_usr.user_id, department="Operations")
                 db.add(adm)
+            else:
+                admin_user.password_hash = admin_hash
+                db.flush()
 
             db.commit()
     except Exception as seed_user_err:

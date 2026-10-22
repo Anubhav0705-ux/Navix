@@ -34,6 +34,7 @@ from app.models import (
     DemoStory
 )
 from app.core.security import hash_password
+from app.core.config import settings
 
 DEFAULT_ADMIN_ID = "usr_02"
 DEMO_USER_ID = "usr_demo_navix"
@@ -107,20 +108,32 @@ def seed_data() -> Dict[str, int]:
     }
 
     try:
-        # 1. Admin Verification / Creation
+        # 1. Admin Verification / Creation (Environment-driven bootstrap only)
         admin = session.get(Admin, DEFAULT_ADMIN_ID)
-        if not admin:
-            admin_user = session.get(User, DEFAULT_ADMIN_ID)
+        admin_user = session.get(User, DEFAULT_ADMIN_ID)
+
+        # Bootstrap credential comes ONLY from environment and is permitted only in DEV/TEST/demo
+        is_dev_or_test = settings.is_development or settings.is_testing or settings.NAVIX_DATA_MODE == "demo"
+        demo_admin_pw = os.getenv("NAVIX_DEMO_ADMIN_PASSWORD") or settings.NAVIX_DEMO_ADMIN_PASSWORD
+
+        if is_dev_or_test and demo_admin_pw:
+            pw_hash = hash_password(demo_admin_pw)
             if not admin_user:
                 admin_user = User(
                     user_id=DEFAULT_ADMIN_ID,
                     name="System Admin",
                     email="admin@navix.com",
                     role="admin",
-                    password_hash=hash_password("NavixAdmin2026!")
+                    password_hash=pw_hash
                 )
                 session.add(admin_user)
                 session.flush()
+            else:
+                # Synchronize existing admin password hash with environment without logging
+                admin_user.password_hash = pw_hash
+                session.flush()
+
+        if admin_user and not admin:
             admin = Admin(admin_id=DEFAULT_ADMIN_ID)
             session.add(admin)
             session.flush()
