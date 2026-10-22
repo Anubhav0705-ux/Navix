@@ -181,6 +181,37 @@ export const STORY_PHOTOS: Record<string, string> = {
 
 // Exact Entity-Level Landmark & Dish Resolution Registry
 export const VERIFIED_ENTITY_PHOTOS: Record<string, string> = {
+  // Ganpatipule Landmarks & Food & Stays
+  'shree swamyambhu ganpati temple': '/media/places/ganpatipule_temple.webp',
+  'ganpatipule beach': '/media/places/ganpatipule_beach.webp',
+  'prachin konkan': '/media/places/ganpatipule_prachin_konkan.webp',
+  'keshavsut smarak': '/media/places/ganpatipule_malgund.webp',
+  'aare ware': '/media/places/ganpatipule_aare_ware.webp',
+  'jaigad sea fort': '/media/places/ganpatipule_jaigad_fort.webp',
+  'ukdiche modak': '/media/food/ganpatipule_ukdiche_modak.webp',
+  'malvani fish thali': '/media/food/ganpatipule_malvani_thali.webp',
+  'solkadhi': '/media/food/ganpatipule_solkadhi.webp',
+  'kaju usal': '/media/food/ganpatipule_kaju_usal.webp',
+  'aamras': '/media/food/ganpatipule_aamras.webp',
+  'mtdc resort ganpatipule': '/media/stays/ganpatipule_mtdc.webp',
+  'abhishek beach resort': '/media/stays/ganpatipule_abhishek.webp',
+
+  // Pushkar Landmarks & Food & Stays
+  'pushkar holy lake': '/media/places/pushkar_lake_ghats.webp',
+  'brahma mandir': '/media/places/pushkar_brahma_temple.webp',
+  'savitri mata temple': '/media/places/pushkar_savitri_temple.webp',
+  'old rangji temple': '/media/places/pushkar_rangji_temple.webp',
+  'varaha temple': '/media/places/pushkar_varaha_temple.webp',
+  'pushkar desert dunes': '/media/places/pushkar_camel_fair.webp',
+  'pushkar sadar heritage bazaar': '/media/places/pushkar_heritage_bazaar.webp',
+  'rabdi malpua': '/media/food/pushkar_rabdi_malpua.webp',
+  'rose lassi': '/media/food/pushkar_rose_lassi.webp',
+  'pushkar dal baati': '/media/food/pushkar_dal_baati.webp',
+  'pushkar falafel': '/media/food/pushkar_falafel.webp',
+  'pushkar pyaaz kachori': '/media/food/pushkar_pyaaz_kachori.webp',
+  'pushkar palace': '/media/stays/pushkar_palace.webp',
+  'zostel pushkar': '/media/stays/pushkar_zostel.webp',
+
   // Goa Flagship Attractions
   'basilica of bom jesus': '/media/places/goa_basilica_bom_jesus.webp',
   'fontainhas': '/media/places/goa_fontainhas.webp',

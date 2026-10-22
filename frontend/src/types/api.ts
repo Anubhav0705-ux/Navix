@@ -17,6 +17,28 @@ export interface TokenResponse {
   access_token: string;
   token_type: string;
   user: UserResponse;
+  must_change_password?: boolean;
+}
+
+export interface PasswordResetAdminItem {
+  request_id: string;
+  user_id: string;
+  user_name?: string;
+  user_email?: string;
+  requested_at: string;
+  status: string;
+  reviewed_at?: string;
+  reviewed_by_admin_id?: string;
+  temporary_password_expires_at?: string;
+  completed_at?: string;
+}
+
+export interface ApproveResetResponse {
+  request_id: string;
+  status: string;
+  temporary_password: string;
+  expires_at: string;
+  message: string;
 }
 
 export interface PlannerPreferences {

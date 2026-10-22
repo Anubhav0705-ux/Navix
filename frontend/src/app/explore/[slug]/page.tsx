@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { Navbar, Footer, SafeImage } from '@/components';
@@ -30,6 +30,39 @@ export default function DestinationDetailPage() {
   const [destination, setDestination] = useState<DestinationDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'attractions' | 'food' | 'stays'>('attractions');
+
+  const mapAttractions = useMemo(() => {
+    return (destination?.attractions || []).map((a) => ({
+      name: a.name,
+      latitude: a.latitude,
+      longitude: a.longitude,
+      category: a.category
+    }));
+  }, [destination?.attractions]);
+
+  const mapFoodPlaces = useMemo(() => {
+    return (destination?.food_places || [])
+      .filter((f) => f.data_state === 'VERIFIED_REAL' && f.latitude && f.longitude)
+      .slice(0, 6)
+      .map((f) => ({
+        name: f.name,
+        latitude: f.latitude,
+        longitude: f.longitude,
+        speciality: f.speciality
+      }));
+  }, [destination?.food_places]);
+
+  const mapHotel = useMemo(() => {
+    const vh = (destination?.hotels || []).find(
+      (h) => h.data_state === 'VERIFIED_REAL' && h.latitude && h.longitude
+    );
+    if (!vh) return undefined;
+    return {
+      name: vh.name,
+      latitude: vh.latitude,
+      longitude: vh.longitude
+    };
+  }, [destination?.hotels]);
 
   const handlePlanDestination = () => {
     if (!destination) return;
@@ -184,7 +217,7 @@ export default function DestinationDetailPage() {
               </div>
               <div className="bg-white p-5 rounded-2xl border border-[#EBDCC7] shadow-xs">
                 <span className="text-[10px] font-bold uppercase text-[#94A3B8] block">Curated Sites</span>
-                <span className="text-sm font-bold text-[#142A38]">{destination.attractions?.length || 10} Places</span>
+                <span className="text-sm font-bold text-[#142A38]">{destination.attractions?.length || 0} Places</span>
               </div>
             </div>
           </div>
@@ -276,8 +309,15 @@ export default function DestinationDetailPage() {
                 >
                   <div className="relative h-52 w-full">
                     <SafeImage src={attr.image} alt={attr.name} category={attr.category} className="w-full h-full object-cover" />
-                    <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-[#142A38] shadow-xs">
-                      {attr.category}
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                      <span className="bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-[#142A38] shadow-xs">
+                        {attr.category}
+                      </span>
+                      {attr.data_state === 'VERIFIED_REAL' && (
+                        <span className="bg-[#1F6E78] text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-xs">
+                          Verified
+                        </span>
+                      )}
                     </div>
                     <div className="absolute top-3 right-3 bg-white/95 px-2.5 py-1 rounded-full text-[10px] font-bold text-[#142A38] flex items-center gap-1 shadow-xs">
                       <Star className="w-3 h-3 text-[#D8A64B] fill-[#D8A64B]" />
@@ -319,8 +359,19 @@ export default function DestinationDetailPage() {
                 >
                   <div className="relative h-52 w-full">
                     <SafeImage src={food.image} alt={food.name} category="food" className="w-full h-full object-cover" />
-                    <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-[#142A38] shadow-xs">
-                      {food.cuisine}
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                      <span className="bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-[#142A38] shadow-xs">
+                        {food.cuisine}
+                      </span>
+                      {food.data_state === 'VERIFIED_REAL' ? (
+                        <span className="bg-[#1F6E78] text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-xs">
+                          Regional Specialty
+                        </span>
+                      ) : (
+                        <span className="bg-[#64748B] text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-xs">
+                          Representative Option
+                        </span>
+                      )}
                     </div>
                     <div className="absolute top-3 right-3 bg-white/95 px-2.5 py-1 rounded-full text-[10px] font-bold text-[#142A38] flex items-center gap-1 shadow-xs">
                       <Star className="w-3 h-3 text-[#D8A64B] fill-[#D8A64B]" />
@@ -362,8 +413,19 @@ export default function DestinationDetailPage() {
                 >
                   <div className="relative h-52 w-full">
                     <SafeImage src={hotel.image} alt={hotel.name} category="hotel" className="w-full h-full object-cover" />
-                    <div className="absolute top-3 left-3 bg-[#142A38] text-white px-3 py-1 rounded-full text-[10px] font-bold">
-                      {hotel.category}
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                      <span className="bg-[#142A38] text-white px-3 py-1 rounded-full text-[10px] font-bold">
+                        {hotel.category}
+                      </span>
+                      {hotel.data_state === 'VERIFIED_REAL' ? (
+                        <span className="bg-[#1F6E78] text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-xs">
+                          Verified Property
+                        </span>
+                      ) : (
+                        <span className="bg-[#E96E55] text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-xs">
+                          Representative Option
+                        </span>
+                      )}
                     </div>
                     <div className="absolute top-3 right-3 bg-white/95 px-2.5 py-1 rounded-full text-[10px] font-bold text-[#142A38] flex items-center gap-1 shadow-xs">
                       <Star className="w-3 h-3 text-[#D8A64B] fill-[#D8A64B]" />
@@ -426,9 +488,9 @@ export default function DestinationDetailPage() {
               centerLng={destination.longitude}
               zoom={12}
               destination={destination.name}
-              attractions={destination.attractions.slice(0, 8).map(a => ({ name: a.name, latitude: a.latitude, longitude: a.longitude, category: a.category }))}
-              foodPlaces={destination.food_places.slice(0, 6).map(f => ({ name: f.name, latitude: f.latitude, longitude: f.longitude, speciality: f.speciality }))}
-              hotel={destination.hotels[0] ? { name: destination.hotels[0].name, latitude: destination.hotels[0].latitude, longitude: destination.hotels[0].longitude } : undefined}
+              attractions={mapAttractions}
+              foodPlaces={mapFoodPlaces}
+              hotel={mapHotel}
             />
           </div>
         </section>

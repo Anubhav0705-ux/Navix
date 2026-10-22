@@ -210,9 +210,17 @@ def seed_data() -> Dict[str, int]:
                 existing.name = item["name"]
                 existing.category = item["category"]
                 existing.description = item["description"]
+                existing.latitude = float(item["latitude"])
+                existing.longitude = float(item["longitude"])
                 existing.entry_fee = float(item.get("demo_entry_fee") or item.get("entry_fee", 0.0))
+                existing.visit_duration_minutes = int(item.get("visit_duration_minutes", 90))
+                existing.opening_time = item.get("opening_time", "09:00")
+                existing.closing_time = item.get("closing_time", "18:00")
                 existing.image = item["image"]
                 existing.rating = float(item["rating"])
+                existing.recommended_score = float(item.get("recommended_score", 80.0))
+                existing.data_state = item.get("data_state", "DEMO_SEED")
+                existing.price_state = item.get("price_state", "DEMO_ESTIMATE")
         session.commit()
 
         # 5. Seed Food Places
@@ -245,8 +253,13 @@ def seed_data() -> Dict[str, int]:
                 existing.speciality = item["speciality"]
                 existing.dietary = item.get("dietary") or item.get("food_type", "both")
                 existing.cost_for_two = float(item.get("demo_cost_for_two") or item.get("cost_for_two", 400.0))
+                existing.opening_hours = item.get("opening_hours", "11:00 - 23:00")
+                existing.latitude = float(item["latitude"])
+                existing.longitude = float(item["longitude"])
                 existing.image = item["image"]
                 existing.rating = float(item["rating"])
+                existing.data_state = item.get("data_state", "DEMO_SEED")
+                existing.price_state = item.get("price_state", "DEMO_ESTIMATE")
         session.commit()
 
         # 6. Seed Hotels / Stays
@@ -277,8 +290,15 @@ def seed_data() -> Dict[str, int]:
                 existing.name = item["name"]
                 existing.category = item.get("tier") or item.get("category", "Standard")
                 existing.price_per_night = float(item.get("demo_price_per_night") or item.get("price_per_night", 1500.0))
+                existing.room_type = item.get("room_type", "Standard Room")
+                existing.amenities = item.get("amenities", [])
+                existing.latitude = float(item["latitude"])
+                existing.longitude = float(item["longitude"])
                 existing.image = item["image"]
                 existing.rating = float(item["rating"])
+                existing.availability = item.get("availability", True)
+                existing.data_state = item.get("data_state", "DEMO_SEED")
+                existing.price_state = item.get("price_state", "DEMO_ESTIMATE")
         session.commit()
 
         # 7. Seed Transit Nodes (Legacy + National Demo Graph)

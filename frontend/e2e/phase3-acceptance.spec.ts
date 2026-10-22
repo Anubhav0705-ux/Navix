@@ -104,6 +104,9 @@ test.describe('NAVIX Phase 3: Ultimate Content Enrichment, Polish & Presentation
     if (await autofillBtn.isVisible()) {
       await autofillBtn.click();
       await page.waitForTimeout(200);
+    } else {
+      await page.fill('#login-email', 'demo@navix.com');
+      await page.fill('#login-password', 'DemoExplorer2026!');
     }
     await page.locator('button[type="submit"]').click();
     await page.waitForURL('**/dashboard', { timeout: 15000 });

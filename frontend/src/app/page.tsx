@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Navbar, Footer, SafeImage, DestinationScene, CINEMATIC_SCENES } from '@/components';
+import { Navbar, Footer, SafeImage, DestinationScene, CINEMATIC_SCENES, OnboardingModal } from '@/components';
 import {
   Compass, MapPin, Calendar, Users, Wallet, ArrowRight,
   ChevronRight, Mountain, Palmtree, Landmark, Trees, Flame, Heart
@@ -568,6 +568,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Onboarding Tour for First-Time Travelers */}
+      <OnboardingModal />
 
       {/* 7. Minimal Footer */}
       <Footer />

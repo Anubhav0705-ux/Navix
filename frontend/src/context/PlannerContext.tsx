@@ -177,10 +177,13 @@ const STORAGE_KEY = 'navix_planner_v2';
 function plannerReducer(state: PlannerState, action: PlannerAction): PlannerState {
   switch (action.type) {
     case 'SET_STAGE':
+      if (state.stage === action.payload) return state;
       return { ...state, stage: action.payload };
     case 'SET_ORIGIN':
+      if (state.origin === action.payload && state.selectedTransportAlternative === undefined) return state;
       return { ...state, origin: action.payload, selectedTransportAlternative: undefined };
     case 'SET_DESTINATION':
+      if (state.destination === action.payload && state.selectedTransportAlternative === undefined && state.selectedPlaces.length === 0) return state;
       return {
         ...state,
         destination: action.payload,
@@ -276,9 +279,11 @@ function plannerReducer(state: PlannerState, action: PlannerAction): PlannerStat
     case 'SET_RETURN_DATE':
       return { ...state, returnDate: action.payload };
     case 'SET_MAXIMUM_BUDGET':
+      if (state.maximumBudget === action.payload) return state;
       return { ...state, maximumBudget: action.payload };
     case 'SET_TRAVELLERS_COUNT': {
       const count = Math.max(1, Math.min(5, action.payload));
+      if (state.travellers === count) return state;
       const currentProfiles = [...state.travellerProfiles];
       if (currentProfiles.length < count) {
         for (let i = currentProfiles.length + 1; i <= count; i++) {
@@ -517,9 +522,12 @@ export const PlannerProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, []);
 
   // Prefill logged-in user name into Traveller 1 if default
+  const hasPrefilledRef = React.useRef(false);
   useEffect(() => {
+    if (hasPrefilledRef.current) return;
     const user = getCurrentUser();
     if (user && state.travellerProfiles[0]?.name === 'Explorer 1') {
+      hasPrefilledRef.current = true;
       dispatch({
         type: 'UPDATE_TRAVELLER_PROFILE',
         payload: { id: 'trv-1', profile: { name: user.name } }

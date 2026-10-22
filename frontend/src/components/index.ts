@@ -12,3 +12,4 @@ export * from './SafeImage';
 export * from './DestinationScene';
 export * from './TravelCollage';
 export * from './TravelAccents';
+export * from './OnboardingModal';

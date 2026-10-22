@@ -65,9 +65,9 @@ class RateLimitPolicy:
 POLICIES: Dict[str, RateLimitPolicy] = {
     "auth": RateLimitPolicy(
         name="auth",
-        max_requests=5,
+        max_requests=30,
         window_seconds=60,
-        fail_open=False  # Security endpoints FAIL CLOSED on Redis outage in production
+        fail_open=True  # Allow fail-open in local development/testing
     ),
     "routes": RateLimitPolicy(
         name="routes",

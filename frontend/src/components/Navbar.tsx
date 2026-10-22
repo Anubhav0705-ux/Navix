@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { Logo } from './Logo';
 import { getCurrentUser, logoutSession, subscribeAuth } from '@/services/auth';
-import { UserResponse } from '@/types';
 import {
   Menu, X, Compass, BookOpen, Bookmark,
   LogOut, MapPin, ChevronDown, Shield
@@ -26,12 +25,10 @@ export const Navbar: React.FC<NavbarProps> = ({ transparentOnHero = false }) => 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close menus on route transitions
-  const [prevPathname, setPrevPathname] = useState(pathname);
-  if (prevPathname !== pathname) {
-    setPrevPathname(pathname);
+  useEffect(() => {
     setAccountDropdownOpen(false);
     setMobileMenuOpen(false);
-  }
+  }, [pathname]);
 
   // Handle scroll effect when transparentOnHero is enabled
   useEffect(() => {

@@ -1,4 +1,5 @@
-import { getApi } from './api';
+import { getApi, postApi } from './api';
+import { PasswordResetAdminItem, ApproveResetResponse } from '@/types';
 
 export interface AdminNode {
   node_id: string;
@@ -48,4 +49,16 @@ export async function fetchAdminUsers(): Promise<AdminUser[]> {
 
 export async function fetchAdminTrips(): Promise<AdminTrip[]> {
   return getApi<AdminTrip[]>('/api/v1/admin/trips');
+}
+
+export async function fetchAdminPasswordResets(): Promise<PasswordResetAdminItem[]> {
+  return getApi<PasswordResetAdminItem[]>('/api/v1/admin/password-resets');
+}
+
+export async function approvePasswordReset(request_id: string): Promise<ApproveResetResponse> {
+  return postApi<ApproveResetResponse>(`/api/v1/admin/password-resets/${request_id}/approve`, {});
+}
+
+export async function rejectPasswordReset(request_id: string): Promise<{ message: string }> {
+  return postApi<{ message: string }>(`/api/v1/admin/password-resets/${request_id}/reject`, {});
 }

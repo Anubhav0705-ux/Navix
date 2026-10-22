@@ -2,6 +2,7 @@ from app.database.base import Base
 from app.models.user import User
 from app.models.traveler import Traveler
 from app.models.admin import Admin
+from app.models.password_reset import PasswordResetRequest
 from app.models.trip import Trip
 from app.models.transit_node import TransitNode
 from app.models.transit_schedule import TransitSchedule
@@ -42,6 +43,7 @@ __all__ = [
     "User",
     "Traveler",
     "Admin",
+    "PasswordResetRequest",
     "Trip",
     "TransitNode",
     "TransitSchedule",

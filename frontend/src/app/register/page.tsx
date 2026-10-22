@@ -23,6 +23,7 @@ function RegisterFormContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [hpField, setHpField] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -39,8 +40,8 @@ function RegisterFormContent() {
       setErrorMessage('Please enter your full name.');
       return;
     }
-    if (password.length < 6) {
-      setErrorMessage('Password must be at least 6 characters.');
+    if (password.length < 8) {
+      setErrorMessage('Password must be at least 8 characters.');
       return;
     }
     if (password !== confirmPassword) {
@@ -51,7 +52,7 @@ function RegisterFormContent() {
     setIsSubmitting(true);
 
     try {
-      await registerUser(name.trim(), email.trim(), password);
+      await registerUser(name.trim(), email.trim(), password, hpField);
 
       // Safe return navigation
       const destination = sanitizeReturnUrl(returnToParam || (activeDraft?.returnTo) || '/dashboard');
@@ -135,6 +136,17 @@ function RegisterFormContent() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-3.5">
+            {/* Honeypot field for anti-bot protection */}
+            <input
+              type="text"
+              name="hp_field"
+              value={hpField}
+              onChange={(e) => setHpField(e.target.value)}
+              tabIndex={-1}
+              aria-hidden="true"
+              autoComplete="off"
+              className="opacity-0 absolute -left-[9999px] h-0 w-0 -z-50 pointer-events-none"
+            />
             <div>
               <label
                 htmlFor="register-name"

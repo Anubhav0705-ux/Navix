@@ -21,6 +21,7 @@ function LoginFormContent() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [hpField, setHpField] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -34,7 +35,13 @@ function LoginFormContent() {
     setIsSubmitting(true);
 
     try {
-      const resp = await loginUser(email, password);
+      const resp = await loginUser(email, password, hpField);
+
+      // Enforce immediate password change if authenticating with an admin temporary password
+      if (resp.must_change_password) {
+        router.push('/auth/set-new-password');
+        return;
+      }
 
       // Safe return navigation
       if (resp.user.role?.toLowerCase() === 'admin' && !returnToParam) {
@@ -124,6 +131,17 @@ function LoginFormContent() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Honeypot field for anti-bot protection */}
+            <input
+              type="text"
+              name="hp_field"
+              value={hpField}
+              onChange={(e) => setHpField(e.target.value)}
+              tabIndex={-1}
+              aria-hidden="true"
+              autoComplete="off"
+              className="opacity-0 absolute -left-[9999px] h-0 w-0 -z-50 pointer-events-none"
+            />
             <div>
               <label
                 htmlFor="login-email"
@@ -156,6 +174,12 @@ function LoginFormContent() {
                 >
                   Password
                 </label>
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-xs font-semibold text-[#1F6E78] hover:text-[#15525A] hover:underline transition-colors"
+                >
+                  Forgot password?
+                </Link>
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8E9BA4]">

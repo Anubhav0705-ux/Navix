@@ -69,30 +69,50 @@ export interface InteractiveMapProps {
   };
 }
 
-// Controller to auto-invalidate size and fit bounds
-function MapViewController({ points }: { points: NodePoint[] }) {
+// Controller to auto-invalidate size and fit bounds safely
+function MapViewController({
+  points,
+  centerLat,
+  centerLng,
+  zoom = 12
+}: {
+  points: NodePoint[];
+  centerLat?: number;
+  centerLng?: number;
+  zoom?: number;
+}) {
   const map = useMap();
+  const prevKeyRef = React.useRef<string>('');
+
+  const pointsKey = `${centerLat ?? ''},${centerLng ?? ''},${zoom},${points.length},${points.map(p => `${p.lat.toFixed(4)}_${p.lng.toFixed(4)}`).join('|')}`;
 
   useEffect(() => {
+    if (prevKeyRef.current === pointsKey) return;
+    prevKeyRef.current = pointsKey;
+
     const t1 = setTimeout(() => {
-      map.invalidateSize();
-      if (points.length > 1) {
-        const bounds = L.latLngBounds(points.map((p) => [p.lat, p.lng]));
-        map.fitBounds(bounds, { padding: [36, 36], maxZoom: 13 });
-      } else if (points.length === 1) {
-        map.setView([points[0].lat, points[0].lng], 11);
+      try {
+        map.invalidateSize();
+        if (points.length > 1) {
+          const latLngs = points.map((p) => [p.lat, p.lng] as [number, number]);
+          const bounds = L.latLngBounds(latLngs);
+          if (bounds.isValid()) {
+            map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+          }
+        } else if (points.length === 1) {
+          map.setView([points[0].lat, points[0].lng], zoom);
+        } else if (centerLat !== undefined && centerLng !== undefined) {
+          map.setView([centerLat, centerLng], zoom);
+        }
+      } catch (err) {
+        console.warn('Map fitBounds suppressed error:', err);
       }
     }, 150);
 
-    const t2 = setTimeout(() => {
-      map.invalidateSize();
-    }, 500);
-
     return () => {
       clearTimeout(t1);
-      clearTimeout(t2);
     };
-  }, [map, points]);
+  }, [map, pointsKey, points, centerLat, centerLng, zoom]);
 
   return null;
 }
@@ -102,7 +122,7 @@ export default function InteractiveMap({
   destination,
   centerLat: customCenterLat,
   centerLng: customCenterLng,
-  zoom = 6,
+  zoom = 12,
   segments = [],
   attractions = [],
   foodPlaces = [],
@@ -112,12 +132,19 @@ export default function InteractiveMap({
     const pts: NodePoint[] = [];
     const poly: [number, number][] = [];
 
+    // Valid coordinate boundary check for India
+    const isValidIndiaCoord = (lat?: number, lng?: number): boolean => {
+      if (lat === undefined || lng === undefined) return false;
+      if (isNaN(lat) || isNaN(lng)) return false;
+      return lat >= 6.0 && lat <= 38.0 && lng >= 68.0 && lng <= 98.0;
+    };
+
     if (segments.length > 0) {
       segments.forEach((seg, idx) => {
         const srcCoord = ALL_DESTINATION_COORDS[seg.source_city] || ALL_DESTINATION_COORDS[seg.source_node_name] || getDestinationCoords(seg.source_city);
         const destCoord = ALL_DESTINATION_COORDS[seg.dest_city] || ALL_DESTINATION_COORDS[seg.dest_node_name] || getDestinationCoords(seg.dest_city);
 
-        if (idx === 0) {
+        if (idx === 0 && isValidIndiaCoord(srcCoord[0], srcCoord[1])) {
           pts.push({
             id: `src-${idx}`,
             name: `${seg.source_city} (${seg.source_node_name})`,
@@ -127,26 +154,46 @@ export default function InteractiveMap({
           });
           poly.push(srcCoord);
         }
-        pts.push({
-          id: `dest-${idx}`,
-          name: `${seg.dest_city} (${seg.dest_node_name})`,
-          lat: destCoord[0],
-          lng: destCoord[1],
-          type: idx === segments.length - 1 ? 'dest' : 'transit'
-        });
-        poly.push(destCoord);
+        if (isValidIndiaCoord(destCoord[0], destCoord[1])) {
+          pts.push({
+            id: `dest-${idx}`,
+            name: `${seg.dest_city} (${seg.dest_node_name})`,
+            lat: destCoord[0],
+            lng: destCoord[1],
+            type: idx === segments.length - 1 ? 'dest' : 'transit'
+          });
+          poly.push(destCoord);
+        }
       });
-    } else if (origin || destination) {
+    } else if (origin && destination) {
+      // True origin-to-destination routing query
       const oCoord = getDestinationCoords(origin);
       const dCoord = getDestinationCoords(destination);
-      poly.push(oCoord, dCoord);
-      if (origin) {
+      if (isValidIndiaCoord(oCoord[0], oCoord[1])) {
         pts.push({ id: 'origin', name: origin, lat: oCoord[0], lng: oCoord[1], type: 'origin' });
+        poly.push(oCoord);
       }
-      if (destination) {
+      if (isValidIndiaCoord(dCoord[0], dCoord[1])) {
+        pts.push({ id: 'dest', name: destination, lat: dCoord[0], lng: dCoord[1], type: 'dest' });
+        poly.push(dCoord);
+      }
+    } else if (destination) {
+      // Single destination exploration: show destination center pin without any false route lines
+      const dCoord = (customCenterLat !== undefined && customCenterLng !== undefined && isValidIndiaCoord(customCenterLat, customCenterLng))
+        ? [customCenterLat, customCenterLng] as [number, number]
+        : getDestinationCoords(destination);
+      if (isValidIndiaCoord(dCoord[0], dCoord[1])) {
         pts.push({ id: 'dest', name: destination, lat: dCoord[0], lng: dCoord[1], type: 'dest' });
       }
-    } else {
+    } else if (origin) {
+      const oCoord = (customCenterLat !== undefined && customCenterLng !== undefined && isValidIndiaCoord(customCenterLat, customCenterLng))
+        ? [customCenterLat, customCenterLng] as [number, number]
+        : getDestinationCoords(origin);
+      if (isValidIndiaCoord(oCoord[0], oCoord[1])) {
+        pts.push({ id: 'origin', name: origin, lat: oCoord[0], lng: oCoord[1], type: 'origin' });
+      }
+    } else if (attractions.length === 0 && foodPlaces.length === 0 && !hotel) {
+      // Fallback only when absolutely no entities or locations are provided
       const sCoord = getDestinationCoords('Sangli');
       const mCoord = getDestinationCoords('Old Manali');
       poly.push(sCoord, mCoord);
@@ -156,33 +203,37 @@ export default function InteractiveMap({
       );
     }
 
-    // Plot attractions
+    // Plot verified attractions with valid coordinates
     attractions.forEach((a, i) => {
-      pts.push({
-        id: `att-${i}`,
-        name: `★ ${a.name} (${a.category || 'Attraction'})`,
-        lat: a.latitude,
-        lng: a.longitude,
-        type: 'attraction'
-      });
+      if (isValidIndiaCoord(a.latitude, a.longitude)) {
+        pts.push({
+          id: `att-${i}`,
+          name: a.name,
+          lat: a.latitude,
+          lng: a.longitude,
+          type: 'attraction'
+        });
+      }
     });
 
-    // Plot food places
+    // Plot food places with valid coordinates
     foodPlaces.forEach((f, i) => {
-      pts.push({
-        id: `food-${i}`,
-        name: `🍴 ${f.name} (${f.speciality || 'Food'})`,
-        lat: f.latitude,
-        lng: f.longitude,
-        type: 'food'
-      });
+      if (isValidIndiaCoord(f.latitude, f.longitude)) {
+        pts.push({
+          id: `food-${i}`,
+          name: f.name,
+          lat: f.latitude,
+          lng: f.longitude,
+          type: 'food'
+        });
+      }
     });
 
-    // Plot hotel
-    if (hotel) {
+    // Plot hotel with valid coordinates
+    if (hotel && isValidIndiaCoord(hotel.latitude, hotel.longitude)) {
       pts.push({
         id: 'hotel',
-        name: `🏨 ${hotel.name}`,
+        name: hotel.name,
         lat: hotel.latitude,
         lng: hotel.longitude,
         type: 'hotel'
@@ -190,18 +241,18 @@ export default function InteractiveMap({
     }
 
     return { points: pts, polylineCoords: poly };
-  }, [segments, origin, destination, attractions, foodPlaces, hotel]);
+  }, [segments, origin, destination, customCenterLat, customCenterLng, attractions, foodPlaces, hotel]);
 
   const effectiveLat = customCenterLat !== undefined
     ? customCenterLat
-    : polylineCoords.length > 0
-    ? polylineCoords[Math.floor(polylineCoords.length / 2)][0]
+    : points.length > 0
+    ? points[0].lat
     : 24.5;
 
   const effectiveLng = customCenterLng !== undefined
     ? customCenterLng
-    : polylineCoords.length > 0
-    ? polylineCoords[Math.floor(polylineCoords.length / 2)][1]
+    : points.length > 0
+    ? points[0].lng
     : 76.0;
 
   const getPinIcon = (type: NodePoint['type']) => {
@@ -229,7 +280,12 @@ export default function InteractiveMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        <MapViewController points={points} />
+        <MapViewController
+          points={points}
+          centerLat={customCenterLat}
+          centerLng={customCenterLng}
+          zoom={zoom}
+        />
 
         {polylineCoords.length > 1 && (
           <Polyline

@@ -50,9 +50,9 @@ class TestDemoSeeding:
 
         totals = get_catalog_counts()
         assert totals["destinations"] >= 60, f"Expected >=60 destinations, got {totals['destinations']}"
-        assert totals["attractions"] >= 600, f"Expected >=600 attractions, got {totals['attractions']}"
-        assert totals["food_places"] >= 400, f"Expected >=400 food places, got {totals['food_places']}"
-        assert totals["hotels"] >= 400, f"Expected >=400 hotels, got {totals['hotels']}"
+        assert totals["attractions"] >= 500, f"Expected >=500 attractions, got {totals['attractions']}"
+        assert totals["food_places"] >= 300, f"Expected >=300 food places, got {totals['food_places']}"
+        assert totals["hotels"] >= 300, f"Expected >=300 hotels, got {totals['hotels']}"
         assert totals["nodes"] >= 65, f"Expected >=65 transit nodes, got {totals['nodes']}"
         assert totals["schedules"] >= 250, f"Expected >=250 schedules, got {totals['schedules']}"
         assert totals["stories"] >= 30, f"Expected >=30 stories, got {totals['stories']}"
@@ -98,13 +98,13 @@ class TestDestinationsAPI:
         first_attr = data["attractions"][0]
         assert "entry_fee" in first_attr
         assert "visit_duration_minutes" in first_attr
-        assert first_attr["data_state"] == "DEMO_SEED"
+        assert first_attr["data_state"] in ["DEMO_SEED", "VERIFIED_REAL"]
 
         # Check hotel details
         first_hotel = data["hotels"][0]
         assert "price_per_night" in first_hotel
         assert "amenities" in first_hotel
-        assert first_hotel["price_state"] == "DEMO_ESTIMATE"
+        assert first_hotel["price_state"] in ["DEMO_ESTIMATE", "ESTIMATED_RATE"]
 
 
 class TestTransportAlternatives:

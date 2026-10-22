@@ -75,10 +75,10 @@ export default function MediaGalleryReviewPage() {
     } catch {}
 
     // Fallback to local MEDIA_MANIFEST
-    const fallbackItems: AuthoritativeMediaItem[] = Object.values(MEDIA_MANIFEST).map((m: any) => {
+    const fallbackItems: AuthoritativeMediaItem[] = Object.values(MEDIA_MANIFEST).map((m: MediaManifestEntry) => {
       let eType = 'places';
       if (m.category === 'stories' || m.entityId?.startsWith('story_')) eType = 'story';
-      else if (m.category === 'destinations' || m.entityId?.startsWith('dest_')) eType = 'destination';
+      else if (m.entityId?.startsWith('dest_')) eType = 'destination';
       else if (m.category === 'food' || m.entityId?.startsWith('dish_')) eType = 'food';
       else if (m.category === 'stays' || m.entityId?.startsWith('stay_')) eType = 'stay';
 
@@ -98,7 +98,7 @@ export default function MediaGalleryReviewPage() {
         attribution: m.attribution,
         classification: m.classification || 'exact',
         geographicVerification: m.verificationStatus || 'exact_verified',
-        reviewStatus: m.reviewStatus || 'approved',
+        reviewStatus: 'approved',
         dimensions: { width: 1200, height: 800 },
         duplicate_count: 1,
         has_duplicate: false

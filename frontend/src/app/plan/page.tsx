@@ -125,9 +125,13 @@ function InnerPlannerWorkspace() {
     if (qOrigin && qOrigin !== state.origin) {
       dispatch({ type: 'SET_ORIGIN', payload: qOrigin });
     }
-    if (qBudget && !isNaN(Number(qBudget))) dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: Number(qBudget) });
-    if (qTravellers && !isNaN(Number(qTravellers))) dispatch({ type: 'SET_TRAVELLERS_COUNT', payload: Number(qTravellers) });
-  }, [isAuthenticatedUser, searchParams, dispatch, state.destination, state.origin, planResult]);
+    if (qBudget && !isNaN(Number(qBudget)) && Number(qBudget) !== state.maximumBudget) {
+      dispatch({ type: 'SET_MAXIMUM_BUDGET', payload: Number(qBudget) });
+    }
+    if (qTravellers && !isNaN(Number(qTravellers)) && Number(qTravellers) !== state.travellers) {
+      dispatch({ type: 'SET_TRAVELLERS_COUNT', payload: Number(qTravellers) });
+    }
+  }, [isAuthenticatedUser, searchParams, dispatch, state.destination, state.origin, state.maximumBudget, state.travellers, planResult]);
 
 
   // Loading checklist timer animation

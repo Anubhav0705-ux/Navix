@@ -8,14 +8,16 @@ import {
   PassportStamp, DottedRouteAccent, CoordinatesTag,
   PostageStampSnippet, CompassRoseFragment
 } from '@/components';
-import { getCurrentUser } from '@/services/auth';
+import { getCurrentUser, changePassword, deleteAccount, logoutSession } from '@/services/auth';
 import { getSavedTrips, deleteSavedTrip, SavedTripItem, saveTrip } from '@/services/trips';
 import { saveTripPlan } from '@/lib';
 import { UserResponse } from '@/types';
 import { resolveDestinationPhoto } from '@/lib/mediaResolver';
+import { APIError } from '@/services/api';
 import {
   Compass, Calendar, Trash2, ExternalLink, ArrowRight, Loader2,
-  MapPin, Download, Copy, Sparkles, CheckCircle2, Plus
+  MapPin, Download, Copy, Sparkles, CheckCircle2, Plus,
+  KeyRound, ShieldAlert, AlertTriangle, Lock, ShieldCheck, X
 } from 'lucide-react';
 import { exportTripPlanPDF } from '@/lib/pdf-export';
 
@@ -63,6 +65,21 @@ export default function DashboardPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
+
+  // Account Settings state
+  const [currentPw, setCurrentPw] = useState('');
+  const [newPw, setNewPw] = useState('');
+  const [confirmPw, setConfirmPw] = useState('');
+  const [isChangingPw, setIsChangingPw] = useState(false);
+  const [pwSuccessMsg, setPwSuccessMsg] = useState<string | null>(null);
+  const [pwErrorMsg, setPwErrorMsg] = useState<string | null>(null);
+
+  // Account Deletion state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletePw, setDeletePw] = useState('');
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [deleteErrorMsg, setDeleteErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -120,6 +137,61 @@ export default function DashboardPage() {
       showToast('Could not delete trip.');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwErrorMsg(null);
+    setPwSuccessMsg(null);
+
+    if (newPw.length < 8) {
+      setPwErrorMsg('New password must be at least 8 characters long.');
+      return;
+    }
+    if (newPw !== confirmPw) {
+      setPwErrorMsg('New passwords do not match.');
+      return;
+    }
+
+    setIsChangingPw(true);
+    try {
+      const res = await changePassword(currentPw, newPw, confirmPw);
+      setPwSuccessMsg(res.message);
+      setCurrentPw('');
+      setNewPw('');
+      setConfirmPw('');
+    } catch (err: unknown) {
+      if (err instanceof APIError) {
+        setPwErrorMsg(err.message);
+      } else {
+        setPwErrorMsg('Failed to update password. Please check your current password.');
+      }
+    } finally {
+      setIsChangingPw(false);
+    }
+  };
+
+  const handleDeleteAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setDeleteErrorMsg(null);
+
+    if (deleteConfirmation.trim() !== 'DELETE') {
+      setDeleteErrorMsg("Please type 'DELETE' in uppercase to confirm.");
+      return;
+    }
+
+    setIsDeletingAccount(true);
+    try {
+      await deleteAccount(deletePw, 'DELETE');
+      router.push('/');
+    } catch (err: unknown) {
+      setIsDeletingAccount(false);
+      if (err instanceof APIError) {
+        setDeleteErrorMsg(err.message);
+      } else {
+        setDeleteErrorMsg('Failed to delete account. Please verify your password.');
+      }
     }
   };
 
@@ -478,7 +550,221 @@ export default function DashboardPage() {
           </div>
         </section>
 
+        {/* --- 4. ACCOUNT SETTINGS & SECURITY --- */}
+        <section className="space-y-6 pt-6 border-t border-[#EBDCC7]">
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl sm:text-3xl font-black font-editorial text-[#142A38] flex items-center gap-2.5">
+              <KeyRound className="w-6 h-6 text-[#1F6E78]" />
+              <span>Account Security & Preferences</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Change Password Card */}
+            <div className="lg:col-span-7 bg-white border border-[#EBDCC7] rounded-3xl p-6 sm:p-8 space-y-5 shadow-xs">
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold font-editorial text-[#142A38]">Change Password</h3>
+                <p className="text-xs text-[#66757F]">
+                  Update your personal traveler password. Password must be at least 8 characters long.
+                </p>
+              </div>
+
+              {pwSuccessMsg && (
+                <div role="status" className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs flex items-center gap-2.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>{pwSuccessMsg}</span>
+                </div>
+              )}
+
+              {pwErrorMsg && (
+                <div role="alert" className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-xs flex items-center gap-2.5">
+                  <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0" />
+                  <span>{pwErrorMsg}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleChangePassword} className="space-y-3.5">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#66757F] mb-1">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Enter current password"
+                    value={currentPw}
+                    onChange={(e) => setCurrentPw(e.target.value)}
+                    className="w-full bg-[#FBF7F1] focus:bg-white border border-[#EBDCC7] rounded-xl px-4 py-2.5 text-xs text-[#142A38] font-medium focus:outline-none focus:ring-2 focus:ring-[#1F6E78]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#66757F] mb-1">
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      placeholder="At least 8 characters"
+                      value={newPw}
+                      onChange={(e) => setNewPw(e.target.value)}
+                      className="w-full bg-[#FBF7F1] focus:bg-white border border-[#EBDCC7] rounded-xl px-4 py-2.5 text-xs text-[#142A38] font-medium focus:outline-none focus:ring-2 focus:ring-[#1F6E78]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#66757F] mb-1">
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      placeholder="Repeat new password"
+                      value={confirmPw}
+                      onChange={(e) => setConfirmPw(e.target.value)}
+                      className="w-full bg-[#FBF7F1] focus:bg-white border border-[#EBDCC7] rounded-xl px-4 py-2.5 text-xs text-[#142A38] font-medium focus:outline-none focus:ring-2 focus:ring-[#1F6E78]"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isChangingPw}
+                    className="px-6 py-2.5 bg-[#1F6E78] hover:bg-[#15525A] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    {isChangingPw ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Updating...</span>
+                      </>
+                    ) : (
+                      <span>Update Password</span>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* Danger Zone: Account Deletion */}
+            <div className="lg:col-span-5 bg-rose-50/40 border border-rose-200/80 rounded-3xl p-6 sm:p-8 space-y-5 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-rose-100 text-rose-700 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                  <ShieldAlert className="w-3 h-3" />
+                  <span>Danger Zone</span>
+                </div>
+                <h3 className="text-lg font-bold font-editorial text-rose-950">Delete Account</h3>
+                <p className="text-xs text-[#66757F] leading-relaxed">
+                  Permanently delete your traveler profile, all saved itineraries, and preferences. This action cannot be undone.
+                </p>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(true)}
+                  className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm cursor-pointer"
+                >
+                  Delete Account...
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </main>
+
+      {/* Delete Account Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div role="dialog" aria-modal="true" className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-rose-200 p-6 sm:p-8 space-y-5 text-[#142A38]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#F4EBE0]">
+              <div className="flex items-center gap-2 text-rose-600">
+                <AlertTriangle className="w-5 h-5" />
+                <h3 className="font-bold text-base font-editorial text-[#142A38]">Confirm Account Deletion</h3>
+              </div>
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteErrorMsg(null);
+                }}
+                className="w-8 h-8 rounded-full flex items-center justify-center text-[#8E9BA4] hover:text-[#142A38] hover:bg-[#FBF7F1] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-[#66757F] leading-relaxed">
+              This action is permanent and irreversible. All your saved journeys ({savedTrips.length}), custom route preferences, and traveler profile will be erased immediately.
+            </p>
+
+            {deleteErrorMsg && (
+              <div role="alert" className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
+                <span>{deleteErrorMsg}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleDeleteAccount} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#66757F] mb-1">
+                  Enter Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  placeholder="Your current password"
+                  value={deletePw}
+                  onChange={(e) => setDeletePw(e.target.value)}
+                  className="w-full bg-[#FBF7F1] focus:bg-white border border-[#EBDCC7] rounded-xl px-4 py-2 text-xs text-[#142A38] focus:outline-none focus:ring-2 focus:ring-rose-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#66757F] mb-1">
+                  Type <span className="font-mono text-rose-600">DELETE</span> to confirm
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="DELETE"
+                  value={deleteConfirmation}
+                  onChange={(e) => setDeleteConfirmation(e.target.value)}
+                  className="w-full bg-[#FBF7F1] focus:bg-white border border-[#EBDCC7] rounded-xl px-4 py-2 text-xs text-[#142A38] font-mono focus:outline-none focus:ring-2 focus:ring-rose-500"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setDeleteErrorMsg(null);
+                  }}
+                  className="px-4 py-2.5 text-xs font-bold text-[#66757F] hover:text-[#142A38] rounded-xl cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isDeletingAccount}
+                  className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm cursor-pointer disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isDeletingAccount ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Deleting...</span>
+                    </>
+                  ) : (
+                    <span>Permanently Delete Account</span>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
