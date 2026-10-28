@@ -62,3 +62,9 @@ backend/data/staging/
 
 # Playwright visual QA screenshots
 frontend/e2e-screenshots/
+
+# Database backups & dumps
+backups/
+*.dump
+*.dump.*
+*.sql.gz

@@ -1,6 +1,7 @@
+import os
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, List, Optional
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -80,6 +81,14 @@ class Settings(BaseSettings):
         default=None,
         description="Bootstrap password for demo/dev admin account (DEV/TEST only)"
     )
+
+    def __init__(self, **values: Any):
+        # Prevent local dev .env file from leaking demo admin credentials into STAGING/PRODUCTION test instances
+        env_val = values.get("APP_ENV") or os.getenv("APP_ENV")
+        if env_val and str(env_val).strip().upper() in (EnvironmentOption.STAGING.value, EnvironmentOption.PRODUCTION.value):
+            if "NAVIX_DEMO_ADMIN_PASSWORD" not in values and "NAVIX_DEMO_ADMIN_PASSWORD" not in os.environ:
+                values["NAVIX_DEMO_ADMIN_PASSWORD"] = None
+        super().__init__(**values)
 
     @model_validator(mode="after")
     def validate_and_normalize_configuration(self) -> "Settings":

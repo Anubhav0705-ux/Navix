@@ -124,18 +124,77 @@ def get_user_saved_trips(
     return results
 
 
+@saved_trips_router.get("/{trip_id}", response_model=SavedTripSummary)
+def get_saved_trip_by_id(
+    trip_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve a specific saved trip.
+    Enforces strict Broken Object Level Authorization (IDOR) check:
+    Resource owner must match authenticated user or user must be admin.
+    """
+    trip = db.query(Trip).filter(Trip.trip_id == trip_id).first()
+    if not trip:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"code": "TRIP_NOT_FOUND", "message": "Saved trip not found."}
+        )
+
+    if trip.traveler_id != current_user.user_id and current_user.role.lower() != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "FORBIDDEN", "message": "You do not have permission to access this trip."}
+        )
+
+    try:
+        plan_obj = TripPlanResult.model_validate_json(trip.plan_data) if trip.plan_data else None
+    except Exception:
+        plan_obj = None
+
+    if not plan_obj:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"code": "DATA_ERROR", "message": "Trip plan data could not be parsed."}
+        )
+
+    return SavedTripSummary(
+        trip_id=trip.trip_id,
+        origin=trip.origin,
+        destination=trip.destination,
+        travel_date=str(trip.travel_date),
+        budget_cap=float(trip.budget_cap),
+        total_cost=plan_obj.cost_breakdown.total_trip_cost,
+        remaining_budget=plan_obj.cost_breakdown.remaining_budget,
+        budget_status=plan_obj.cost_breakdown.budget_status,
+        created_at=str(trip.travel_date),
+        plan=plan_obj
+    )
+
+
 @saved_trips_router.delete("/{trip_id}", response_model=Dict[str, Any])
 def delete_saved_trip(
     trip_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Delete a saved trip for the current user."""
-    trip = db.query(Trip).filter(Trip.trip_id == trip_id, Trip.traveler_id == current_user.user_id).first()
+    """
+    Delete a saved trip for the current user.
+    Enforces strict Broken Object Level Authorization (IDOR) check:
+    Resource owner must match authenticated user or user must be admin.
+    """
+    trip = db.query(Trip).filter(Trip.trip_id == trip_id).first()
     if not trip:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={"code": "TRIP_NOT_FOUND", "message": "Saved trip not found."}
+        )
+
+    if trip.traveler_id != current_user.user_id and current_user.role.lower() != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "FORBIDDEN", "message": "You do not have permission to delete this trip."}
         )
 
     # Delete related allocations & segments

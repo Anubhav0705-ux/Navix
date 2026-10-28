@@ -37,6 +37,7 @@ from app.models.demo_catalog import (
     DemoHotel,
     DemoStory
 )
+from app.models.analytics import AnalyticsEvent
 
 __all__ = [
     "Base",
@@ -79,5 +80,6 @@ __all__ = [
     "DemoAttraction",
     "DemoFoodPlace",
     "DemoHotel",
-    "DemoStory"
+    "DemoStory",
+    "AnalyticsEvent"
 ]

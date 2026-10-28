@@ -12,6 +12,19 @@ test.describe('NAVIX Ultimate Presentation Release — 5 Golden Paths & Visual Q
 
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
+    await page.addInitScript(() => {
+      window.localStorage.removeItem('navix_trip_plan');
+      window.localStorage.removeItem('navix_planner_state');
+      window.localStorage.setItem('navix_auth_token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3JfZGVtb19uYXZpeCIsInJvbGUiOiJ0cmF2ZWxlciIsImV4cCI6MTc5MzM3NDY2Mn0.1N9zWvQZ4pTmtJ8GX1MeJQdENCJmbpVCEcVIE5vqNEU');
+      const userObj = JSON.stringify({
+        user_id: 'usr_demo_navix',
+        name: 'Demo Explorer',
+        email: 'demo@navix.com',
+        role: 'traveler'
+      });
+      window.localStorage.setItem('navix_auth_user', userObj);
+      window.localStorage.setItem('navix_user', userObj);
+    });
   });
 
   test('Visual QA & 16 Screenshot Views Capture', async ({ page }) => {

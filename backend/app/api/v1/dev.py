@@ -7,8 +7,20 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 
 from app.database.session import get_db
+from app.core.config import settings
+from app.core.security import get_current_admin
+from app.models.user import User
 
 dev_router = APIRouter(prefix="/dev", tags=["Developer Inspection"])
+
+
+def _assert_dev_mode():
+    """Ensure developer inspection endpoints are forbidden in production and staging."""
+    if settings.is_production or settings.is_staging:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "DEV_ENDPOINTS_DISABLED", "message": "Developer inspection endpoints are disabled in production and staging."}
+        )
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 AUTHORITATIVE_CATALOG_FILE = (
@@ -34,6 +46,7 @@ def get_db_summary(db: Session = Depends(get_db)):
     Read-only developer summary endpoint.
     Returns non-sensitive table counts from the existing Navix database.
     """
+    _assert_dev_mode()
     tables = [
         "users",
         "travelers",
@@ -80,6 +93,7 @@ def get_media_catalog(
     Internal photo-review interface endpoint.
     Serves authoritative catalog records with full metadata, dimensions, license, and verification status.
     """
+    _assert_dev_mode()
     items = []
     if AUTHORITATIVE_CATALOG_FILE.exists():
         try:
@@ -146,6 +160,7 @@ def get_media_audit():
     Comprehensive media audit across all entities.
     Returns entity counts, unique image count, duplicate count, and verification status.
     """
+    _assert_dev_mode()
     items = []
     if AUTHORITATIVE_CATALOG_FILE.exists():
         try:
@@ -187,8 +202,12 @@ def get_media_audit():
 
 
 @dev_router.post("/media-catalog/approve")
-def approve_media_item(req: ApproveRequest):
+def approve_media_item(
+    req: ApproveRequest,
+    current_admin: User = Depends(get_current_admin)
+):
     """Allows internal reviewer to approve/reject an entity image candidate."""
+    _assert_dev_mode()
     from app.services.media_pipeline import media_pipeline
     if req.entity_id in media_pipeline.catalog:
         media_pipeline.catalog[req.entity_id]["reviewStatus"] = req.status
@@ -198,8 +217,11 @@ def approve_media_item(req: ApproveRequest):
 
 
 @dev_router.post("/media-catalog/export")
-def export_media_manifest():
+def export_media_manifest(
+    current_admin: User = Depends(get_current_admin)
+):
     """Exports authoritative catalog to frontend manifests and synchronizes database."""
+    _assert_dev_mode()
     from app.services.media_pipeline import media_pipeline
     media_pipeline.sync_manifests()
     media_pipeline.sync_media_resolver()

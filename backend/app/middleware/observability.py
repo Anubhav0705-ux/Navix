@@ -39,6 +39,16 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
         # Bind request_id to contextvar for request-scoped logging
         token = request_id_ctx.set(req_id)
 
+        # Check maximum allowed Content-Length (5MB limit)
+        content_length = request.headers.get("content-length")
+        if content_length and content_length.isdigit() and int(content_length) > 5 * 1024 * 1024:
+            metrics.record_error(413)
+            return JSONResponse(
+                status_code=413,
+                content={"detail": "Request payload exceeds maximum allowed limit of 5MB.", "request_id": req_id},
+                headers={"X-Request-ID": req_id}
+            )
+
         start_time = time.perf_counter()
         metrics.increment_in_flight()
 
@@ -83,8 +93,11 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
                 }
             )
 
-            # Attach X-Request-ID header to response
+            # Attach Security & Correlation Headers to response
             response.headers["X-Request-ID"] = req_id
+            response.headers["X-Content-Type-Options"] = "nosniff"
+            response.headers["X-Frame-Options"] = "DENY"
+            response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
 
             # Reset ContextVar
             request_id_ctx.reset(token)

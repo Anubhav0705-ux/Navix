@@ -11,6 +11,7 @@ from app.models.transit_schedule import TransitSchedule
 from app.models.trip import Trip
 from app.models.password_reset import PasswordResetRequest
 from app.schemas.auth import PasswordResetAdminView, ApproveResetResponse, GenericMessageResponse
+from app.schemas.analytics import AdminAnalyticsSummary
 from app.core.security import get_current_admin, hash_password
 
 admin_router = APIRouter(prefix="/admin", tags=["Admin Dashboard"])
@@ -194,3 +195,17 @@ def admin_reject_password_reset(
     db.commit()
 
     return GenericMessageResponse(message="Password reset request rejected.")
+
+
+@admin_router.get("/analytics", response_model=AdminAnalyticsSummary)
+def admin_get_analytics_summary(
+    current_admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve aggregated first-party product analytics for administrative reporting.
+    Returns counts, planner completion rate, popular destinations, and daily activity trends.
+    No individual user tracking or surveillance data is exposed.
+    """
+    from app.services.analytics_service import analytics_service
+    return analytics_service.get_admin_summary(db)

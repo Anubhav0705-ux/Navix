@@ -22,15 +22,23 @@ def upgrade() -> None:
     inspector = sa.inspect(bind)
     tables = inspector.get_table_names()
 
+    has_users = False
+    if 'users' in tables:
+        cols = [c['name'] for c in inspector.get_columns('users')]
+        has_users = 'user_id' in cols
+
+    user_fk = [sa.ForeignKey('users.user_id', ondelete='CASCADE')] if has_users else []
+    admin_fk = [sa.ForeignKey('users.user_id', ondelete='SET NULL')] if has_users else []
+
     if 'password_reset_requests' not in tables:
         op.create_table(
             'password_reset_requests',
             sa.Column('request_id', sa.String(length=50), primary_key=True),
-            sa.Column('user_id', sa.String(length=50), sa.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False),
+            sa.Column('user_id', sa.String(length=50), *user_fk, nullable=False),
             sa.Column('requested_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
             sa.Column('status', sa.String(length=20), server_default='PENDING', nullable=False),
             sa.Column('reviewed_at', sa.DateTime(timezone=True), nullable=True),
-            sa.Column('reviewed_by_admin_id', sa.String(length=50), sa.ForeignKey('users.user_id', ondelete='SET NULL'), nullable=True),
+            sa.Column('reviewed_by_admin_id', sa.String(length=50), *admin_fk, nullable=True),
             sa.Column('temporary_password_hash', sa.String(length=255), nullable=True),
             sa.Column('temporary_password_expires_at', sa.DateTime(timezone=True), nullable=True),
             sa.Column('completed_at', sa.DateTime(timezone=True), nullable=True),

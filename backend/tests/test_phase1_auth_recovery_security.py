@@ -300,3 +300,11 @@ class TestChangePasswordAndAccountDeletion:
         # Verify user is gone from database
         check_user = db_session.query(User).filter(User.user_id == del_user_id).first()
         assert check_user is None
+
+        # 4. Token referencing deleted account must be rejected on protected endpoints
+        res_deleted_token = client.get(
+            "/api/v1/auth/me",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert res_deleted_token.status_code == 401
+        assert "no longer exists" in res_deleted_token.json()["detail"]

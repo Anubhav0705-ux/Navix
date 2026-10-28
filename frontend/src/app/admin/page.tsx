@@ -7,19 +7,21 @@ import { getCurrentUser } from '@/services/auth';
 import {
   fetchAdminNodes, fetchAdminSchedules, fetchAdminUsers, fetchAdminTrips,
   fetchAdminPasswordResets, approvePasswordReset, rejectPasswordReset,
+  fetchAdminAnalytics, AdminAnalyticsData,
   AdminNode, AdminSchedule, AdminUser, AdminTrip
 } from '@/services/admin';
 import { UserResponse, PasswordResetAdminItem, ApproveResetResponse } from '@/types';
 import {
   Shield, Database, Calendar, Users, MapPin, Loader2,
-  KeyRound, CheckCircle2, XCircle, Copy, AlertTriangle, X
+  KeyRound, CheckCircle2, XCircle, Copy, AlertTriangle, X,
+  BarChart3, TrendingUp, Eye, Compass
 } from 'lucide-react';
 
 export default function AdminPage() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<UserResponse | null>(null);
   const [isMounted, setIsMounted] = useState(false);
-  const [tab, setTab] = useState<'nodes' | 'schedules' | 'users' | 'trips' | 'resets'>('nodes');
+  const [tab, setTab] = useState<'nodes' | 'schedules' | 'users' | 'trips' | 'resets' | 'analytics'>('nodes');
   const [loading, setLoading] = useState(true);
 
   const [nodes, setNodes] = useState<AdminNode[]>([]);
@@ -27,6 +29,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [trips, setTrips] = useState<AdminTrip[]>([]);
   const [resets, setResets] = useState<PasswordResetAdminItem[]>([]);
+  const [analytics, setAnalytics] = useState<AdminAnalyticsData | null>(null);
 
   // Action states
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
@@ -40,14 +43,16 @@ export default function AdminPage() {
       fetchAdminSchedules(),
       fetchAdminUsers(),
       fetchAdminTrips(),
-      fetchAdminPasswordResets()
+      fetchAdminPasswordResets(),
+      fetchAdminAnalytics().catch(() => null)
     ])
-      .then(([n, s, u, t, r]) => {
+      .then(([n, s, u, t, r, a]) => {
         setNodes(n);
         setSchedules(s);
         setUsers(u);
         setTrips(t);
         setResets(r);
+        if (a) setAnalytics(a);
         setLoading(false);
       })
       .catch(() => {
@@ -207,6 +212,15 @@ export default function AdminPage() {
                 {pendingResetsCount}
               </span>
             )}
+          </button>
+
+          <button
+            onClick={() => setTab('analytics')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-smooth flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+              tab === 'analytics' ? 'bg-[#0E9F7A] text-white shadow-sm' : 'text-[#667085] hover:text-[#0B1320]'
+            }`}
+          >
+            <BarChart3 className="w-3.5 h-3.5" /> Product Analytics
           </button>
         </div>
 
@@ -407,6 +421,101 @@ export default function AdminPage() {
                     </tbody>
                   </table>
                 )}
+              </div>
+            )}
+
+            {tab === 'analytics' && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#E7E5E0] gap-2">
+                  <div>
+                    <h2 className="text-base font-extrabold text-[#0B1320] flex items-center gap-2">
+                      <BarChart3 className="w-4 h-4 text-[#0E9F7A]" /> First-Party Product Analytics
+                    </h2>
+                    <p className="text-xs text-[#667085]">
+                      Aggregated telemetry collected without personal tracking, third-party trackers, or behavioral profiling.
+                    </p>
+                  </div>
+                  <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded-lg border border-emerald-200">
+                    Privacy-Preserving
+                  </span>
+                </div>
+
+                {/* Key Metrics Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#E7E5E0] space-y-1">
+                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider">Planner Starts</span>
+                    <p className="text-2xl font-black text-[#0B1320]">{analytics?.total_planner_starts ?? 0}</p>
+                  </div>
+                  <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#E7E5E0] space-y-1">
+                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider">Completed Plans</span>
+                    <p className="text-2xl font-black text-[#0E9F7A]">{analytics?.total_completed_plans ?? 0}</p>
+                  </div>
+                  <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#E7E5E0] space-y-1">
+                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider">Completion Rate</span>
+                    <p className="text-2xl font-black text-[#0B1320]">{analytics?.planner_completion_rate ?? 0}%</p>
+                  </div>
+                  <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#E7E5E0] space-y-1">
+                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider">Saved Trips</span>
+                    <p className="text-2xl font-black text-[#0B1320]">{analytics?.total_saved_trips ?? trips.length}</p>
+                  </div>
+                  <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#E7E5E0] space-y-1">
+                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider">Page Views</span>
+                    <p className="text-2xl font-black text-[#0B1320]">{analytics?.total_page_views ?? 0}</p>
+                  </div>
+                  <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#E7E5E0] space-y-1">
+                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider">Destination Views</span>
+                    <p className="text-2xl font-black text-[#0B1320]">{analytics?.total_destination_views ?? 0}</p>
+                  </div>
+                  <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#E7E5E0] space-y-1">
+                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider">Story Views</span>
+                    <p className="text-2xl font-black text-[#0B1320]">{analytics?.total_story_views ?? 0}</p>
+                  </div>
+                  <div className="p-4 bg-[#F7F5F0] rounded-xl border border-[#E7E5E0] space-y-1">
+                    <span className="text-[10px] font-bold text-[#667085] uppercase tracking-wider">Total Events</span>
+                    <p className="text-2xl font-black text-[#0B1320]">{analytics?.total_events ?? 0}</p>
+                  </div>
+                </div>
+
+                {/* Popular Destinations & Activity Trend */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                  <div className="border border-[#E7E5E0] rounded-xl p-4 bg-white space-y-3">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#667085] flex items-center gap-1.5">
+                      <Compass className="w-3.5 h-3.5 text-[#0E9F7A]" /> Most Viewed Destinations
+                    </h3>
+                    {analytics?.popular_destinations && analytics.popular_destinations.length > 0 ? (
+                      <div className="space-y-2">
+                        {analytics.popular_destinations.map((pd, idx) => (
+                          <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-[#F7F5F0] text-xs">
+                            <span className="font-bold text-[#0B1320]">{pd.destination}</span>
+                            <span className="px-2 py-0.5 rounded-full bg-white border border-[#E7E5E0] text-[10px] font-bold text-[#667085]">
+                              {pd.views} views
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-[#8E9BA4] py-4 text-center">No destination views recorded yet.</p>
+                    )}
+                  </div>
+
+                  <div className="border border-[#E7E5E0] rounded-xl p-4 bg-white space-y-3">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#667085] flex items-center gap-1.5">
+                      <TrendingUp className="w-3.5 h-3.5 text-[#0E9F7A]" /> 14-Day Activity Trend
+                    </h3>
+                    {analytics?.daily_activity_trend && analytics.daily_activity_trend.length > 0 ? (
+                      <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                        {analytics.daily_activity_trend.map((dt, idx) => (
+                          <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-[#F7F5F0] text-xs">
+                            <span className="font-mono text-[#667085]">{dt.date}</span>
+                            <span className="font-bold text-[#0E9F7A]">{dt.count} events</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-[#8E9BA4] py-4 text-center">No activity trend recorded yet.</p>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </div>

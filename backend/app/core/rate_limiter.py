@@ -61,43 +61,45 @@ class RateLimitPolicy:
     local_concurrency_limit: Optional[int] = None
 
 
+is_dev_or_test = settings.is_development or settings.is_test
+
 # Configurable endpoint rate limit policies
 POLICIES: Dict[str, RateLimitPolicy] = {
     "auth": RateLimitPolicy(
         name="auth",
-        max_requests=30,
+        max_requests=120 if is_dev_or_test else 30,
         window_seconds=60,
         fail_open=True  # Allow fail-open in local development/testing
     ),
     "routes": RateLimitPolicy(
         name="routes",
-        max_requests=10,
+        max_requests=60 if is_dev_or_test else 10,
         window_seconds=60,
         fail_open=True,
         local_concurrency_limit=20  # Bounded local concurrency fallback
     ),
     "trips": RateLimitPolicy(
         name="trips",
-        max_requests=10,
+        max_requests=60 if is_dev_or_test else 10,
         window_seconds=60,
         fail_open=True,
         local_concurrency_limit=20
     ),
     "locations": RateLimitPolicy(
         name="locations",
-        max_requests=60,
+        max_requests=120 if is_dev_or_test else 60,
         window_seconds=60,
         fail_open=True
     ),
     "places": RateLimitPolicy(
         name="places",
-        max_requests=60,
+        max_requests=120 if is_dev_or_test else 60,
         window_seconds=60,
         fail_open=True
     ),
     "default": RateLimitPolicy(
         name="default",
-        max_requests=100,
+        max_requests=200 if is_dev_or_test else 100,
         window_seconds=60,
         fail_open=True
     )
@@ -209,6 +211,11 @@ class DistributedRateLimiter:
 
     def _handle_redis_degraded(self, policy: RateLimitPolicy) -> Tuple[bool, int, int, int]:
         """Handles rate limiting decisions when Redis cluster is unreachable or circuit broken."""
+        # Security/auth policies must strictly fail closed in STAGING and PRODUCTION
+        if (settings.is_staging or settings.is_production) and policy.name == "auth":
+            logger.error(f"Redis rate limiter unavailable for SECURITY policy '{policy.name}' in {settings.APP_ENV}. Failing CLOSED.")
+            return False, 0, policy.window_seconds, policy.max_requests
+
         if (settings.is_development or settings.is_testing) and not policy.fail_open:
             logger.warning(
                 f"Redis rate limiter unavailable for SECURITY policy '{policy.name}' in {settings.APP_ENV} mode. "

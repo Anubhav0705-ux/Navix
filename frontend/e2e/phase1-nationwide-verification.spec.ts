@@ -19,6 +19,19 @@ test.describe('NAVIX Phase 1 — Nationwide Trip Planner Verification & Recovery
 
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
+    await page.addInitScript(() => {
+      window.localStorage.removeItem('navix_trip_plan');
+      window.localStorage.removeItem('navix_planner_state');
+      window.localStorage.setItem('navix_auth_token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3JfZGVtb19uYXZpeCIsInJvbGUiOiJ0cmF2ZWxlciIsImV4cCI6MTc5MzM3NDY2Mn0.1N9zWvQZ4pTmtJ8GX1MeJQdENCJmbpVCEcVIE5vqNEU');
+      const userObj = JSON.stringify({
+        user_id: 'usr_demo_navix',
+        name: 'Demo Explorer',
+        email: 'demo@navix.com',
+        role: 'traveler'
+      });
+      window.localStorage.setItem('navix_auth_user', userObj);
+      window.localStorage.setItem('navix_user', userObj);
+    });
   });
 
   async function copyToArtifacts(filename: string) {
@@ -93,7 +106,7 @@ test.describe('NAVIX Phase 1 — Nationwide Trip Planner Verification & Recovery
     await expect(page.getByRole('heading', { level: 1 })).toContainText(/Goa/i, { timeout: 15000 });
 
     // Click "Build Trip Itinerary"
-    const buildBtn = page.getByRole('link', { name: /Build Trip Itinerary/i });
+    const buildBtn = page.locator('button, a').filter({ hasText: /Build Trip Itinerary/i });
     await expect(buildBtn).toBeVisible();
     await buildBtn.click();
     await page.waitForURL('**/plan?destination=**', { timeout: 10000 });
@@ -126,7 +139,7 @@ test.describe('NAVIX Phase 1 — Nationwide Trip Planner Verification & Recovery
     await expect(page.getByRole('heading', { level: 1 })).toContainText(/Udaipur/i, { timeout: 15000 });
 
     // Click "Build Trip Itinerary"
-    const buildBtn = page.getByRole('link', { name: /Build Trip Itinerary/i });
+    const buildBtn = page.locator('button, a').filter({ hasText: /Build Trip Itinerary/i });
     await expect(buildBtn).toBeVisible();
     await buildBtn.click();
     await page.waitForURL('**/plan?destination=**', { timeout: 10000 });
@@ -184,7 +197,7 @@ test.describe('NAVIX Phase 1 — Nationwide Trip Planner Verification & Recovery
     await expect(page.getByRole('heading', { level: 1 })).toContainText(/Munnar/i, { timeout: 15000 });
 
     // Click "Build Trip Itinerary"
-    const buildBtn = page.getByRole('link', { name: /Build Trip Itinerary/i });
+    const buildBtn = page.locator('button, a').filter({ hasText: /Build Trip Itinerary/i });
     await expect(buildBtn).toBeVisible();
     await buildBtn.click();
     await page.waitForURL('**/plan?destination=**', { timeout: 10000 });
@@ -206,6 +219,8 @@ test.describe('NAVIX Phase 1 — Nationwide Trip Planner Verification & Recovery
     // 1. Sign in with Demo Account
     await page.goto('/login');
     await expect(page.getByRole('heading', { name: /Sign In|Welcome back/i })).toBeVisible({ timeout: 15000 });
+    await page.fill('input[type="email"]', 'demo@navix.com');
+    await page.fill('input[type="password"]', 'DemoExplorer2026!');
     const signInBtn = page.locator('button[type="submit"]');
     await signInBtn.click();
     await page.waitForURL('**/dashboard', { timeout: 15000 });

@@ -62,3 +62,21 @@ export async function approvePasswordReset(request_id: string): Promise<ApproveR
 export async function rejectPasswordReset(request_id: string): Promise<{ message: string }> {
   return postApi<{ message: string }>(`/api/v1/admin/password-resets/${request_id}/reject`, {});
 }
+
+export interface AdminAnalyticsData {
+  total_events: number;
+  total_page_views: number;
+  total_planner_starts: number;
+  total_completed_plans: number;
+  planner_completion_rate: number;
+  total_saved_trips: number;
+  total_story_views: number;
+  total_destination_views: number;
+  popular_destinations: { destination: string; views: number }[];
+  daily_activity_trend: { date: string; count: number }[];
+  has_data: boolean;
+}
+
+export async function fetchAdminAnalytics(): Promise<AdminAnalyticsData> {
+  return getApi<AdminAnalyticsData>('/api/v1/admin/analytics');
+}

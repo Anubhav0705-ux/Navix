@@ -2639,7 +2639,7 @@
     "availability": true,
     "data_state": "VERIFIED_REAL",
     "price_state": "ESTIMATED_RATE",
-    "image": "/media/stays/representative_mountain_homestay.webp"
+    "image": "/media/stays/goa_taj_exotica.webp"
   },
   {
     "id": "stay_goa_02",
@@ -2662,7 +2662,7 @@
     "availability": true,
     "data_state": "VERIFIED_REAL",
     "price_state": "ESTIMATED_RATE",
-    "image": "/media/stays/representative_transit_hotel.webp"
+    "image": "/media/stays/goa_fort_tiracol.webp"
   },
   {
     "id": "stay_goa_03",
@@ -2684,7 +2684,7 @@
     "availability": true,
     "data_state": "VERIFIED_REAL",
     "price_state": "ESTIMATED_RATE",
-    "image": "/media/stays/representative_transit_hotel.webp"
+    "image": "/media/stays/goa_hosteller_candolim.webp"
   },
   {
     "id": "stay_goa_04",
@@ -2705,7 +2705,7 @@
     "availability": true,
     "data_state": "REPRESENTATIVE",
     "price_state": "DEMO_ESTIMATE",
-    "image": "/media/stays/representative_mountain_homestay.webp"
+    "image": "/media/stays/goa_panjim_inn.webp"
   },
   {
     "id": "stay_goa_05",

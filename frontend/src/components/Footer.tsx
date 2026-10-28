@@ -33,11 +33,20 @@ export const Footer: React.FC = () => {
           </nav>
         </div>
 
-        {/* Minimal Copyright & Attribution */}
+        {/* Minimal Copyright & Legal Links */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#64748B]">
-          <p>© 2026 NAVIX Travel Technologies. Built for India.</p>
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            <p>© 2026 NAVIX Project. Built for India.</p>
+            <span className="hidden sm:inline text-white/20">|</span>
+            <Link href="/privacy" className="hover:text-[#94A3B8] transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-[#94A3B8] transition-colors">
+              Terms of Service
+            </Link>
+          </div>
           <p className="text-[11px] text-[#475569]">
-            Multimodal routing with guaranteed trip budget bounds.
+            Algorithmic multimodal routing under budget constraints.
           </p>
         </div>
       </div>

@@ -19,10 +19,17 @@ from app.middleware.rate_limit import RateLimitMiddleware
 configure_logging()
 logger = logging.getLogger("navix.main")
 
+docs_url = "/docs" if not settings.is_production else None
+redoc_url = "/redoc" if not settings.is_production else None
+openapi_url = "/openapi.json" if not settings.is_production else None
+
 app = FastAPI(
     title="NAVIX API",
     description="Backend API for NAVIX Algorithmic Budget-First Route Planner",
-    version="0.1.0"
+    version="0.1.0",
+    docs_url=docs_url,
+    redoc_url=redoc_url,
+    openapi_url=openapi_url
 )
 
 # CORS Middleware Configuration

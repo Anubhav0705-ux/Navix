@@ -50,7 +50,7 @@ test.describe('NAVIX Release Hardening Phase 1: End-to-End Test Suite', () => {
     // Step 3
     await nextBtn.click();
     await expect(page.locator('text=Step 3 of 3')).toBeVisible();
-    await expect(page.locator('text=Algorithmic Multimodal Routing')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Algorithmic Multimodal Routing' })).toBeVisible();
 
     // Complete onboarding
     const startBtn = page.getByRole('button', { name: /Start Exploring/i });

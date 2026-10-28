@@ -253,7 +253,7 @@ function RegisterFormContent() {
               </div>
             </div>
 
-            <div className="pt-3">
+            <div className="pt-3 space-y-2">
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -271,6 +271,17 @@ function RegisterFormContent() {
                   </>
                 )}
               </button>
+
+              <p className="text-[11px] text-center text-[#8E9BA4]">
+                By creating an account, you agree to our{' '}
+                <Link href="/terms" className="underline hover:text-[#1F6E78] transition-colors">
+                  Terms of Service
+                </Link>{' '}
+                and acknowledge the{' '}
+                <Link href="/privacy" className="underline hover:text-[#1F6E78] transition-colors">
+                  Privacy Policy
+                </Link>.
+              </p>
             </div>
           </form>
         </div>

@@ -139,7 +139,16 @@ def admin_refresh_transport_source(
     x_navix_admin_token: Optional[str] = Header(None, alias="X-Navix-Admin-Token"),
     db: Session = Depends(get_db)
 ):
-    expected_token = os.getenv("ADMIN_REFRESH_TOKEN", "navix_admin_token_wp9_secure")
+    expected_token = os.getenv("ADMIN_REFRESH_TOKEN")
+    if not expected_token and (settings.is_development or settings.is_testing):
+        expected_token = "navix_admin_token_wp9_secure"
+
+    if (settings.is_production or settings.is_staging) and (not expected_token or expected_token == "navix_admin_token_wp9_secure"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Administrative refresh is disabled in production without explicit, secure ADMIN_REFRESH_TOKEN configuration."
+        )
+
     if not x_navix_admin_token or x_navix_admin_token != expected_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
